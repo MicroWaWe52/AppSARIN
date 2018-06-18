@@ -22,7 +22,6 @@ namespace GestioneSarin2
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.layoutAdd);
             listPRoduct = FindViewById<ListView>(Resource.Id.listViewProdottiact);
-           // Helper.GetFtpImg("");
             //WAIT richiesta al database ,costruzione dell prodotto per ogni prodotto con immagine scaricata dal server.
             var listatemp=new List<Prodotto>();
             var ptemp=new Prodotto();
@@ -32,6 +31,8 @@ namespace GestioneSarin2
             ptemp.QuantityPrice = "2/2€";
 
 
+            listatemp.Add(ptemp);
+            listatemp.Add(ptemp);
             listatemp.Add(ptemp);
         
             listPRoduct.Adapter=new ProdottoAdapter(listatemp);

@@ -42,25 +42,17 @@ namespace GestioneSarin2
 
             }
 
-            //var options = new BitmapFactory.Options {InSampleSize = 2};
-            //var boolExists = File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/littlegeorge.png");
+           
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().PermitAll().Build();
-
             StrictMode.SetThreadPolicy(policy);
-            //FileStream fsConstrol = new FileStream(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/littlegeorge.png", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             URL url = new URL("http://www.teatrotse.com/DasGappArchives/littlegeorge.png");
             HttpURLConnection connection = (HttpURLConnection)url.OpenConnection();
-
             Stream issInputStream = connection.InputStream;
             Bitmap img = BitmapFactory.DecodeStream(issInputStream);
           
-            // Bitmap b = BitmapFactory.DecodeFile(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/littlegeorge.png", options);
             
             var holder = (ViewHolder)view.Tag;
-
             holder.Photo.SetImageBitmap(img);
-
-            //  holder.Photo.SetImageDrawable(ImageManager.Get(parent.Context, prodottolList[position].ImageUrl));
             holder.Name.Text = prodottolList[position].Name;
             holder.QuantPrice.Text = prodottolList[position].QuantityPrice;
 
