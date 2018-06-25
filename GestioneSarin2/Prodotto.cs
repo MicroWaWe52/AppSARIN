@@ -12,11 +12,13 @@ using Android.Widget;
 
 namespace GestioneSarin2
 {
-    class Prodotto
+    class Prodotto:Java.Lang.Object
     {
         public string Name { get; set; }
 
         public string QuantityPrice { get; set; }
         public string ImageUrl { get; set; }
+        public string Grouop { get; set; }
+        public string SubGroup { get; set; }
     }
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
-
-using Android.App;
+using Android;
 using Android.Content;
+using Android.Content.PM;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Net;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.Widget;
@@ -15,11 +17,12 @@ using Android.Views;
 using Android.Widget;
 using Java.IO;
 using Java.Net;
+using Console = System.Console;
 using Environment = System.Environment;
 
 namespace GestioneSarin2
 {
-    
+
     class ProdottoAdapter : BaseAdapter<Prodotto>
     {
         private List<Prodotto> prodottolList;
@@ -42,17 +45,28 @@ namespace GestioneSarin2
 
             }
 
-           
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().PermitAll().Build();
-            StrictMode.SetThreadPolicy(policy);
-            URL url = new URL("http://www.teatrotse.com/DasGappArchives/littlegeorge.png");
-            HttpURLConnection connection = (HttpURLConnection)url.OpenConnection();
-            Stream issInputStream = connection.InputStream;
-            Bitmap img = BitmapFactory.DecodeStream(issInputStream);
-          
-            
             var holder = (ViewHolder)view.Tag;
-            holder.Photo.SetImageBitmap(img);
+            try
+            {
+                var photoname = prodottolList[position].ImageUrl.Split('\\');
+
+                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                    .DirectoryDownloads).AbsolutePath;
+                path += "/" + photoname.Last();
+                if (!System.IO.File.Exists(path))
+                {
+                    Helper.GetMIssPhoto(path);
+                }
+                using (Stream stream = new FileStream(path, FileMode.Open,FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    holder.Photo.SetImageBitmap(BitmapFactory.DecodeStream(stream));
+                }
+            }
+            catch (Exception e)
+            {
+                Toast.MakeText(parent.Context, "Alcune immagini non sono state trovate.Aggiorna l'archivio",ToastLength.Short);
+            }
+
             holder.Name.Text = prodottolList[position].Name;
             holder.QuantPrice.Text = prodottolList[position].QuantityPrice;
 
