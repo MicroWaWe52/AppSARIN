@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Android;
 using Android.App;
@@ -136,22 +137,30 @@ namespace GestioneSarin2
                 RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
             }
 
-            var array = Intent.GetStringArrayExtra("prod");
+            var prodArray = Intent.GetStringArrayExtra("prod");
+            var uriArray = Intent.GetStringArrayExtra("uri");
+
             try
             {
-                listprod = array.ToList();
-                var templist = new List<string>();
-                foreach (var prod in listprod)
+                var listURI=uriArray.ToList();
+                listprod = prodArray.ToList();
+                var templist = new List<Prodotto>();
+                var finalList = listprod.Zip(listURI, (p, u) =>new 
                 {
-                    var split = prod.Split(';');
-                    split[0] = query.First(p => p[4] == split[0])[5];
-                    var result = split.Aggregate("", (current, s) => current + s + ";");
-                    templist.Add(result);
+                    prodotto=p,
+                    uri=u
+                }).ToList();
+                foreach (var prod in finalList)
+                {
+                    var ptemp=new Prodotto();
+                    ptemp.ImageUrl= prod.uri;
+                    var split = prod.prodotto.Split(';');
+                    ptemp.Name = query.First(p => p[4] == split[0])[5];
+                    ptemp.QuantityPrice = split[1] + '/' + split[2];
+                    templist.Add(ptemp);
 
                 }
-
-
-                listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, templist);
+                listView.Adapter = new ProdottoAdapter(templist);
             }
             catch (Exception)
             {

@@ -23,6 +23,7 @@ namespace GestioneSarin2
         private ListView listPRoduct;
         private List<List<string>> query;
         private List<string> listProd;
+        private List<string> listURI;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -37,6 +38,14 @@ namespace GestioneSarin2
             catch (Exception e)
             {
                 listProd = new List<string>();
+            }
+            try
+            {
+                listURI = Intent.GetStringArrayExtra("uri").ToList();
+            }
+            catch (Exception e)
+            {
+                listURI = new List<string>();
             }
             query = Helper.table.Where(s => s[s.Count - 2] == GroupSel).ToList();
             var subGroupList = new List<string>();
@@ -61,7 +70,7 @@ namespace GestioneSarin2
                     Grouop = query.First(list => list[3].Equals(subGroup))[5],
                     SubGroup = query.First(list => list[3].Equals(subGroup)).Last(),
 
-                    Name =textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup)).Last()),
+                    Name = textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup)).Last()),
                     QuantityPrice = ""
                 };
                 pListSub.Add(psub);
@@ -85,7 +94,7 @@ namespace GestioneSarin2
             else
             {
                 var text = new EditText(this);
-                text.InputType = InputTypes.NumberFlagDecimal;
+                text.SetRawInputType(InputTypes.NumberFlagDecimal);
                 var builder = new AlertDialog.Builder(this);
                 builder.SetTitle("Seleziona la quantita");
                 builder.SetCancelable(true);
@@ -96,8 +105,12 @@ namespace GestioneSarin2
                     {
                         listProd.Add(query[e.Position][4] + ';' + text.Text + ';' + query[e.Position][12]);
                         Intent i = new Intent(this, typeof(MainActivity));
+                        var urisplit = query[e.Position][15].Split('\\');
+                        listURI.Add(urisplit.Last());
+                        var uriarr = listURI.ToArray();
                         var array = listProd.ToArray();
                         i.PutExtra("prod", array);
+                        i.PutExtra("uri", uriarr);
                         StartActivity(i);
 
                     });
