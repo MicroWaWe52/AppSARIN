@@ -1,24 +1,11 @@
-﻿using System;
+﻿using Android.Graphics;
+using Android.Views;
+using Android.Widget;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using Android;
-using Android.Content;
-using Android.Content.PM;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Net;
-using Android.OS;
-using Android.Runtime;
-using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
-using Java.IO;
-using Java.Net;
-using Console = System.Console;
-using Environment = System.Environment;
+using Android.Content.Res;
 
 namespace GestioneSarin2
 {
@@ -53,11 +40,12 @@ namespace GestioneSarin2
                 var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                     .DirectoryDownloads).AbsolutePath;
                 path += "/" + photoname.Last();
-                if (!System.IO.File.Exists(path))
+                if (!File.Exists(path))
                 {
                     Helper.GetMIssPhoto(path);
                 }
-                using (Stream stream = new FileStream(path, FileMode.Open,FileAccess.ReadWrite, FileShare.ReadWrite))
+
+                using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
                     holder.Photo.SetImageBitmap(BitmapFactory.DecodeStream(stream));
                 }
@@ -67,7 +55,11 @@ namespace GestioneSarin2
                 Toast.MakeText(parent.Context, "Alcune immagini non sono state trovate.Aggiorna l'archivio",ToastLength.Short);
             }
 
+            AssetManager am = parent.Context.Assets;
+            Typeface tvName=Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            holder.Name.SetTypeface(tvName,TypefaceStyle.Normal);
             holder.Name.Text = prodottolList[position].Name;
+            holder.QuantPrice.SetTypeface(tvName,TypefaceStyle.Normal);
             holder.QuantPrice.Text = prodottolList[position].QuantityPrice;
 
             return view;

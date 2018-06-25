@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -49,6 +50,8 @@ namespace GestioneSarin2
                 .Select(group => group.Key)
                 .ToList();
             var pListSub = new List<Prodotto>();
+            var cultureInfo = Thread.CurrentThread.CurrentCulture;
+            var textInfo = cultureInfo.TextInfo;
             foreach (var subGroup in output)
             {
 
@@ -57,7 +60,8 @@ namespace GestioneSarin2
                     ImageUrl = query.First(list => list[3].Equals(subGroup))[15],
                     Grouop = query.First(list => list[3].Equals(subGroup))[5],
                     SubGroup = query.First(list => list[3].Equals(subGroup)).Last(),
-                    Name = query.First(list => list[3].Equals(subGroup)).Last(),
+
+                    Name =textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup)).Last()),
                     QuantityPrice = ""
                 };
                 pListSub.Add(psub);
@@ -103,13 +107,16 @@ namespace GestioneSarin2
 
         public void GetInSub(List<List<string>> querys)
         {
+            CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+            TextInfo ti = ci.TextInfo;
             var listtemp = new List<Prodotto>();
             foreach (var sDirectoryItem in querys)
             {
+                var name = ti.ToLower(sDirectoryItem[5]);
                 var ptemp = new Prodotto
                 {
                     ImageUrl = sDirectoryItem[15],
-                    Name = sDirectoryItem[5],
+                    Name = name,
                     QuantityPrice = $"{sDirectoryItem[6]}pz/{sDirectoryItem[12]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last()

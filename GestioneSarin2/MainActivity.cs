@@ -109,7 +109,6 @@ namespace GestioneSarin2
 
         private void Lw_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            var cm = (ConnectivityManager) GetSystemService(ConnectionService);
             Intent i = new Intent(this, typeof(ActivityAdd));
             i.PutExtra("gruppo", ((ListView)sender).GetItemAtPosition(e.Position).ToString());
             i.PutExtra("prod", listprod.ToArray());
@@ -158,7 +157,7 @@ namespace GestioneSarin2
             {
                 listprod = new List<string>();
             }
-
+            
 
         }
 

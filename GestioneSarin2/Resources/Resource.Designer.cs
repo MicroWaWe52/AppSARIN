@@ -1187,44 +1187,47 @@ namespace GestioneSarin2
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f0c004b
-			public const int abc_background_cache_hint_selector_material_dark = 2131492939;
-			
-			// aapt resource value: 0x7f0c004c
-			public const int abc_background_cache_hint_selector_material_light = 2131492940;
+			// aapt resource value: 0x7f0c004a
+			public const int TextColor = 2131492938;
 			
 			// aapt resource value: 0x7f0c004d
-			public const int abc_btn_colored_borderless_text_material = 2131492941;
+			public const int abc_background_cache_hint_selector_material_dark = 2131492941;
 			
 			// aapt resource value: 0x7f0c004e
-			public const int abc_btn_colored_text_material = 2131492942;
+			public const int abc_background_cache_hint_selector_material_light = 2131492942;
 			
 			// aapt resource value: 0x7f0c004f
-			public const int abc_color_highlight_material = 2131492943;
+			public const int abc_btn_colored_borderless_text_material = 2131492943;
 			
 			// aapt resource value: 0x7f0c0050
-			public const int abc_hint_foreground_material_dark = 2131492944;
+			public const int abc_btn_colored_text_material = 2131492944;
 			
 			// aapt resource value: 0x7f0c0051
-			public const int abc_hint_foreground_material_light = 2131492945;
+			public const int abc_color_highlight_material = 2131492945;
+			
+			// aapt resource value: 0x7f0c0052
+			public const int abc_hint_foreground_material_dark = 2131492946;
+			
+			// aapt resource value: 0x7f0c0053
+			public const int abc_hint_foreground_material_light = 2131492947;
 			
 			// aapt resource value: 0x7f0c0000
 			public const int abc_input_method_navigation_guard = 2131492864;
 			
-			// aapt resource value: 0x7f0c0052
-			public const int abc_primary_text_disable_only_material_dark = 2131492946;
-			
-			// aapt resource value: 0x7f0c0053
-			public const int abc_primary_text_disable_only_material_light = 2131492947;
-			
 			// aapt resource value: 0x7f0c0054
-			public const int abc_primary_text_material_dark = 2131492948;
+			public const int abc_primary_text_disable_only_material_dark = 2131492948;
 			
 			// aapt resource value: 0x7f0c0055
-			public const int abc_primary_text_material_light = 2131492949;
+			public const int abc_primary_text_disable_only_material_light = 2131492949;
 			
 			// aapt resource value: 0x7f0c0056
-			public const int abc_search_url_text = 2131492950;
+			public const int abc_primary_text_material_dark = 2131492950;
+			
+			// aapt resource value: 0x7f0c0057
+			public const int abc_primary_text_material_light = 2131492951;
+			
+			// aapt resource value: 0x7f0c0058
+			public const int abc_search_url_text = 2131492952;
 			
 			// aapt resource value: 0x7f0c0001
 			public const int abc_search_url_text_normal = 2131492865;
@@ -1235,35 +1238,38 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0003
 			public const int abc_search_url_text_selected = 2131492867;
 			
-			// aapt resource value: 0x7f0c0057
-			public const int abc_secondary_text_material_dark = 2131492951;
-			
-			// aapt resource value: 0x7f0c0058
-			public const int abc_secondary_text_material_light = 2131492952;
-			
 			// aapt resource value: 0x7f0c0059
-			public const int abc_tint_btn_checkable = 2131492953;
+			public const int abc_secondary_text_material_dark = 2131492953;
 			
 			// aapt resource value: 0x7f0c005a
-			public const int abc_tint_default = 2131492954;
+			public const int abc_secondary_text_material_light = 2131492954;
 			
 			// aapt resource value: 0x7f0c005b
-			public const int abc_tint_edittext = 2131492955;
+			public const int abc_tint_btn_checkable = 2131492955;
 			
 			// aapt resource value: 0x7f0c005c
-			public const int abc_tint_seek_thumb = 2131492956;
+			public const int abc_tint_default = 2131492956;
 			
 			// aapt resource value: 0x7f0c005d
-			public const int abc_tint_spinner = 2131492957;
+			public const int abc_tint_edittext = 2131492957;
 			
 			// aapt resource value: 0x7f0c005e
-			public const int abc_tint_switch_track = 2131492958;
+			public const int abc_tint_seek_thumb = 2131492958;
+			
+			// aapt resource value: 0x7f0c005f
+			public const int abc_tint_spinner = 2131492959;
+			
+			// aapt resource value: 0x7f0c0060
+			public const int abc_tint_switch_track = 2131492960;
 			
 			// aapt resource value: 0x7f0c0004
 			public const int accent_material_dark = 2131492868;
 			
 			// aapt resource value: 0x7f0c0005
 			public const int accent_material_light = 2131492869;
+			
+			// aapt resource value: 0x7f0c004b
+			public const int background = 2131492939;
 			
 			// aapt resource value: 0x7f0c0006
 			public const int background_floating_material_dark = 2131492870;
@@ -1313,8 +1319,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c003c
 			public const int design_bottom_navigation_shadow_color = 2131492924;
 			
-			// aapt resource value: 0x7f0c005f
-			public const int design_error = 2131492959;
+			// aapt resource value: 0x7f0c0061
+			public const int design_error = 2131492961;
 			
 			// aapt resource value: 0x7f0c003d
 			public const int design_fab_shadow_end_color = 2131492925;
@@ -1340,8 +1346,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0044
 			public const int design_snackbar_background_color = 2131492932;
 			
-			// aapt resource value: 0x7f0c0060
-			public const int design_tint_password_toggle = 2131492960;
+			// aapt resource value: 0x7f0c0062
+			public const int design_tint_password_toggle = 2131492962;
 			
 			// aapt resource value: 0x7f0c0012
 			public const int dim_foreground_disabled_material_dark = 2131492882;
@@ -1370,8 +1376,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c001a
 			public const int highlighted_text_material_light = 2131492890;
 			
-			// aapt resource value: 0x7f0c004a
-			public const int ic_launcher_background = 2131492938;
+			// aapt resource value: 0x7f0c004c
+			public const int ic_launcher_background = 2131492940;
 			
 			// aapt resource value: 0x7f0c001b
 			public const int material_blue_grey_800 = 2131492891;
@@ -1466,11 +1472,11 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0036
 			public const int switch_thumb_disabled_material_light = 2131492918;
 			
-			// aapt resource value: 0x7f0c0061
-			public const int switch_thumb_material_dark = 2131492961;
+			// aapt resource value: 0x7f0c0063
+			public const int switch_thumb_material_dark = 2131492963;
 			
-			// aapt resource value: 0x7f0c0062
-			public const int switch_thumb_material_light = 2131492962;
+			// aapt resource value: 0x7f0c0064
+			public const int switch_thumb_material_light = 2131492964;
 			
 			// aapt resource value: 0x7f0c0037
 			public const int switch_thumb_normal_material_dark = 2131492919;
@@ -2233,26 +2239,26 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
-			// aapt resource value: 0x7f02006d
-			public const int avd_hide_password_1 = 2130837613;
-			
 			// aapt resource value: 0x7f02006e
-			public const int avd_hide_password_2 = 2130837614;
+			public const int avd_hide_password_1 = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int avd_hide_password_3 = 2130837615;
+			public const int avd_hide_password_2 = 2130837615;
+			
+			// aapt resource value: 0x7f020070
+			public const int avd_hide_password_3 = 2130837616;
 			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
 			
-			// aapt resource value: 0x7f020070
-			public const int avd_show_password_1 = 2130837616;
-			
 			// aapt resource value: 0x7f020071
-			public const int avd_show_password_2 = 2130837617;
+			public const int avd_show_password_1 = 2130837617;
 			
 			// aapt resource value: 0x7f020072
-			public const int avd_show_password_3 = 2130837618;
+			public const int avd_show_password_2 = 2130837618;
+			
+			// aapt resource value: 0x7f020073
+			public const int avd_show_password_3 = 2130837619;
 			
 			// aapt resource value: 0x7f020055
 			public const int design_bottom_navigation_item_background = 2130837589;
@@ -2282,49 +2288,52 @@ namespace GestioneSarin2
 			public const int ic_notifications_black_24dp = 2130837597;
 			
 			// aapt resource value: 0x7f02005e
-			public const int navigation_empty_icon = 2130837598;
+			public const int Icon = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int notification_action_background = 2130837599;
+			public const int navigation_empty_icon = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int notification_bg = 2130837600;
+			public const int notification_action_background = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int notification_bg_low = 2130837601;
+			public const int notification_bg = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int notification_bg_low_normal = 2130837602;
+			public const int notification_bg_low = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int notification_bg_low_pressed = 2130837603;
+			public const int notification_bg_low_normal = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int notification_bg_normal = 2130837604;
+			public const int notification_bg_low_pressed = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int notification_bg_normal_pressed = 2130837605;
+			public const int notification_bg_normal = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int notification_icon_background = 2130837606;
-			
-			// aapt resource value: 0x7f02006b
-			public const int notification_template_icon_bg = 2130837611;
-			
-			// aapt resource value: 0x7f02006c
-			public const int notification_template_icon_low_bg = 2130837612;
+			public const int notification_bg_normal_pressed = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int notification_tile_bg = 2130837607;
+			public const int notification_icon_background = 2130837607;
+			
+			// aapt resource value: 0x7f02006c
+			public const int notification_template_icon_bg = 2130837612;
+			
+			// aapt resource value: 0x7f02006d
+			public const int notification_template_icon_low_bg = 2130837613;
 			
 			// aapt resource value: 0x7f020068
-			public const int notify_panel_notification_icon_bg = 2130837608;
+			public const int notification_tile_bg = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int tooltip_frame_dark = 2130837609;
+			public const int notify_panel_notification_icon_bg = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int tooltip_frame_light = 2130837610;
+			public const int tooltip_frame_dark = 2130837610;
+			
+			// aapt resource value: 0x7f02006b
+			public const int tooltip_frame_light = 2130837611;
 			
 			static Drawable()
 			{
