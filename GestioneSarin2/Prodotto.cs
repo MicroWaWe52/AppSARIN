@@ -20,5 +20,7 @@ namespace GestioneSarin2
         public string ImageUrl { get; set; }
         public string Grouop { get; set; }
         public string SubGroup { get; set; }
+       public string UnitPrice { get; set; }
+        public string CodArt { get; set; }
     }
 }

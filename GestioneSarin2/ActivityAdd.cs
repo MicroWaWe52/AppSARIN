@@ -15,6 +15,7 @@ using AlertDialog = Android.Support.V7.App.AlertDialog;
 
 namespace GestioneSarin2
 {
+
     [Activity(Label = "ActivityAdd", Theme = "@style/AppTheme")]
     public class ActivityAdd : Activity
     {
@@ -103,9 +104,9 @@ namespace GestioneSarin2
                 builder.SetPositiveButton("Conferma",
                     delegate
                     {
-                        listProd.Add(query[e.Position][4] + ';' + text.Text + ';' + query[e.Position][12]);
+                        listProd.Add(subqueryList[e.Position].CodArt + ';' + text.Text + ';' + subqueryList[e.Position].UnitPrice);
                         Intent i = new Intent(this, typeof(MainActivity));
-                        var urisplit = query[e.Position][15].Split('\\');
+                        var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
                         listURI.Add(urisplit.Last());
                         var uriarr = listURI.ToArray();
                         var array = listProd.ToArray();
@@ -118,6 +119,7 @@ namespace GestioneSarin2
             }
         }
 
+        private List<Prodotto> subqueryList;
         public void GetInSub(List<List<string>> querys)
         {
             CultureInfo ci = Thread.CurrentThread.CurrentCulture;
@@ -132,12 +134,16 @@ namespace GestioneSarin2
                     Name = name,
                     QuantityPrice = $"{sDirectoryItem[6]}pz/{sDirectoryItem[12]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
-                    SubGroup = sDirectoryItem.Last()
+                    SubGroup = sDirectoryItem.Last(),
+                    UnitPrice = sDirectoryItem[12],
+                    CodArt=sDirectoryItem[4]
 
                 };
                 listtemp.Add(ptemp);
             }
             listPRoduct.Adapter = new ProdottoAdapter(listtemp);
+            subqueryList = listtemp;
+
         }
     }
 }

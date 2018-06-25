@@ -30,6 +30,7 @@ namespace GestioneSarin2
         private List<string> listprod;
         private List<List<string>> query = Helper.table;
         private ListView listView;
+        private List<string> listURI;
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -113,6 +114,7 @@ namespace GestioneSarin2
             Intent i = new Intent(this, typeof(ActivityAdd));
             i.PutExtra("gruppo", ((ListView)sender).GetItemAtPosition(e.Position).ToString());
             i.PutExtra("prod", listprod.ToArray());
+            i.PutExtra("uri", listURI.ToArray());
             StartActivity(i);
         }
 
@@ -142,7 +144,7 @@ namespace GestioneSarin2
 
             try
             {
-                var listURI=uriArray.ToList();
+                listURI = uriArray.ToList();
                 listprod = prodArray.ToList();
                 var templist = new List<Prodotto>();
                 var finalList = listprod.Zip(listURI, (p, u) =>new 
@@ -161,9 +163,11 @@ namespace GestioneSarin2
 
                 }
                 listView.Adapter = new ProdottoAdapter(templist);
+
             }
             catch (Exception)
             {
+                listURI=new List<string>();
                 listprod = new List<string>();
             }
             
