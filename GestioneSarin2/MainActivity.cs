@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -152,12 +153,16 @@ namespace GestioneSarin2
                     prodotto=p,
                     uri=u
                 }).ToList();
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
                 foreach (var prod in finalList)
                 {
                     var ptemp=new Prodotto();
                     ptemp.ImageUrl= prod.uri;
                     var split = prod.prodotto.Split(';');
-                    ptemp.Name = query.First(p => p[4] == split[0])[5];
+                    var namet = query.First(p => p[4] == split[0])[5];
+                    namet = textInfo.ToLower(namet);
+                    ptemp.Name = textInfo.ToTitleCase(namet);
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
                     templist.Add(ptemp);
 

@@ -3,8 +3,10 @@ using Android.Views;
 using Android.Widget;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Android.Content.Res;
 
 namespace GestioneSarin2
@@ -57,8 +59,12 @@ namespace GestioneSarin2
 
             AssetManager am = parent.Context.Assets;
             Typeface tvName=Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+
             holder.Name.SetTypeface(tvName,TypefaceStyle.Normal);
-            holder.Name.Text = prodottolList[position].Name;
+            holder.Name.Text = textInfo.ToTitleCase(prodottolList[position].Name);
             holder.QuantPrice.SetTypeface(tvName,TypefaceStyle.Normal);
             holder.QuantPrice.Text = prodottolList[position].QuantityPrice;
 

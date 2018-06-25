@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestioneSarin2", "GestioneSarin2\GestioneSarin2.csproj", "{52381C0D-EAAA-42D6-BAE9-66657B9E0A21}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Batik", "GestioneSarin2\Batik.csproj", "{52381C0D-EAAA-42D6-BAE9-66657B9E0A21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
