@@ -9,6 +9,7 @@ using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Gms.Ads;
 using Android.Graphics;
 using Android.Hardware;
 using Android.Net;
@@ -18,6 +19,9 @@ using Android.Support.V7.App;
 using Android.Telecom;
 using Android.Util;
 using Android.Views;
+using Android.Gms.Common;
+using Firebase.Messaging;
+using Firebase.Iid;
 using Android.Views.Autofill;
 using Android.Widget;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
@@ -148,17 +152,17 @@ namespace GestioneSarin2
                 listURI = uriArray.ToList();
                 listprod = prodArray.ToList();
                 var templist = new List<Prodotto>();
-                var finalList = listprod.Zip(listURI, (p, u) =>new 
+                var finalList = listprod.Zip(listURI, (p, u) => new
                 {
-                    prodotto=p,
-                    uri=u
+                    prodotto = p,
+                    uri = u
                 }).ToList();
                 CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
                 TextInfo textInfo = cultureInfo.TextInfo;
                 foreach (var prod in finalList)
                 {
-                    var ptemp=new Prodotto();
-                    ptemp.ImageUrl= prod.uri;
+                    var ptemp = new Prodotto();
+                    ptemp.ImageUrl = prod.uri;
                     var split = prod.prodotto.Split(';');
                     var namet = query.First(p => p[4] == split[0])[5];
                     namet = textInfo.ToLower(namet);
@@ -172,11 +176,13 @@ namespace GestioneSarin2
             }
             catch (Exception)
             {
-                listURI=new List<string>();
+                listURI = new List<string>();
                 listprod = new List<string>();
             }
-            
+            IsPlayServicesAvailable();
+            FirebaseMessaging.Instance.SubscribeToTopic("all");
 
+            
         }
 
 
@@ -300,6 +306,27 @@ namespace GestioneSarin2
 
             }
             return base.OnOptionsItemSelected(item);
+        }
+        public bool IsPlayServicesAvailable()
+        {
+            string x;
+            int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+            if (resultCode != ConnectionResult.Success)
+            {
+                if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+                    x = GoogleApiAvailability.Instance.GetErrorString(resultCode);
+                else
+                {
+                    x = "This device is not supported";
+                    Finish();
+                }
+                return false;
+            }
+            else
+            {
+                x = "Google Play Services is available.";
+                return true;
+            }
         }
 
     }

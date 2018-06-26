@@ -62,6 +62,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="ImageManager.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MyFirebaseIIDService.cs" />
     <Compile Include="Prodotto.cs" />
     <Compile Include="ProdottoAdapter.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -70,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\FiraSans-Regular.ttf" />
+    <GoogleServicesJson Include="google-services.json" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -109,6 +111,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2" />
+    <PackageReference Include="Xamarin.Firebase.Messaging">
+      <Version>60.1142.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.GooglePlayServices.Ads.Lite">
+      <Version>60.1142.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.GooglePlayServices.Base">
+      <Version>60.1142.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\layoutAdd.axml">

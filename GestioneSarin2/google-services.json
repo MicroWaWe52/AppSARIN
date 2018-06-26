@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "5052960167",
+    "firebase_url": "https://batik-ac6a7.firebaseio.com",
+    "project_id": "batik-ac6a7",
+    "storage_bucket": "batik-ac6a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5052960167:android:a7324afe3079e600",
+        "android_client_info": {
+          "package_name": "com.klasth.Batik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5052960167-34l3323tlp7p40deff5cvj508g90923k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJlVNA0tI5Mu7ZUDzfHFBQdW7f7Ydf_FQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

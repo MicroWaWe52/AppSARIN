@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Android.App;
 using Android.Content;
+using Android.Gms.Ads;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
@@ -80,6 +81,11 @@ namespace GestioneSarin2
 
             listPRoduct.Adapter = new ProdottoAdapter(pListSub);
 
+            const string id = "ca-app-pub-9127274129568614~8115433014";
+            MobileAds.Initialize(this, id);
+            var adView = FindViewById<AdView>(Resource.Id.adView);
+            var adRequest = new AdRequest.Builder().Build();
+            adView.LoadAd(adRequest);
             // Create your application here
         }
 
