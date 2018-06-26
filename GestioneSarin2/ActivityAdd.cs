@@ -80,12 +80,6 @@ namespace GestioneSarin2
 
 
             listPRoduct.Adapter = new ProdottoAdapter(pListSub);
-
-            const string id = "ca-app-pub-9127274129568614~8115433014";
-            MobileAds.Initialize(this, id);
-            var adView = FindViewById<AdView>(Resource.Id.adView);
-            var adRequest = new AdRequest.Builder().Build();
-            adView.LoadAd(adRequest);
             // Create your application here
         }
 
@@ -149,6 +143,7 @@ namespace GestioneSarin2
             }
             listPRoduct.Adapter = new ProdottoAdapter(listtemp);
             subqueryList = listtemp;
+          
 
         }
     }
