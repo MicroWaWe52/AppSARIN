@@ -15,19 +15,19 @@ namespace GestioneSarin2
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class ActivityHome : Activity
     {
-        private ImageButton ordButton;
-        private ImageButton histButton;
-        private ImageButton presetButton;
-        private ImageButton settButton;
+        private ImageView ordButton;
+        private ImageView histButton;
+        private ImageView presetButton;
+        private ImageView settButton;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.layoutHome);
+            SetContentView(Resource.Layout.layoutMain);
 
-            ordButton = FindViewById<ImageButton>(Resource.Id.imageButtonHomeOrd);
-            histButton = FindViewById<ImageButton>(Resource.Id.imageButtonHist);
-            presetButton = FindViewById<ImageButton>(Resource.Id.imageButtonPres);
-            settButton = FindViewById<ImageButton>(Resource.Id.imageButtonSett);
+            ordButton = FindViewById<ImageView>(Resource.Id.imageViewOrd);
+            histButton = FindViewById<ImageView>(Resource.Id.imageViewHist);
+            presetButton = FindViewById<ImageView>(Resource.Id.imageViewPres);
+            settButton = FindViewById<ImageView>(Resource.Id.imageViewSett);
             ordButton.Click += OrdButton_Click;
             histButton.Click += HistButton_Click;
             presetButton.Click += PresetButton_Click;
@@ -37,13 +37,13 @@ namespace GestioneSarin2
 
         private void SettButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Toast.MakeText(this, "SETTING", ToastLength.Short).Show();
 
         }
 
         private void PresetButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Toast.MakeText(this, "PRESEPIO", ToastLength.Short).Show();
         }
 
         private void HistButton_Click(object sender, EventArgs e)
