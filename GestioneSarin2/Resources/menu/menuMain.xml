@@ -1,6 +1,7 @@
 ﻿<menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools">
+      xmlns:tools="http://schemas.android.com/tools"
+      android:title="Ciao">
   <item
     android:id="@+id/Aggiorna_Il_Database"
     android:orderInCategory="100"

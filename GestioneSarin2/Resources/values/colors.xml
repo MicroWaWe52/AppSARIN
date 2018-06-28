@@ -5,4 +5,5 @@
     <color name="colorAccent">#3498db</color>
   <color name="TextColor">#333</color>
   <color name="background">#f2efe8</color>
+  <color name="grayDate">#555</color>
 </resources>

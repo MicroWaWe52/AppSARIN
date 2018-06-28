@@ -30,11 +30,11 @@ namespace GestioneSarin2
                 var name = view.FindViewById<TextView>(Resource.Id.nameTextView);
                 var quantPrice = view.FindViewById<TextView>(Resource.Id.QuantPriceTextView);
 
-                view.Tag = new ViewHolder() { Photo = photo, Name = name, QuantPrice = quantPrice };
+                view.Tag = new ViewHolderProdotto { Photo = photo, Name = name, QuantPrice = quantPrice };
 
             }
 
-            var holder = (ViewHolder)view.Tag;
+            var holder = (ViewHolderProdotto)view.Tag;
             try
             {
                 var photoname = prodottolList[position].ImageUrl.Split('\\');

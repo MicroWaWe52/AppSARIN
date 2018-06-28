@@ -59,10 +59,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivityAdd.cs" />
+    <Compile Include="ActivityHist.cs" />
+    <Compile Include="ActivityHome.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="ImageManager.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyFirebaseIIDService.cs" />
+    <Compile Include="Ordine.cs" />
+    <Compile Include="OrdineAdapter.cs" />
     <Compile Include="Prodotto.cs" />
     <Compile Include="ProdottoAdapter.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -110,7 +114,10 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2" />
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2.1" />
+    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
+      <Version>27.0.2.1</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Messaging">
       <Version>60.1142.1</Version>
     </PackageReference>
@@ -134,6 +141,25 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layoutHome.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layoutHistory.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\RowModelHist.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\ActionbarHist.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\send.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

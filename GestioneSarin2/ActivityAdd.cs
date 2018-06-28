@@ -9,6 +9,8 @@ using Android.Content;
 using Android.Gms.Ads;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.App;
+using Android.Support.V7.App;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
@@ -17,8 +19,8 @@ using AlertDialog = Android.Support.V7.App.AlertDialog;
 namespace GestioneSarin2
 {
 
-    [Activity(Label = "ActivityAdd", Theme = "@style/AppTheme")]
-    public class ActivityAdd : Activity
+    [Activity(Label = "ActivityAdd", Theme = "@style/AppThemeNo",NoHistory = true)]
+    public class ActivityAdd : AppCompatActivity
     {
         public string GroupSel;
         private bool subGrouop;
@@ -95,7 +97,8 @@ namespace GestioneSarin2
             else
             {
                 var text = new EditText(this);
-                text.SetRawInputType(InputTypes.NumberFlagDecimal);
+                
+                text.SetRawInputType(InputTypes.ClassNumber);
                 var builder = new AlertDialog.Builder(this);
                 builder.SetTitle("Seleziona la quantita");
                 builder.SetCancelable(true);
@@ -104,7 +107,7 @@ namespace GestioneSarin2
                 builder.SetPositiveButton("Conferma",
                     delegate
                     {
-                        listProd.Add(subqueryList[e.Position].CodArt + ';' + text.Text + ';' + subqueryList[e.Position].UnitPrice);
+                        listProd.Add(subqueryList[e.Position].CodArt + ';' + text.Text.Replace(',','.') + ';' + subqueryList[e.Position].UnitPrice);
                         Intent i = new Intent(this, typeof(MainActivity));
                         var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
                         listURI.Add(urisplit.Last());
@@ -112,6 +115,7 @@ namespace GestioneSarin2
                         var array = listProd.ToArray();
                         i.PutExtra("prod", array);
                         i.PutExtra("uri", uriarr);
+                        i.PutExtra("first", false);
                         StartActivity(i);
 
                     });

@@ -134,6 +134,8 @@ namespace GestioneSarin2
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
                 TOTALE += Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(prodsplit[2]);
             }
+
+            TOTALE = Math.Round(TOTALE,2);
             return TOTALE;
         }
 

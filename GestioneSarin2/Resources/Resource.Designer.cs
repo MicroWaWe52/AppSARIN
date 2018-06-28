@@ -1217,44 +1217,44 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f090052
 			public const int TextColor = 2131296338;
 			
-			// aapt resource value: 0x7f090055
-			public const int abc_background_cache_hint_selector_material_dark = 2131296341;
-			
 			// aapt resource value: 0x7f090056
-			public const int abc_background_cache_hint_selector_material_light = 2131296342;
+			public const int abc_background_cache_hint_selector_material_dark = 2131296342;
 			
 			// aapt resource value: 0x7f090057
-			public const int abc_btn_colored_borderless_text_material = 2131296343;
+			public const int abc_background_cache_hint_selector_material_light = 2131296343;
 			
 			// aapt resource value: 0x7f090058
-			public const int abc_btn_colored_text_material = 2131296344;
+			public const int abc_btn_colored_borderless_text_material = 2131296344;
 			
 			// aapt resource value: 0x7f090059
-			public const int abc_color_highlight_material = 2131296345;
+			public const int abc_btn_colored_text_material = 2131296345;
 			
 			// aapt resource value: 0x7f09005a
-			public const int abc_hint_foreground_material_dark = 2131296346;
+			public const int abc_color_highlight_material = 2131296346;
 			
 			// aapt resource value: 0x7f09005b
-			public const int abc_hint_foreground_material_light = 2131296347;
+			public const int abc_hint_foreground_material_dark = 2131296347;
+			
+			// aapt resource value: 0x7f09005c
+			public const int abc_hint_foreground_material_light = 2131296348;
 			
 			// aapt resource value: 0x7f090008
 			public const int abc_input_method_navigation_guard = 2131296264;
 			
-			// aapt resource value: 0x7f09005c
-			public const int abc_primary_text_disable_only_material_dark = 2131296348;
-			
 			// aapt resource value: 0x7f09005d
-			public const int abc_primary_text_disable_only_material_light = 2131296349;
+			public const int abc_primary_text_disable_only_material_dark = 2131296349;
 			
 			// aapt resource value: 0x7f09005e
-			public const int abc_primary_text_material_dark = 2131296350;
+			public const int abc_primary_text_disable_only_material_light = 2131296350;
 			
 			// aapt resource value: 0x7f09005f
-			public const int abc_primary_text_material_light = 2131296351;
+			public const int abc_primary_text_material_dark = 2131296351;
 			
 			// aapt resource value: 0x7f090060
-			public const int abc_search_url_text = 2131296352;
+			public const int abc_primary_text_material_light = 2131296352;
+			
+			// aapt resource value: 0x7f090061
+			public const int abc_search_url_text = 2131296353;
 			
 			// aapt resource value: 0x7f090009
 			public const int abc_search_url_text_normal = 2131296265;
@@ -1265,29 +1265,29 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f09000b
 			public const int abc_search_url_text_selected = 2131296267;
 			
-			// aapt resource value: 0x7f090061
-			public const int abc_secondary_text_material_dark = 2131296353;
-			
 			// aapt resource value: 0x7f090062
-			public const int abc_secondary_text_material_light = 2131296354;
+			public const int abc_secondary_text_material_dark = 2131296354;
 			
 			// aapt resource value: 0x7f090063
-			public const int abc_tint_btn_checkable = 2131296355;
+			public const int abc_secondary_text_material_light = 2131296355;
 			
 			// aapt resource value: 0x7f090064
-			public const int abc_tint_default = 2131296356;
+			public const int abc_tint_btn_checkable = 2131296356;
 			
 			// aapt resource value: 0x7f090065
-			public const int abc_tint_edittext = 2131296357;
+			public const int abc_tint_default = 2131296357;
 			
 			// aapt resource value: 0x7f090066
-			public const int abc_tint_seek_thumb = 2131296358;
+			public const int abc_tint_edittext = 2131296358;
 			
 			// aapt resource value: 0x7f090067
-			public const int abc_tint_spinner = 2131296359;
+			public const int abc_tint_seek_thumb = 2131296359;
 			
 			// aapt resource value: 0x7f090068
-			public const int abc_tint_switch_track = 2131296360;
+			public const int abc_tint_spinner = 2131296360;
+			
+			// aapt resource value: 0x7f090069
+			public const int abc_tint_switch_track = 2131296361;
 			
 			// aapt resource value: 0x7f09000c
 			public const int accent_material_dark = 2131296268;
@@ -1343,8 +1343,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f090050
 			public const int colorPrimaryDark = 2131296336;
 			
-			// aapt resource value: 0x7f090069
-			public const int common_google_signin_btn_text_dark = 2131296361;
+			// aapt resource value: 0x7f09006a
+			public const int common_google_signin_btn_text_dark = 2131296362;
 			
 			// aapt resource value: 0x7f090000
 			public const int common_google_signin_btn_text_dark_default = 2131296256;
@@ -1358,8 +1358,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f090003
 			public const int common_google_signin_btn_text_dark_pressed = 2131296259;
 			
-			// aapt resource value: 0x7f09006a
-			public const int common_google_signin_btn_text_light = 2131296362;
+			// aapt resource value: 0x7f09006b
+			public const int common_google_signin_btn_text_light = 2131296363;
 			
 			// aapt resource value: 0x7f090004
 			public const int common_google_signin_btn_text_light_default = 2131296260;
@@ -1373,14 +1373,14 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f090007
 			public const int common_google_signin_btn_text_light_pressed = 2131296263;
 			
-			// aapt resource value: 0x7f09006b
-			public const int common_google_signin_btn_tint = 2131296363;
+			// aapt resource value: 0x7f09006c
+			public const int common_google_signin_btn_tint = 2131296364;
 			
 			// aapt resource value: 0x7f090044
 			public const int design_bottom_navigation_shadow_color = 2131296324;
 			
-			// aapt resource value: 0x7f09006c
-			public const int design_error = 2131296364;
+			// aapt resource value: 0x7f09006d
+			public const int design_error = 2131296365;
 			
 			// aapt resource value: 0x7f090045
 			public const int design_fab_shadow_end_color = 2131296325;
@@ -1406,8 +1406,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f09004c
 			public const int design_snackbar_background_color = 2131296332;
 			
-			// aapt resource value: 0x7f09006d
-			public const int design_tint_password_toggle = 2131296365;
+			// aapt resource value: 0x7f09006e
+			public const int design_tint_password_toggle = 2131296366;
 			
 			// aapt resource value: 0x7f09001a
 			public const int dim_foreground_disabled_material_dark = 2131296282;
@@ -1430,14 +1430,17 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f090020
 			public const int foreground_material_light = 2131296288;
 			
+			// aapt resource value: 0x7f090054
+			public const int grayDate = 2131296340;
+			
 			// aapt resource value: 0x7f090021
 			public const int highlighted_text_material_dark = 2131296289;
 			
 			// aapt resource value: 0x7f090022
 			public const int highlighted_text_material_light = 2131296290;
 			
-			// aapt resource value: 0x7f090054
-			public const int ic_launcher_background = 2131296340;
+			// aapt resource value: 0x7f090055
+			public const int ic_launcher_background = 2131296341;
 			
 			// aapt resource value: 0x7f090023
 			public const int material_blue_grey_800 = 2131296291;
@@ -1532,11 +1535,11 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f09003e
 			public const int switch_thumb_disabled_material_light = 2131296318;
 			
-			// aapt resource value: 0x7f09006e
-			public const int switch_thumb_material_dark = 2131296366;
-			
 			// aapt resource value: 0x7f09006f
-			public const int switch_thumb_material_light = 2131296367;
+			public const int switch_thumb_material_dark = 2131296367;
+			
+			// aapt resource value: 0x7f090070
+			public const int switch_thumb_material_light = 2131296368;
 			
 			// aapt resource value: 0x7f09003f
 			public const int switch_thumb_normal_material_dark = 2131296319;
@@ -2474,17 +2477,20 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c003a
 			public const int ALT = 2131492922;
 			
-			// aapt resource value: 0x7f0c00bf
-			public const int Agente = 2131493055;
+			// aapt resource value: 0x7f0c00c9
+			public const int Agente = 2131493065;
 			
-			// aapt resource value: 0x7f0c00bd
-			public const int Aggiorna_Il_Database = 2131493053;
+			// aapt resource value: 0x7f0c00c7
+			public const int Aggiorna_Il_Database = 2131493063;
 			
 			// aapt resource value: 0x7f0c003b
 			public const int CTRL = 2131492923;
 			
-			// aapt resource value: 0x7f0c00be
-			public const int Cliente = 2131493054;
+			// aapt resource value: 0x7f0c00c8
+			public const int Cliente = 2131493064;
+			
+			// aapt resource value: 0x7f0c00c2
+			public const int DataTextViewHist = 2131493058;
 			
 			// aapt resource value: 0x7f0c003c
 			public const int FUNCTION = 2131492924;
@@ -2492,8 +2498,11 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c003d
 			public const int META = 2131492925;
 			
-			// aapt resource value: 0x7f0c00ba
-			public const int QuantPriceTextView = 2131493050;
+			// aapt resource value: 0x7f0c00c3
+			public const int PriceTextViewHist = 2131493059;
+			
+			// aapt resource value: 0x7f0c00c0
+			public const int QuantPriceTextView = 2131493056;
 			
 			// aapt resource value: 0x7f0c003e
 			public const int SHIFT = 2131492926;
@@ -2501,8 +2510,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c003f
 			public const int SYM = 2131492927;
 			
-			// aapt resource value: 0x7f0c00a8
-			public const int action0 = 2131493032;
+			// aapt resource value: 0x7f0c00ae
+			public const int action0 = 2131493038;
 			
 			// aapt resource value: 0x7f0c0083
 			public const int action_bar = 2131492995;
@@ -2525,17 +2534,17 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0061
 			public const int action_bar_title = 2131492961;
 			
-			// aapt resource value: 0x7f0c00a5
-			public const int action_container = 2131493029;
+			// aapt resource value: 0x7f0c00ab
+			public const int action_container = 2131493035;
 			
 			// aapt resource value: 0x7f0c0084
 			public const int action_context_bar = 2131492996;
 			
-			// aapt resource value: 0x7f0c00ac
-			public const int action_divider = 2131493036;
+			// aapt resource value: 0x7f0c00b2
+			public const int action_divider = 2131493042;
 			
-			// aapt resource value: 0x7f0c00a6
-			public const int action_image = 2131493030;
+			// aapt resource value: 0x7f0c00ac
+			public const int action_image = 2131493036;
 			
 			// aapt resource value: 0x7f0c0003
 			public const int action_menu_divider = 2131492867;
@@ -2552,17 +2561,14 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0063
 			public const int action_mode_close_button = 2131492963;
 			
-			// aapt resource value: 0x7f0c00a7
-			public const int action_text = 2131493031;
+			// aapt resource value: 0x7f0c00ad
+			public const int action_text = 2131493037;
 			
-			// aapt resource value: 0x7f0c00b5
-			public const int actions = 2131493045;
+			// aapt resource value: 0x7f0c00bb
+			public const int actions = 2131493051;
 			
 			// aapt resource value: 0x7f0c0064
 			public const int activity_chooser_view_content = 2131492964;
-			
-			// aapt resource value: 0x7f0c00a4
-			public const int adView = 2131493028;
 			
 			// aapt resource value: 0x7f0c002f
 			public const int add = 2131492911;
@@ -2600,8 +2606,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c006a
 			public const int buttonPanel = 2131492970;
 			
-			// aapt resource value: 0x7f0c00a9
-			public const int cancel_action = 2131493033;
+			// aapt resource value: 0x7f0c00af
+			public const int cancel_action = 2131493039;
 			
 			// aapt resource value: 0x7f0c004c
 			public const int center = 2131492940;
@@ -2615,8 +2621,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c007a
 			public const int checkbox = 2131492986;
 			
-			// aapt resource value: 0x7f0c00b1
-			public const int chronometer = 2131493041;
+			// aapt resource value: 0x7f0c00b7
+			public const int chronometer = 2131493047;
 			
 			// aapt resource value: 0x7f0c0055
 			public const int clip_horizontal = 2131492949;
@@ -2675,8 +2681,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0038
 			public const int end = 2131492920;
 			
-			// aapt resource value: 0x7f0c00b7
-			public const int end_padder = 2131493047;
+			// aapt resource value: 0x7f0c00bd
+			public const int end_padder = 2131493053;
 			
 			// aapt resource value: 0x7f0c0047
 			public const int enterAlways = 2131492935;
@@ -2711,6 +2717,9 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c000a
 			public const int ghost_view = 2131492874;
 			
+			// aapt resource value: 0x7f0c00a6
+			public const int gridLayout1 = 2131493030;
+			
 			// aapt resource value: 0x7f0c0005
 			public const int home = 2131492869;
 			
@@ -2720,8 +2729,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0069
 			public const int icon = 2131492969;
 			
-			// aapt resource value: 0x7f0c00b6
-			public const int icon_group = 2131493046;
+			// aapt resource value: 0x7f0c00bc
+			public const int icon_group = 2131493052;
 			
 			// aapt resource value: 0x7f0c0020
 			public const int icon_only = 2131492896;
@@ -2732,8 +2741,20 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0066
 			public const int image = 2131492966;
 			
-			// aapt resource value: 0x7f0c00b2
-			public const int info = 2131493042;
+			// aapt resource value: 0x7f0c00a8
+			public const int imageButtonHist = 2131493032;
+			
+			// aapt resource value: 0x7f0c00a7
+			public const int imageButtonHomeOrd = 2131493031;
+			
+			// aapt resource value: 0x7f0c00a9
+			public const int imageButtonPres = 2131493033;
+			
+			// aapt resource value: 0x7f0c00aa
+			public const int imageButtonSett = 2131493034;
+			
+			// aapt resource value: 0x7f0c00b8
+			public const int info = 2131493048;
 			
 			// aapt resource value: 0x7f0c0060
 			public const int italic = 2131492960;
@@ -2759,6 +2780,9 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0026
 			public const int listMode = 2131492902;
 			
+			// aapt resource value: 0x7f0c00a5
+			public const int listViewHist = 2131493029;
+			
 			// aapt resource value: 0x7f0c0095
 			public const int listViewMainProd = 2131493013;
 			
@@ -2768,11 +2792,11 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0068
 			public const int list_item = 2131492968;
 			
-			// aapt resource value: 0x7f0c00bc
-			public const int masked = 2131493052;
+			// aapt resource value: 0x7f0c00c5
+			public const int masked = 2131493061;
 			
-			// aapt resource value: 0x7f0c00ab
-			public const int media_actions = 2131493035;
+			// aapt resource value: 0x7f0c00b1
+			public const int media_actions = 2131493041;
 			
 			// aapt resource value: 0x7f0c0093
 			public const int message = 2131493011;
@@ -2786,23 +2810,29 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0030
 			public const int multiply = 2131492912;
 			
-			// aapt resource value: 0x7f0c00b9
-			public const int nameTextView = 2131493049;
+			// aapt resource value: 0x7f0c00a4
+			public const int my_toolbar = 2131493028;
+			
+			// aapt resource value: 0x7f0c00bf
+			public const int nameTextView = 2131493055;
+			
+			// aapt resource value: 0x7f0c00c1
+			public const int nameTextViewHist = 2131493057;
 			
 			// aapt resource value: 0x7f0c0094
 			public const int navigation = 2131493012;
 			
-			// aapt resource value: 0x7f0c00c1
-			public const int navigation_dashboard = 2131493057;
+			// aapt resource value: 0x7f0c00cb
+			public const int navigation_dashboard = 2131493067;
 			
 			// aapt resource value: 0x7f0c009d
 			public const int navigation_header_container = 2131493021;
 			
-			// aapt resource value: 0x7f0c00c0
-			public const int navigation_home = 2131493056;
+			// aapt resource value: 0x7f0c00ca
+			public const int navigation_home = 2131493066;
 			
-			// aapt resource value: 0x7f0c00c2
-			public const int navigation_notifications = 2131493058;
+			// aapt resource value: 0x7f0c00cc
+			public const int navigation_notifications = 2131493068;
 			
 			// aapt resource value: 0x7f0c0043
 			public const int never = 2131492931;
@@ -2813,14 +2843,14 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0027
 			public const int normal = 2131492903;
 			
+			// aapt resource value: 0x7f0c00ba
+			public const int notification_background = 2131493050;
+			
 			// aapt resource value: 0x7f0c00b4
-			public const int notification_background = 2131493044;
+			public const int notification_main_column = 2131493044;
 			
-			// aapt resource value: 0x7f0c00ae
-			public const int notification_main_column = 2131493038;
-			
-			// aapt resource value: 0x7f0c00ad
-			public const int notification_main_column_container = 2131493037;
+			// aapt resource value: 0x7f0c00b3
+			public const int notification_main_column_container = 2131493043;
 			
 			// aapt resource value: 0x7f0c0053
 			public const int parallax = 2131492947;
@@ -2831,8 +2861,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c000b
 			public const int parent_matrix = 2131492875;
 			
-			// aapt resource value: 0x7f0c00b8
-			public const int photoImageView = 2131493048;
+			// aapt resource value: 0x7f0c00be
+			public const int photoImageView = 2131493054;
 			
 			// aapt resource value: 0x7f0c0054
 			public const int pin = 2131492948;
@@ -2849,11 +2879,11 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0051
 			public const int right = 2131492945;
 			
-			// aapt resource value: 0x7f0c00b3
-			public const int right_icon = 2131493043;
+			// aapt resource value: 0x7f0c00b9
+			public const int right_icon = 2131493049;
 			
-			// aapt resource value: 0x7f0c00af
-			public const int right_side = 2131493039;
+			// aapt resource value: 0x7f0c00b5
+			public const int right_side = 2131493045;
 			
 			// aapt resource value: 0x7f0c000c
 			public const int save_image_matrix = 2131492876;
@@ -2915,6 +2945,9 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0091
 			public const int select_dialog_listview = 2131493009;
 			
+			// aapt resource value: 0x7f0c00c6
+			public const int sendHistory = 2131493062;
+			
 			// aapt resource value: 0x7f0c007b
 			public const int shortcut = 2131492987;
 			
@@ -2960,8 +2993,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0052
 			public const int start = 2131492946;
 			
-			// aapt resource value: 0x7f0c00aa
-			public const int status_bar_latest_event_content = 2131493034;
+			// aapt resource value: 0x7f0c00b0
+			public const int status_bar_latest_event_content = 2131493040;
 			
 			// aapt resource value: 0x7f0c007d
 			public const int submenuarrow = 2131492989;
@@ -2996,8 +3029,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0015
 			public const int textinput_error = 2131492885;
 			
-			// aapt resource value: 0x7f0c00b0
-			public const int time = 2131493040;
+			// aapt resource value: 0x7f0c00b6
+			public const int time = 2131493046;
 			
 			// aapt resource value: 0x7f0c001c
 			public const int title = 2131492892;
@@ -3044,8 +3077,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0c0016
 			public const int view_offset_helper = 2131492886;
 			
-			// aapt resource value: 0x7f0c00bb
-			public const int visible = 2131493051;
+			// aapt resource value: 0x7f0c00c4
+			public const int visible = 2131493060;
 			
 			// aapt resource value: 0x7f0c0022
 			public const int wide = 2131492898;
@@ -3242,67 +3275,76 @@ namespace GestioneSarin2
 			public const int layoutAdd = 2130968617;
 			
 			// aapt resource value: 0x7f04002a
-			public const int notification_action = 2130968618;
+			public const int layoutHistory = 2130968618;
 			
 			// aapt resource value: 0x7f04002b
-			public const int notification_action_tombstone = 2130968619;
+			public const int layoutHome = 2130968619;
 			
 			// aapt resource value: 0x7f04002c
-			public const int notification_media_action = 2130968620;
+			public const int notification_action = 2130968620;
 			
 			// aapt resource value: 0x7f04002d
-			public const int notification_media_cancel_action = 2130968621;
+			public const int notification_action_tombstone = 2130968621;
 			
 			// aapt resource value: 0x7f04002e
-			public const int notification_template_big_media = 2130968622;
+			public const int notification_media_action = 2130968622;
 			
 			// aapt resource value: 0x7f04002f
-			public const int notification_template_big_media_custom = 2130968623;
+			public const int notification_media_cancel_action = 2130968623;
 			
 			// aapt resource value: 0x7f040030
-			public const int notification_template_big_media_narrow = 2130968624;
+			public const int notification_template_big_media = 2130968624;
 			
 			// aapt resource value: 0x7f040031
-			public const int notification_template_big_media_narrow_custom = 2130968625;
+			public const int notification_template_big_media_custom = 2130968625;
 			
 			// aapt resource value: 0x7f040032
-			public const int notification_template_custom_big = 2130968626;
+			public const int notification_template_big_media_narrow = 2130968626;
 			
 			// aapt resource value: 0x7f040033
-			public const int notification_template_icon_group = 2130968627;
+			public const int notification_template_big_media_narrow_custom = 2130968627;
 			
 			// aapt resource value: 0x7f040034
-			public const int notification_template_lines_media = 2130968628;
+			public const int notification_template_custom_big = 2130968628;
 			
 			// aapt resource value: 0x7f040035
-			public const int notification_template_media = 2130968629;
+			public const int notification_template_icon_group = 2130968629;
 			
 			// aapt resource value: 0x7f040036
-			public const int notification_template_media_custom = 2130968630;
+			public const int notification_template_lines_media = 2130968630;
 			
 			// aapt resource value: 0x7f040037
-			public const int notification_template_part_chronometer = 2130968631;
+			public const int notification_template_media = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int notification_template_part_time = 2130968632;
+			public const int notification_template_media_custom = 2130968632;
 			
 			// aapt resource value: 0x7f040039
-			public const int RowModel = 2130968633;
+			public const int notification_template_part_chronometer = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
-			public const int select_dialog_item_material = 2130968634;
+			public const int notification_template_part_time = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int select_dialog_multichoice_material = 2130968635;
+			public const int RowModel = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int select_dialog_singlechoice_material = 2130968636;
+			public const int RowModelHist = 2130968636;
 			
 			// aapt resource value: 0x7f04003d
-			public const int support_simple_spinner_dropdown_item = 2130968637;
+			public const int select_dialog_item_material = 2130968637;
 			
 			// aapt resource value: 0x7f04003e
-			public const int tooltip = 2130968638;
+			public const int select_dialog_multichoice_material = 2130968638;
+			
+			// aapt resource value: 0x7f04003f
+			public const int select_dialog_singlechoice_material = 2130968639;
+			
+			// aapt resource value: 0x7f040040
+			public const int support_simple_spinner_dropdown_item = 2130968640;
+			
+			// aapt resource value: 0x7f040041
+			public const int tooltip = 2130968641;
 			
 			static Layout()
 			{
@@ -3318,10 +3360,13 @@ namespace GestioneSarin2
 		{
 			
 			// aapt resource value: 0x7f0e0000
-			public const int menuMain = 2131623936;
+			public const int ActionbarHist = 2131623936;
 			
 			// aapt resource value: 0x7f0e0001
-			public const int navigation = 2131623937;
+			public const int menuMain = 2131623937;
+			
+			// aapt resource value: 0x7f0e0002
+			public const int navigation = 2131623938;
 			
 			static Menu()
 			{
@@ -3344,6 +3389,9 @@ namespace GestioneSarin2
 			
 			// aapt resource value: 0x7f030002
 			public const int ic_launcher_round = 2130903042;
+			
+			// aapt resource value: 0x7f030003
+			public const int send = 2130903043;
 			
 			static Mipmap()
 			{
@@ -3450,9 +3498,6 @@ namespace GestioneSarin2
 			
 			// aapt resource value: 0x7f070037
 			public const int appbar_scrolling_view_behavior = 2131165239;
-			
-			// aapt resource value: 0x7f070044
-			public const int banner_ad_unit_id = 2131165252;
 			
 			// aapt resource value: 0x7f070038
 			public const int bottom_sheet_behavior = 2131165240;
@@ -3598,6 +3643,9 @@ namespace GestioneSarin2
 			
 			// aapt resource value: 0x7f0a0181
 			public const int AppTheme = 2131362177;
+			
+			// aapt resource value: 0x7f0a0182
+			public const int AppThemeNo = 2131362178;
 			
 			// aapt resource value: 0x7f0a009b
 			public const int Base_AlertDialog_AppCompat = 2131361947;

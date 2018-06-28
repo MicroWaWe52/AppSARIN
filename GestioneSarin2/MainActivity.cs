@@ -1,35 +1,26 @@
-﻿using System;
+﻿using Android;
+using Android.App;
+using Android.Content;
+using Android.Content.PM;
+using Android.Gms.Common;
+using Android.OS;
+using Android.Support.Design.Widget;
+using Android.Support.V7.App;
+using Android.Views;
+using Android.Widget;
+using Firebase.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-using Android;
-using Android.App;
-using Android.Content;
-using Android.Content.PM;
-using Android.Gms.Ads;
-using Android.Graphics;
-using Android.Hardware;
-using Android.Net;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V7.App;
-using Android.Telecom;
-using Android.Util;
-using Android.Views;
-using Android.Gms.Common;
-using Firebase.Messaging;
-using Firebase.Iid;
-using Android.Views.Autofill;
-using Android.Widget;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
 
 namespace GestioneSarin2
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,ParentActivity = typeof(ActivityHome))]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
         private List<string> listprod;
@@ -83,15 +74,36 @@ namespace GestioneSarin2
 
                         }
                         var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                            .DirectoryDownloads).AbsolutePath;
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/Ordine.csv"))
+                            .DirectoryDownloads).AbsolutePath + "/Sarin";
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        var curDir = new Java.IO.File(path);
+                        var csvlist = curDir.List();
+                        var last = 0;
+                        if (csvlist != null)
+                        {
+                            foreach (var ord in csvlist)
+                            {
+                                var narr = new string(ord.Where(char.IsDigit).ToArray());
+                                var n = narr.Aggregate("", (current, digit) => current + digit);
+
+                                if (Convert.ToInt32(n) > last)
+                                {
+                                    last = Convert.ToInt32(n);
+                                }
+                            }
+                        }
+
+                        using (StreamWriter streamWriter = new StreamWriter(path + $"/OrdineN{last+1}.csv"))
                         {
                             foreach (var prod in listprod)
                             {
                                 streamWriter.WriteLine(prod);
                             }
 
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};{edittextAgente.Text};{codclifor}");
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
                         }
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
@@ -147,6 +159,22 @@ namespace GestioneSarin2
             var prodArray = Intent.GetStringArrayExtra("prod");
             var uriArray = Intent.GetStringArrayExtra("uri");
 
+            if (Intent.GetBooleanExtra("first", true))
+            {
+                SetCodCliFor();
+            }
+            else
+            {
+                using (StreamReader stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
+                {
+                    codclifor = stream.ReadLine();
+                }
+                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                    .DirectoryDownloads).AbsolutePath + "";
+                var clienti = Helper.GetClienti(path);
+                SupportActionBar.Subtitle = "Cliente:" + clienti.First(list => list[7] == codclifor)[12];
+
+            }
             try
             {
                 listURI = uriArray.ToList();
@@ -182,7 +210,7 @@ namespace GestioneSarin2
             IsPlayServicesAvailable();
             FirebaseMessaging.Instance.SubscribeToTopic("all");
 
-            
+
         }
 
 
@@ -218,7 +246,7 @@ namespace GestioneSarin2
             layoutRadio.AddView(radioDesc);
             layoutRadio.AddView(radioIva);
             layoutRadio.AddView(radioCod);
-
+            layoutRadio.Check(radioDesc.Id);
             layoutprinc.AddView(layoutRadio);
             layoutprinc.AddView(separator);
             var searchText = new AutoCompleteTextView(this);

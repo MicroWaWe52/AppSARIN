@@ -1,0 +1,26 @@
+﻿<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools" >
+
+  <item
+    android:id="@+id/sendHistory"
+    android:icon="@mipmap/send"
+    android:title="@string/app_name"
+    app:showAsAction="ifRoom"/>
+
+
+ <!-- <item>
+
+    <item
+      android:id="@+id/r"
+      android:icon="@drawable/icon"
+      android:title="@string/app_name"
+      />
+
+    <item android:id="@+id/action_settings"
+          android:title="@string/app_name"
+          app:showAsAction="never"/>
+
+  </item>-->
+
+</menu>
