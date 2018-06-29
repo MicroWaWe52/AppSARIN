@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Android.Content.Res;
+using Environment = Android.OS.Environment;
 
 namespace GestioneSarin2
 {
@@ -35,26 +36,56 @@ namespace GestioneSarin2
             }
 
             var holder = (ViewHolderProdotto)view.Tag;
-            try
+            if (position>0)
             {
-                var photoname = prodottolList[position].ImageUrl.Split('\\');
-
-                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                    .DirectoryDownloads).AbsolutePath;
-                path += "/" + photoname.Last();
-                if (!File.Exists(path))
+                if (prodottolList[position].ImageUrl!=prodottolList[position-1].ImageUrl)
                 {
-                    Helper.GetMIssPhoto(path);
-                }
+                    try
+                    {
+                        var photoname = prodottolList[position].ImageUrl.Split('\\');
 
-                using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-                {
-                    holder.Photo.SetImageBitmap(BitmapFactory.DecodeStream(stream));
+                        var path = Environment.GetExternalStoragePublicDirectory(Environment
+                            .DirectoryDownloads).AbsolutePath;
+                        path += "/" + photoname.Last();
+                        if (!File.Exists(path))
+                        {
+                            Helper.GetMIssPhoto(path);
+                        }
+
+                        using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                        {
+                            holder.Photo.SetImageBitmap(BitmapFactory.DecodeStream(stream));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.MakeText(parent.Context, "Alcune immagini non sono state trovate.Aggiorna l'archivio",ToastLength.Short);
+                    }
                 }
             }
-            catch (Exception e)
+            else
             {
-                Toast.MakeText(parent.Context, "Alcune immagini non sono state trovate.Aggiorna l'archivio",ToastLength.Short);
+                try
+                {
+                    var photoname = prodottolList[position].ImageUrl.Split('\\');
+
+                    var path = Environment.GetExternalStoragePublicDirectory(Environment
+                        .DirectoryDownloads).AbsolutePath;
+                    path += "/" + photoname.Last();
+                    if (!File.Exists(path))
+                    {
+                        Helper.GetMIssPhoto(path);
+                    }
+
+                    using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    {
+                        holder.Photo.SetImageBitmap(BitmapFactory.DecodeStream(stream));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Toast.MakeText(parent.Context, "Alcune immagini non sono state trovate.Aggiorna l'archivio", ToastLength.Short);
+                }
             }
 
             AssetManager am = parent.Context.Assets;

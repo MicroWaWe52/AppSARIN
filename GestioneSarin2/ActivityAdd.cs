@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Gms.Ads;
@@ -91,7 +92,7 @@ namespace GestioneSarin2
             {
                 var subSelected = ((Prodotto)listPRoduct.GetItemAtPosition(e.Position)).SubGroup;
                 var subQuery = query.Where(s => s[s.Count - 1].Contains(subSelected)).ToList();
-                GetInSub(subQuery);
+               GetInSubAsync(subQuery);
                 subGrouop = !subGrouop;
             }
             else
@@ -148,6 +149,34 @@ namespace GestioneSarin2
             listPRoduct.Adapter = new ProdottoAdapter(listtemp);
             subqueryList = listtemp;
           
+
+        }
+
+        public async void  GetInSubAsync(List<List<string>> querys)
+        {
+            CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+            TextInfo ti = ci.TextInfo;
+            var listtemp = new List<Prodotto>();
+            foreach (var sDirectoryItem in querys)
+            {
+                var name = ti.ToLower(sDirectoryItem[5]);
+                var ptemp = new Prodotto
+                {
+                    ImageUrl = sDirectoryItem[15],
+                    Name = name,
+                    QuantityPrice = $"{sDirectoryItem[6]}pz/{sDirectoryItem[12]}€",
+                    Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
+                    SubGroup = sDirectoryItem.Last(),
+                    UnitPrice = sDirectoryItem[12],
+                    CodArt = sDirectoryItem[4]
+
+                };
+                listtemp.Add(ptemp);
+                listPRoduct.Adapter = new ProdottoAdapter(listtemp);
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
+            }
+            subqueryList = listtemp;
+
 
         }
     }
