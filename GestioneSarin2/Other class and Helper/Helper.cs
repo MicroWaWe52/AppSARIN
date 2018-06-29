@@ -31,11 +31,6 @@ namespace GestioneSarin2
     static class Helper
     {
         public static List<List<string>> table;
-
-        private static string con = $@"Data Source={
-                Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/_catandr.xls"
-            };Extended Properties='Excel 8.0;HDR=Yes;IMEX=1';";
-        //  $@"Excel File={Environment.GetFolderPath(Environment.SpecialFolder.Personal)+ "/_catandr.xls"};";
         public static List<DirectoryItem> GetDirectoryInformation(string address, string username, string password)
         {
             FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(address);
@@ -101,10 +96,7 @@ namespace GestioneSarin2
             return returnValue;
         }
 
-        public static string GetName(string path)
-        {
-            return "2";
-        }
+        
 
         public static List<string> GetGroup()
         {

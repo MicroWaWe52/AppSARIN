@@ -58,20 +58,21 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityAdd.cs" />
-    <Compile Include="ActivityHist.cs" />
-    <Compile Include="ActivityHome.cs" />
-    <Compile Include="Helper.cs" />
-    <Compile Include="ImageManager.cs" />
-    <Compile Include="MainActivity.cs" />
-    <Compile Include="MyFirebaseIIDService.cs" />
-    <Compile Include="Ordine.cs" />
-    <Compile Include="OrdineAdapter.cs" />
-    <Compile Include="Prodotto.cs" />
-    <Compile Include="ProdottoAdapter.cs" />
+    <Compile Include="Activity\ActivityAdd.cs" />
+    <Compile Include="Activity\ActivityHist.cs" />
+    <Compile Include="Activity\ActivityHome.cs" />
+    <Compile Include="Activity\ActivitySettings.cs" />
+    <Compile Include="Other class and Helper\Helper.cs" />
+    <Compile Include="Adapter and Single class\ImageManager.cs" />
+    <Compile Include="Activity\MainActivity.cs" />
+    <Compile Include="Other class and Helper\MyFirebaseIIDService.cs" />
+    <Compile Include="Adapter and Single class\Ordine.cs" />
+    <Compile Include="Adapter and Single class\OrdineAdapter.cs" />
+    <Compile Include="Adapter and Single class\Prodotto.cs" />
+    <Compile Include="Adapter and Single class\ProdottoAdapter.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewHolder.cs" />
+    <Compile Include="Adapter and Single class\ViewHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\FiraSans-Regular.ttf" />
@@ -183,6 +184,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\BG.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layoutSettings.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\PreferenceScxml.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

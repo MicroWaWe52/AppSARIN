@@ -15,7 +15,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Android.Preferences;
 using Android.Text;
+using GestioneSarin2.Activity;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
 
@@ -46,6 +48,9 @@ namespace GestioneSarin2
                     {
                         Text = "Tutti"
                     };
+                   //todo setting code var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                  //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
+
                     var radiobuttonCat = new RadioButton(this)
                     {
                         Text = "Categorie"
@@ -225,7 +230,7 @@ namespace GestioneSarin2
                     alertall.Dismiss();
                 });
             builder.Show();
-            
+
 
         }
 
@@ -286,7 +291,7 @@ namespace GestioneSarin2
                 var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                     .DirectoryDownloads).AbsolutePath + "";
                 var clienti = Helper.GetClienti(path);
-                SupportActionBar.Subtitle = "Cliente:" + clienti.First(list => list[7] == codclifor)[12];
+                SupportActionBar.Subtitle = "Cliente: " + clienti.First(list => list[7] == codclifor)[12];
 
             }
             try
@@ -428,7 +433,7 @@ namespace GestioneSarin2
                     stream.Write(codclifor);
                 }
 
-                SupportActionBar.Subtitle = "Cliente:" + clienti.First(list => list[7] == codclifor)[12];
+                SupportActionBar.Subtitle = "Cliente: " + clienti.First(list => list[7] == codclifor)[12];
             });
             layoutRadio.Check(1);
             builder1.Show();
