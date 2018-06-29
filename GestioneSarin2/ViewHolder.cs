@@ -23,5 +23,6 @@ namespace GestioneSarin2
         public TextView Name { get; set; }
         public TextView Data { get; set; }
         public TextView Price { get; set; }
+        public TextView CodCli { get; set; }
     }
 }

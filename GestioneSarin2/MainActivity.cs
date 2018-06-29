@@ -15,12 +15,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Android.Text;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
 
 namespace GestioneSarin2
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false,ParentActivity = typeof(ActivityHome))]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, ParentActivity = typeof(ActivityHome))]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
         private List<string> listprod;
@@ -36,16 +37,74 @@ namespace GestioneSarin2
                     listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
                     return true;
                 case Resource.Id.navigation_dashboard:
-
+                    var main = new LinearLayout(this)
+                    {
+                        Orientation = Orientation.Vertical
+                    };
+                    var radiogroup = new RadioGroup(this);
+                    var radiobuttonAll = new RadioButton(this)
+                    {
+                        Text = "Tutti"
+                    };
+                    var radiobuttonCat = new RadioButton(this)
+                    {
+                        Text = "Categorie"
+                    };
+                    radiogroup.Orientation = Orientation.Horizontal;
+                    radiogroup.AddView(radiobuttonAll);
+                    radiogroup.AddView(radiobuttonCat);
                     var lw = new ListView(this);
-                    lw.ItemClick += Lw_ItemClick;
+                    var prodListAll = new List<string>();
+                    var textSearch = new EditText(this);
+                    void OnRadiogroupOnCheckedChange(object sender, RadioGroup.CheckedChangeEventArgs args)
+                    {
+                        lw.ItemClick -= Lw_ItemClickAll;
+                        lw.ItemClick -= Lw_ItemClickCat;
+                        var id = args.CheckedId;
+                        if (id == radiobuttonCat.Id)
+                        {
+                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup());
+                            lw.ItemClick -= Lw_ItemClickAll;
+                            lw.ItemClick += Lw_ItemClickCat;
+                            textSearch.Enabled = false;
+
+                        }
+                        else if (id == radiobuttonAll.Id)
+                        {
+                            var prodList = new List<string>();
+                            for (var i = 1; i < Helper.table.Count; i++)
+                            {
+                                var prod = Helper.table[i];
+                                prodList.Add(prod[5]);
+                            }
+
+                            prodListAll = prodList;
+                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodList);
+                            lw.ItemClick -= Lw_ItemClickCat;
+                            lw.ItemClick += Lw_ItemClickAll;
+                            textSearch.Enabled = true;
+
+                        }
+                    }
                     lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup());
+
+                    textSearch.TextChanged += (sender, args) =>
+                    {
+                        var newList = prodListAll.Where(p => p.Contains(textSearch.Text.ToUpper())).ToList();
+                        lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, newList);
+                    };
+                    radiogroup.CheckedChange += OnRadiogroupOnCheckedChange;
+                    radiogroup.Check(radiobuttonCat.Id);
+                    main.AddView(radiogroup);
+                    main.AddView(textSearch);
+                    main.AddView(lw);
                     var builder = new AlertDialog.Builder(this);
                     builder.SetTitle("Seleziona gruppo");
                     builder.SetCancelable(true);
-                    builder.SetView(lw);
+                    builder.SetView(main);
                     builder.SetNegativeButton("Annulla", delegate { });
-                    builder.Show();
+                    alertall = builder.Create();
+                    alertall.Show();
                     return true;
                 case Resource.Id.navigation_notifications:
                     if (codclifor == null)
@@ -71,7 +130,6 @@ namespace GestioneSarin2
                         {
                             Toast.MakeText(this, "Codice agente non valido", ToastLength.Short).Show();
                             return;
-
                         }
                         var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                             .DirectoryDownloads).AbsolutePath + "/Sarin";
@@ -96,7 +154,7 @@ namespace GestioneSarin2
                             }
                         }
 
-                        using (StreamWriter streamWriter = new StreamWriter(path + $"/OrdineN{last+1}.csv"))
+                        using (StreamWriter streamWriter = new StreamWriter(path + $"/OrdineN{last + 1}.csv"))
                         {
                             foreach (var prod in listprod)
                             {
@@ -117,6 +175,62 @@ namespace GestioneSarin2
             return false;
         }
 
+        private AlertDialog alertall;
+        private void Lw_ItemClickAll(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var itemName = ((ListView)sender).GetItemAtPosition(e.Position).ToString();
+
+            //listProd.Add(subqueryList[e.Position].CodArt + ';' + text.Text.Replace(',','.') + ';' + subqueryList[e.Position].UnitPrice);
+            var text = new EditText(this);
+
+            text.SetRawInputType(InputTypes.ClassNumber);
+            var builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Seleziona la quantita");
+            builder.SetCancelable(true);
+            builder.SetView(text);
+            builder.SetNegativeButton("Annulla", delegate { });
+            builder.SetPositiveButton("Conferma",
+                delegate
+                {
+                    var psel = Helper.table.First(p => p[5] == itemName);
+                    listprod.Add(psel[4] + ";" + text.Text.Replace(',', '.') + ";" + psel[12]);
+                    var urisplit = psel[15].Split('\\');
+                    listURI.Add(urisplit.Last());
+
+
+
+                    var templist = new List<Prodotto>();
+                    var finalList = listprod.Zip(listURI, (p, u) => new
+                    {
+                        prodotto = p,
+                        uri = u
+                    }).ToList();
+                    CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                    TextInfo textInfo = cultureInfo.TextInfo;
+                    query = Helper.table;
+                    foreach (var prod in finalList)
+                    {
+                        var ptemp = new Prodotto();
+                        ptemp.ImageUrl = prod.uri;
+                        var split = prod.prodotto.Split(';');
+                        var namet = query.First(p => p[4] == split[0])[5];
+                        namet = textInfo.ToLower(namet);
+                        ptemp.Name = textInfo.ToTitleCase(namet);
+                        ptemp.QuantityPrice = split[1] + '/' + split[2];
+                        templist.Add(ptemp);
+
+                    }
+                    listView.Adapter = new ProdottoAdapter(templist);
+
+                    alertall.Dismiss();
+                });
+            builder.Show();
+            
+
+        }
+
+
+
         protected override void OnDestroy()
         {
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
@@ -126,7 +240,7 @@ namespace GestioneSarin2
             base.OnDestroy();
         }
 
-        private void Lw_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        private void Lw_ItemClickCat(object sender, AdapterView.ItemClickEventArgs e)
         {
             Intent i = new Intent(this, typeof(ActivityAdd));
             i.PutExtra("gruppo", ((ListView)sender).GetItemAtPosition(e.Position).ToString());

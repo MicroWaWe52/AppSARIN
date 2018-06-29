@@ -15,6 +15,7 @@ namespace GestioneSarin2
     class Ordine
     {
         public string Name { get; set; }
+        public string CodCli { get; set; }
         public string Date { get; set; }
         public string Tot { get; set; }
     }

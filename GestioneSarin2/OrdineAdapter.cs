@@ -34,8 +34,9 @@ namespace GestioneSarin2
                 var name = view.FindViewById<TextView>(Resource.Id.nameTextViewHist);
                 var Data = view.FindViewById<TextView>(Resource.Id.DataTextViewHist);
                 var Price = view.FindViewById<TextView>(Resource.Id.PriceTextViewHist);
+                var codCli = view.FindViewById<TextView>(Resource.Id.CodCliTextViewHist);
 
-                view.Tag = new ViewHolderOrdine() { Name = name, Data = Data, Price = Price };
+                view.Tag = new ViewHolderOrdine() { Name = name, Data = Data, Price = Price,CodCli = codCli};
 
             }
 
@@ -54,6 +55,8 @@ namespace GestioneSarin2
             holder.Data.Text = textInfo.ToTitleCase(ordineList[position].Date);
             holder.Price.SetTypeface(tvName, TypefaceStyle.Normal);
             holder.Price.Text = ordineList[position].Tot+"€";
+            holder.CodCli.SetTypeface(tvName, TypefaceStyle.Normal);
+            holder.CodCli.Text = ordineList[position].CodCli;
 
             return view;
         }

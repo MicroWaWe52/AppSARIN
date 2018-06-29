@@ -22,4 +22,8 @@
 
   </style>
 
+  <style name="ToolbarColoredBackArrow" parent="AppTheme">
+    <item name="android:textColorSecondary">@color/whiteHome</item>
+  </style>
+
 </resources>

@@ -21,13 +21,16 @@ namespace GestioneSarin2
     {
         private ListView listViewHist;
         private string[] csvlist;
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.layoutHistory);
             // Create your application here
             listViewHist = FindViewById<ListView>(Resource.Id.listViewHist);
-
+            var pathcli = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "";
+            var clienti = Helper.GetClienti(pathcli);
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
             if (!Directory.Exists(path))
@@ -55,11 +58,13 @@ namespace GestioneSarin2
                     }
                     ordDet.RemoveAt(ordDet.Count - 1);
                     var testa = ordDet.Last().Split(';');
+                    var nameTemp= clienti.First(list => list[7] == testa[5])[12];
                     listoOrdines.Add(new Ordine
                     {
                         Date = testa.Last(),
-                        Name = testa[5],
-                        Tot = testa[3]
+                        Name = nameTemp,
+                        Tot = testa[3],
+                        CodCli= testa[5]
                     });
 
                 }
