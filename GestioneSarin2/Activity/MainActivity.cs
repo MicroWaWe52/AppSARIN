@@ -148,6 +148,10 @@ namespace GestioneSarin2
                         var last = 0;
                         if (csvlist != null)
                         {
+                            var tempcsvList = csvlist.ToList();
+                            tempcsvList.Remove("presets.csv");
+                            Array.Copy(tempcsvList.ToArray(), csvlist, tempcsvList.Count);
+                            Array.Resize(ref csvlist, tempcsvList.Count);
                             foreach (var ord in csvlist)
                             {
                                 var narr = new string(ord.Where(char.IsDigit).ToArray());

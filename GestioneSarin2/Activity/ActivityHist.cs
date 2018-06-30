@@ -42,6 +42,10 @@ namespace GestioneSarin2
             var listoOrdines = new List<Ordine>();
             if (csvlist != null)
             {
+                var tempcsvList = csvlist.ToList();
+                tempcsvList.Remove("presets.csv");
+                Array.Copy(tempcsvList.ToArray(), csvlist, tempcsvList.Count);
+                Array.Resize(ref csvlist, tempcsvList.Count);
                 foreach (var ord in csvlist)
                 {
                     var pathord = path + '/' + ord;
@@ -56,7 +60,11 @@ namespace GestioneSarin2
                         ).ToList();
 
                     }
-                    ordDet.RemoveAt(ordDet.Count - 1);
+
+                    if (string.IsNullOrEmpty(ordDet[ordDet.Count - 1]))
+                    {
+                        ordDet.RemoveAt(ordDet.Count - 1);
+                    }
                     var testa = ordDet.Last().Split(';');
                     var nameTemp= clienti.First(list => list[7] == testa[5])[12];
                     listoOrdines.Add(new Ordine

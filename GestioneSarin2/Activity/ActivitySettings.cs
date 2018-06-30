@@ -40,8 +40,8 @@ namespace GestioneSarin2.Activity
                 // Set summary to be the user-description for the selected value
                 connectionPref.SetDefaultValue(sharedPreferences.GetBoolean(key, true));
                 var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                               .DirectoryDownloads).AbsolutePath + "/Sarin/presets.csv";
-                File.Delete(path);
+                               .DirectoryDownloads).AbsolutePath + "/Sarin";
+                Directory.Delete(path,true);
             }
             else if (key.Equals(KeySmsDeleteLimit))
             {
