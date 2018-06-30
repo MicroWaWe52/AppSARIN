@@ -154,6 +154,8 @@ namespace GestioneSarin2
 
         public async void  GetInSubAsync(List<List<string>> querys)
         {
+            listPRoduct.Enabled = false;
+
             CultureInfo ci = Thread.CurrentThread.CurrentCulture;
             TextInfo ti = ci.TextInfo;
             var listtemp = new List<Prodotto>();
@@ -176,7 +178,7 @@ namespace GestioneSarin2
                 await Task.Delay(TimeSpan.FromMilliseconds(500));
             }
             subqueryList = listtemp;
-
+            listPRoduct.Enabled = true;
 
         }
     }

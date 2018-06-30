@@ -71,7 +71,7 @@ namespace GestioneSarin2
             }
             listViewHist.Adapter = new OrdineAdapter(listoOrdines);
             //ActionBar.SetDisplayHomeAsUpEnabled(true);
-            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbar);
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbarSett);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);

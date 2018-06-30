@@ -7,4 +7,5 @@
   <color name="background">#f2efe8</color>
   <color name="grayDate">#666</color>
   <color name="whiteHome">#f2efe8</color>
+  <color name="activated_color">#E8E8E8</color>
 </resources>

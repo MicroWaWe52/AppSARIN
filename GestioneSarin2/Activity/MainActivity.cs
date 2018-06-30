@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Android.Preferences;
+using Android.Support.Design.Internal;
 using Android.Text;
 using GestioneSarin2.Activity;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
@@ -23,7 +24,7 @@ using Environment = System.Environment;
 
 namespace GestioneSarin2
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, ParentActivity = typeof(ActivityHome))]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppThemeNo", MainLauncher = false, ParentActivity = typeof(ActivityHome))]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
         private List<string> listprod;
@@ -48,8 +49,8 @@ namespace GestioneSarin2
                     {
                         Text = "Tutti"
                     };
-                   //todo setting code var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                  //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
+                    //todo setting code var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                    //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
 
                     var radiobuttonCat = new RadioButton(this)
                     {
@@ -267,8 +268,11 @@ namespace GestioneSarin2
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
             navigation.SetOnNavigationItemSelectedListener(this);
             listView = FindViewById<ListView>(Resource.Id.listViewMainProd);
-
-
+            listView.ItemLongClick += ListView_ItemLongClick;
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbarMain);
+            SetSupportActionBar(toolbar);
+            SupportActionBar.SetDisplayShowTitleEnabled(false);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             const string permission = Manifest.Permission.ReadExternalStorage;
             if (CheckSelfPermission(permission) != (int)Permission.Granted)
             {
@@ -332,11 +336,52 @@ namespace GestioneSarin2
 
         }
 
+        private void ListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
+        {
+            var builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Sicuro di voler eliminare il prodotto?");
+            builder.SetCancelable(true);
+            builder.SetNegativeButton("Annulla", delegate { });
+            builder.SetPositiveButton("Conferma", delegate
+            {
+                listprod.RemoveAt(e.Position);
+                listURI.RemoveAt(e.Position);
+                if (listprod.Count <= 0)
+                {
+                    listView.Adapter = null;
+                    return;
+                }
+
+                var templist = new List<Prodotto>();
+                var finalList = listprod.Zip(listURI, (p, u) => new
+                {
+                    prodotto = p,
+                    uri = u
+                }).ToList();
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+                foreach (var prod in finalList)
+                {
+                    var ptemp = new Prodotto();
+                    ptemp.ImageUrl = prod.uri;
+                    var split = prod.prodotto.Split(';');
+                    var namet = query.First(p => p[4] == split[0])[5];
+                    namet = textInfo.ToLower(namet);
+                    ptemp.Name = textInfo.ToTitleCase(namet);
+                    ptemp.QuantityPrice = split[1] + '/' + split[2];
+                    templist.Add(ptemp);
+
+                }
+                listView.Adapter = new ProdottoAdapter(templist);
+            });
+            builder.Show();
+        }
 
         private string codclifor;
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.menuMain, menu);
+            MenuInflater.Inflate(Resource.Menu.actionbarMain, menu);
             return base.OnCreateOptionsMenu(menu);
         }
 
@@ -449,6 +494,46 @@ namespace GestioneSarin2
                 case Resource.Id.Cliente:
                     SetCodCliFor();
                     break;
+                case Resource.Id.savePres:
+                    var edittextAgente = new EditText(this);
+                    edittextAgente.Hint = "Codice agente";
+                    var builder = new AlertDialog.Builder(this);
+                    builder.SetTitle("Vuoi saalvare quest'ordine?");
+                    builder.SetCancelable(true);
+                    builder.SetView(edittextAgente);
+                    builder.SetNegativeButton("No", delegate { });
+                    builder.SetPositiveButton("Si", delegate
+                    {
+
+                        if (!edittextAgente.Text.StartsWith("C") && edittextAgente.Text.Length != 6)
+                        {
+                            Toast.MakeText(this, "Codice agente non valido", ToastLength.Short).Show();
+                            return;
+                        }
+                        var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                            .DirectoryDownloads).AbsolutePath + "/Sarin";
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                     
+
+                        using (StreamWriter streamWriter = new StreamWriter(path + "/presets.csv",true))
+                        {
+                            foreach (var prod in listprod)
+                            {
+                                streamWriter.WriteLine(prod);
+                            }
+
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            streamWriter.Write('#');
+                        }
+                        Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();
+                        listprod = new List<string>();
+                        listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
+                    });
+                    builder.Show();
+                    break;
 
 
             }
@@ -457,7 +542,7 @@ namespace GestioneSarin2
         public bool IsPlayServicesAvailable()
         {
             string x;
-            int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+            var resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
             if (resultCode != ConnectionResult.Success)
             {
                 if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
@@ -469,11 +554,8 @@ namespace GestioneSarin2
                 }
                 return false;
             }
-            else
-            {
-                x = "Google Play Services is available.";
-                return true;
-            }
+            x = "Google Play Services is available.";
+            return true;
         }
 
     }

@@ -30,7 +30,7 @@ namespace GestioneSarin2
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.layoutMain);
+            SetContentView(Resource.Layout.layoutHome);
 
             ordButton = FindViewById<ImageView>(Resource.Id.imageViewOrd);
             histButton = FindViewById<ImageView>(Resource.Id.imageViewHist);
@@ -54,7 +54,7 @@ namespace GestioneSarin2
 
         private void PresetButton_Click(object sender, EventArgs e)
         {
-            Toast.MakeText(this, "PRESEPIO", ToastLength.Short).Show();
+            StartActivity(typeof(ActivityPreset));
         }
 
         private void HistButton_Click(object sender, EventArgs e)

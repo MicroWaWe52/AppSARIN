@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -38,6 +39,9 @@ namespace GestioneSarin2.Activity
                 Preference connectionPref = FindPreference(key);
                 // Set summary to be the user-description for the selected value
                 connectionPref.SetDefaultValue(sharedPreferences.GetBoolean(key, true));
+                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                               .DirectoryDownloads).AbsolutePath + "/Sarin/presets.csv";
+                File.Delete(path);
             }
             else if (key.Equals(KeySmsDeleteLimit))
             {

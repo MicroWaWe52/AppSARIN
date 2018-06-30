@@ -61,6 +61,7 @@
     <Compile Include="Activity\ActivityAdd.cs" />
     <Compile Include="Activity\ActivityHist.cs" />
     <Compile Include="Activity\ActivityHome.cs" />
+    <Compile Include="Activity\ActivityPreset.cs" />
     <Compile Include="Activity\ActivitySettings.cs" />
     <Compile Include="Other class and Helper\Helper.cs" />
     <Compile Include="Adapter and Single class\ImageManager.cs" />
@@ -144,11 +145,6 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\layoutHome.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\layoutHistory.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -163,7 +159,7 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\send.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\layoutMain.axml">
+    <AndroidResource Include="Resources\layout\layoutHome.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -185,7 +181,11 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\BG.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layoutPreset.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\layoutSettings.axml">
       <SubType>Designer</SubType>
@@ -193,6 +193,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\PreferenceScxml.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\actionbarMain.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\save.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
