@@ -277,11 +277,7 @@ namespace GestioneSarin2
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            const string permission = Manifest.Permission.ReadExternalStorage;
-            if (CheckSelfPermission(permission) != (int)Permission.Granted)
-            {
-                RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
-            }
+           
 
             var prodArray = Intent.GetStringArrayExtra("prod");
             var uriArray = Intent.GetStringArrayExtra("uri");

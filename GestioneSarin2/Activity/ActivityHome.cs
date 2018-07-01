@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Android;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
@@ -44,6 +45,12 @@ namespace GestioneSarin2
             st.SetSpan(new TypefaceSpan("FiraSans-Regular.otf"), 0, st.Length(), SpanTypes.ExclusiveExclusive);
             var sequence = st.SubSequenceFormatted(0, st.Length());
             SupportActionBar.TitleFormatted = sequence;
+
+            const string permission = Manifest.Permission.ReadExternalStorage;
+            if (CheckSelfPermission(permission) != (int)Permission.Granted)
+            {
+                RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
+            }
             // Create your application here
         }
 

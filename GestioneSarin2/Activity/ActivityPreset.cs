@@ -17,7 +17,7 @@ using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
 {
-    [Activity(Label = "ActivityPreset",Theme = "@style/AppThemeNo")]
+    [Activity(Label = "Preset",Theme = "@style/AppTheme")]
     public class ActivityPreset : AppCompatActivity
     {
         private ListView listPres;
@@ -125,7 +125,6 @@ namespace GestioneSarin2.Activity
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            MenuInflater.Inflate(Resource.Menu.ActionbarHist, menu);
             return base.OnCreateOptionsMenu(menu);
         }
     }

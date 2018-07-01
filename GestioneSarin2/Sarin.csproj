@@ -64,7 +64,6 @@
     <Compile Include="Activity\ActivityPreset.cs" />
     <Compile Include="Activity\ActivitySettings.cs" />
     <Compile Include="Other class and Helper\Helper.cs" />
-    <Compile Include="Adapter and Single class\ImageManager.cs" />
     <Compile Include="Activity\MainActivity.cs" />
     <Compile Include="Other class and Helper\MyFirebaseIIDService.cs" />
     <Compile Include="Adapter and Single class\Ordine.cs" />
