@@ -1,26 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-using Android.App;
 using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Net;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Java.IO;
-using Java.Net;
-using Console = System.Console;
+using Android.Preferences;
+using GestioneSarin2.Activity;
 using Environment = System.Environment;
 using File = System.IO.File;
 using Uri = System.Uri;
@@ -31,76 +16,10 @@ namespace GestioneSarin2
     static class Helper
     {
         public static List<List<string>> table;
-        public static List<DirectoryItem> GetDirectoryInformation(string address, string username, string password)
+
+        public static List<string> GetGroup(Context context)
         {
-            FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(address);
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-            request.Credentials = new NetworkCredential(username, password);
-            request.UsePassive = true;
-            request.UseBinary = true;
-            request.KeepAlive = false;
-
-            List<DirectoryItem> returnValue = new List<DirectoryItem>();
-            string[] list = null;
-
-            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-            {
-                list = reader.ReadToEnd().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            }
-
-            foreach (string line in list)
-            {
-                if (line.Contains(".xls"))
-                {
-                    continue;
-                }
-                // Windows FTP Server Response Format
-                // DateCreated    IsDirectory    Name
-                string data = line;
-
-                // Parse date
-                string date = data.Substring(36, 12);
-                DateTime dateTime = DateTime.Parse(date);
-                data = data.Remove(0, 24);
-
-                // Parse <DIR>
-                string dir = data.Substring(0, 5);
-                bool isDirectory = dir.Equals("<dir>", StringComparison.InvariantCultureIgnoreCase);
-                data = data.Remove(0, 5);
-                data = data.Remove(0, 10);
-
-                // Parse name
-                string name = data;
-
-                // Create directory info
-                DirectoryItem item = new DirectoryItem();
-                item.BaseUri = new Uri(address);
-                item.DateCreated = dateTime;
-                item.IsDirectory = isDirectory;
-                var split = name.Split(' ');
-                string n = "";
-                for (int i = 3; i < split.Length - 1; i++)
-                {
-                    n += split[i] + " ";
-                }
-
-                n += split[split.Length - 1];
-                item.Name = n;
-
-                item.Items = item.IsDirectory ? GetDirectoryInformation(item.AbsolutePath, username, password) : null;
-
-                returnValue.Add(item);
-            }
-
-            return returnValue;
-        }
-
-        
-
-        public static List<string> GetGroup()
-        {
-            var data = table ?? GetData();
+            var data = table ?? GetData(context);
 
             var descgruppolist=new List<string>();
             foreach (var row in data)
@@ -131,7 +50,7 @@ namespace GestioneSarin2
             return TOTALE;
         }
 
-        public static List<List<string>> GetData(bool force=false)
+        public static List<List<string>> GetData(Context context, bool force = false)
         {
             /* //  FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://217.133.0.34/" + "_catandr.xls");
 
@@ -147,16 +66,19 @@ namespace GestioneSarin2
 
              }*/
 
-
-            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal)+"/catalogo.csv")||force)
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path+"/catalogo.csv")||force)
             {
+                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
+                var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile(new Uri("http://www.teatrotse.com/DasGappArchives/_catandr.csv"), Environment.GetFolderPath(Environment.SpecialFolder.Personal)+"/catalogo.csv");
+                    client.DownloadFile(new Uri($"http://www.{ip}.com/DasGappArchives/_catandr.csv"), path + "/catalogo.csv");
                 }
             }
             var tableTemp = new List<List<string>>();
-            using (var fs = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/catalogo.csv"))
+            using (var fs = new StreamReader(path + "/catalogo.csv"))
             {
                 while (!fs.EndOfStream)
                 {
@@ -197,15 +119,19 @@ namespace GestioneSarin2
             }
         }
 
-        public static bool GetMIssPhoto(string path)
-        {
+        public static bool GetMIssPhoto(string path,Context context)
+        {   var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
             var pathdow = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                 .DirectoryDownloads).AbsolutePath;
             var pathsplit = path.Split('/');
             using (WebClient request = new WebClient())
             {
-                request.Credentials = new NetworkCredential("spigam", "123456");
-                byte[] fileData = request.DownloadData($"ftp://217.133.0.34/{pathsplit[pathsplit.Length - 1]}");
+                var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                request.Credentials = new NetworkCredential(usern, passw);
+             
+                var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                byte[] fileData = request.DownloadData($"ftp:/{ip}/{pathsplit[pathsplit.Length - 1]}");
                 using (FileStream file = new FileStream(pathdow + $"/{pathsplit[pathsplit.Length-1]}", FileMode.Create))
                 {
                     file.Write(fileData, 0, fileData.Length);

@@ -31,43 +31,51 @@ namespace GestioneSarin2.Activity
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
             string file;
-            using (StreamReader sw=new StreamReader(path+"/presets.csv"))
+            try
             {
-                file = sw.ReadToEnd();
-            }
-            var pathcli = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                              .DirectoryDownloads).AbsolutePath + "";
-            var clienti = Helper.GetClienti(pathcli);
-            ordini = file.Split('#').ToList();
-            ordini.RemoveAt(ordini.Count-1);
-            var listoOrdines=new List<Ordine>();
-            foreach (var ordine in ordini)
-            {
-               var ordDet = ordine.Split(
-                    new[] { Environment.NewLine },
-                    StringSplitOptions.None
-                ).ToList();
-                ordDet.RemoveAt(ordDet.Count-1);
-                var testa = ordDet.Last().Split(';');
-                string nameTemp;
-                try
+                using (var sw=new StreamReader(path+"/presets.csv"))
                 {
-                     nameTemp = clienti.First(list => list[7] == testa[5])[12];
+                    file = sw.ReadToEnd();
                 }
-                catch (Exception e)
+                var pathcli = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                                  .DirectoryDownloads).AbsolutePath + "";
+                var clienti = Helper.GetClienti(pathcli);
+                ordini = file.Split('#').ToList();
+                ordini.RemoveAt(ordini.Count - 1);
+                var listoOrdines = new List<Ordine>();
+                foreach (var ordine in ordini)
                 {
-                    continue;
-                }
-                listoOrdines.Add(new Ordine
-                {
-                    Date = testa.Last(),
-                    Name = nameTemp,
-                    Tot = testa[3],
-                    CodCli = testa[5]
-                });
+                    var ordDet = ordine.Split(
+                        new[] { Environment.NewLine },
+                        StringSplitOptions.None
+                    ).ToList();
+                    ordDet.RemoveAt(ordDet.Count - 1);
+                    var testa = ordDet.Last().Split(';');
+                    string nameTemp;
+                    try
+                    {
+                        nameTemp = clienti.First(list => list[7] == testa[5])[12];
+                    }
+                    catch (Exception e)
+                    {
+                        continue;
+                    }
+                    listoOrdines.Add(new Ordine
+                    {
+                        Date = testa.Last(),
+                        Name = nameTemp,
+                        Tot = testa[3],
+                        CodCli = testa[5]
+                    });
 
+                }
+                listPres.Adapter = new OrdineAdapter(listoOrdines);
             }
-            listPres.Adapter=new OrdineAdapter(listoOrdines);
+            catch (Exception e)
+            {
+                
+            }
+           
             // Create your application here
         }
 

@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
   <!-- opens a subscreen of settings -->
-  <CheckBoxPreference
-    android:key="pref_key_auto_delete"
-    android:summary="@string/app_name"
-    android:title="@string/app_name"
-    android:defaultValue="false"/>
   <EditTextPreference
-    android:key="pref_key_sms_delete_limit"
-    android:summary="@string/app_name"
-    android:title="@string/app_name" />
-
-
-
+    android:key="pref_key_ip"
+    android:summary="Server dalla quale prendere dati e file"
+    android:title="Indirizzo IP"
+    android:hint="249.242.164.231"
+   />
+  <EditTextPreference
+    android:key="pref_key_usern"
+    android:summary="Username d'accesso al server"
+    android:title="Username" />
+  <EditTextPreference
+    android:key="pref_key_passw"
+    android:summary="Password d'accesso al server"
+    android:title="Password" />
 </PreferenceScreen>

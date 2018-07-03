@@ -9,6 +9,7 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Text;
@@ -71,7 +72,18 @@ namespace GestioneSarin2
 
         private void OrdButton_Click(object sender, EventArgs e)
         {
-            StartActivity(typeof(MainActivity));
+            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+             var ip = sharedPref.GetString(ActivitySettings.KeyIp,"");
+            if (ip!="")
+            {
+                StartActivity(typeof(MainActivity));
+
+            }
+            else
+            {
+                Toast.MakeText(this,"Accedi ad un server prima",ToastLength.Short).Show();
+            }
+
         }
     }
 }

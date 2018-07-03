@@ -16,7 +16,7 @@ using Environment = System.Environment;
 
 namespace GestioneSarin2
 {
-    [Activity(Theme = "@style/AppThemeNo", ParentActivity = typeof(ActivityHome))]
+    [Activity(Label = "Storico Ordini",Theme = "@style/AppThemeNo", ParentActivity = typeof(ActivityHome))]
     public class ActivityHist : AppCompatActivity
     {
         private ListView listViewHist;
@@ -66,13 +66,23 @@ namespace GestioneSarin2
                         ordDet.RemoveAt(ordDet.Count - 1);
                     }
                     var testa = ordDet.Last().Split(';');
-                    var nameTemp= clienti.First(list => list[7] == testa[5])[12];
+                    string nameTemp;
+                    try
+                    {
+                        nameTemp= clienti.First(list => list[7] == testa[7])[12];
+
+                    }
+                    catch (Exception e)
+                    {
+                        continue;
+                    }
+
                     listoOrdines.Add(new Ordine
                     {
                         Date = testa.Last(),
                         Name = nameTemp,
-                        Tot = testa[3],
-                        CodCli= testa[5]
+                        Tot = testa[5],
+                        CodCli= testa[7]
                     });
 
                 }

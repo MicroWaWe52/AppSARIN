@@ -49,7 +49,7 @@ namespace GestioneSarin2
                         path += "/" + photoname.Last();
                         if (!File.Exists(path))
                         {
-                            Helper.GetMIssPhoto(path);
+                            Helper.GetMIssPhoto(path,parent.Context);
                         }
 
                         using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
@@ -74,7 +74,7 @@ namespace GestioneSarin2
                     path += "/" + photoname.Last();
                     if (!File.Exists(path))
                     {
-                        Helper.GetMIssPhoto(path);
+                        Helper.GetMIssPhoto(path,parent.Context);
                     }
 
                     using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))

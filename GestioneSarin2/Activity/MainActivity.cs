@@ -15,12 +15,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Android.Graphics;
 using Android.Preferences;
 using Android.Support.Design.Internal;
 using Android.Text;
 using GestioneSarin2.Activity;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Color = System.Drawing.Color;
 using Environment = System.Environment;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace GestioneSarin2
 {
@@ -69,7 +72,7 @@ namespace GestioneSarin2
                         var id = args.CheckedId;
                         if (id == radiobuttonCat.Id)
                         {
-                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup());
+                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this));
                             lw.ItemClick -= Lw_ItemClickAll;
                             lw.ItemClick += Lw_ItemClickCat;
                             textSearch.Enabled = false;
@@ -92,7 +95,7 @@ namespace GestioneSarin2
 
                         }
                     }
-                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup());
+                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this));
 
                     textSearch.TextChanged += (sender, args) =>
                     {
@@ -125,7 +128,10 @@ namespace GestioneSarin2
                     layout.AddView(edittextAgente, 0);
                     var builder1 = new AlertDialog.Builder(this);
                     builder1.SetTitle("Conferma ordine");
-                    builder1.SetMessage("Totale Ordine:" + Helper.GetTot(listprod));
+                    var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                    var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
+                    tot = Math.Round(tot, 2);
+                    builder1.SetMessage("Totale Ordine:" + tot);
                     builder1.SetCancelable(true);
                     builder1.SetView(layout);
                     builder1.SetNegativeButton("Annulla", delegate { });
@@ -157,21 +163,29 @@ namespace GestioneSarin2
                                 var narr = new string(ord.Where(char.IsDigit).ToArray());
                                 var n = narr.Aggregate("", (current, digit) => current + digit);
 
-                                if (Convert.ToInt32(n) > last)
+                                try
                                 {
-                                    last = Convert.ToInt32(n);
+                                    if (Convert.ToInt32(n) > last)
+                                    {
+                                        last = Convert.ToInt32(n);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    break;
                                 }
                             }
                         }
 
-                        using (StreamWriter streamWriter = new StreamWriter(path + $"/OrdineN{last + 1}.csv"))
+                        using (StreamWriter streamWriter = new StreamWriter(path: path + $"/Ordine_{DateTime.Now:ddMMyyyy}_N{last + 1}.csv"))
                         {
                             foreach (var prod in listprod)
                             {
                                 streamWriter.WriteLine(prod);
                             }
-
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            //WAIT iva nel database
+                            tot = Math.Round(tot, 2);
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
                         }
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
@@ -233,6 +247,10 @@ namespace GestioneSarin2
                     listView.Adapter = new ProdottoAdapter(templist);
 
                     alertall.Dismiss();
+                    var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                    var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
+                    tot = Math.Round(tot, 2);
+                    toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+22%={tot}";
                 });
             builder.Show();
 
@@ -259,26 +277,29 @@ namespace GestioneSarin2
             StartActivity(i);
         }
 
+        private Toolbar toolbar;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.activity_main);
-
-            if (!File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/catalogo.csv"))
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/catalogo.csv"))
             {
-                Helper.GetData();
+                Helper.GetData(this);
             }
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
             navigation.SetOnNavigationItemSelectedListener(this);
             listView = FindViewById<ListView>(Resource.Id.listViewMainProd);
             listView.ItemLongClick += ListView_ItemLongClick;
-            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbarMain);
+            toolbar = FindViewById<Toolbar>(Resource.Id.my_toolbarMain);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayShowTitleEnabled(false);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-           
 
+            toolbar.FindViewById<TextView>(Resource.Id.toolbar_title)
+                .SetTextColor(Android.Graphics.Color.ParseColor("#f2efe8"));
             var prodArray = Intent.GetStringArrayExtra("prod");
             var uriArray = Intent.GetStringArrayExtra("uri");
 
@@ -292,11 +313,6 @@ namespace GestioneSarin2
                 {
                     codclifor = stream.ReadLine();
                 }
-                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                    .DirectoryDownloads).AbsolutePath + "";
-                var clienti = Helper.GetClienti(path);
-                SupportActionBar.Subtitle = "Cliente: " + clienti.First(list => list[7] == codclifor)[12];
-
             }
             try
             {
@@ -323,7 +339,11 @@ namespace GestioneSarin2
 
                 }
                 listView.Adapter = new ProdottoAdapter(templist);
-
+                var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
+                tot = Math.Round(tot, 2);
+                toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+22%={tot}";
+                
             }
             catch (Exception)
             {
@@ -478,7 +498,6 @@ namespace GestioneSarin2
                     stream.Write(codclifor);
                 }
 
-                SupportActionBar.Subtitle = "Cliente: " + clienti.First(list => list[7] == codclifor)[12];
             });
             layoutRadio.Check(1);
             builder1.Show();
@@ -489,7 +508,7 @@ namespace GestioneSarin2
             switch (id)
             {
                 case Resource.Id.Aggiorna_Il_Database:
-                    Helper.GetData(true);
+                    Helper.GetData(this,true);
                     break;
                 case Resource.Id.Cliente:
                     SetCodCliFor();
@@ -524,8 +543,10 @@ namespace GestioneSarin2
                             {
                                 streamWriter.WriteLine(prod);
                             }
-
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            //WAIT iva nel database
+                            var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                            var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 20;
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
                             streamWriter.Write('#');
                         }
                         Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();

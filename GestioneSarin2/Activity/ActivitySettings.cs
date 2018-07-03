@@ -18,34 +18,56 @@ using Java.Lang;
 namespace GestioneSarin2.Activity
 {
     [Activity(Label = "ActivitySettings", MainLauncher = false)]
-    public class ActivitySettings : PreferenceActivity,ISharedPreferencesOnSharedPreferenceChangeListener
+    public class ActivitySettings : PreferenceActivity, ISharedPreferencesOnSharedPreferenceChangeListener
     {
 
-        public static readonly string KeyAutoDelete = "pref_key_auto_delete";
-        public static readonly string KeySmsDeleteLimit = "pref_key_sms_delete_limit";
+        public static readonly string KeyIp = "pref_key_ip";
+        public static readonly string KeyUsern = "pref_key_usern";
+        public static readonly string KeyPassw = "pref_key_passw";
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.PreferenceScxml);
+
+            var keyList = new List<string> { KeyIp, KeyUsern, KeyPassw };
+            Preference pref;
+            foreach (var key in keyList)
+            {
+                pref = FindPreference(key);
+                var valurpref = sharedPref.GetString(key, "");
+                if (valurpref!="")
+                {
+                    pref.Summary = valurpref;
+                }
+            }
 
             // Create your application here
         }
 
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
-            if (key.Equals(KeyAutoDelete))
+            if (key.Equals(KeyIp))
             {
                 Preference connectionPref = FindPreference(key);
-                // Set summary to be the user-description for the selected value
-                connectionPref.SetDefaultValue(sharedPreferences.GetBoolean(key, true));
-                
-            }
-            else if (key.Equals(KeySmsDeleteLimit))
-            {
-                Preference connectionPref = FindPreference(key);
-                // Set summary to be the user-description for the selected value
                 connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
+                connectionPref.Summary = sharedPreferences.GetString(key, "");
+            }
+            else if (key.Equals(KeyUsern))
+            {
+                Preference connectionPref = FindPreference(key);
+                connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
+                connectionPref.Summary = sharedPreferences.GetString(key, "");
+
+            }
+            else if (key.Equals(KeyPassw))
+            {
+                Preference connectionPref = FindPreference(key);
+                connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
+                connectionPref.Summary = sharedPreferences.GetString(key, "");
+
             }
         }
         protected override void OnResume()
@@ -61,5 +83,5 @@ namespace GestioneSarin2.Activity
         }
     }
 
-    
+
 }
