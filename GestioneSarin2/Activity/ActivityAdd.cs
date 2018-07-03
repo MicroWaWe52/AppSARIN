@@ -52,7 +52,7 @@ namespace GestioneSarin2
             {
                 listURI = new List<string>();
             }
-            query = Helper.table.Where(s => s[s.Count - 2] == GroupSel).ToList();
+            query = Helper.table.Where(s => s[21] == GroupSel).ToList();
             var subGroupList = new List<string>();
             foreach (var row in query)
             {
@@ -71,11 +71,11 @@ namespace GestioneSarin2
 
                 var psub = new Prodotto
                 {
-                    ImageUrl = query.First(list => list[3].Equals(subGroup))[15],
-                    Grouop = query.First(list => list[3].Equals(subGroup))[5],
-                    SubGroup = query.First(list => list[3].Equals(subGroup)).Last(),
+                    ImageUrl = query.First(list => list[3].Equals(subGroup))[16],
+                    Grouop = query.First(list => list[3].Equals(subGroup))[2],
+                    SubGroup = query.First(list => list[3].Equals(subGroup))[3],
 
-                    Name = textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup)).Last()),
+                    Name = textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup))[5]),
                     QuantityPrice = ""
                 };
                 pListSub.Add(psub);
@@ -91,7 +91,7 @@ namespace GestioneSarin2
             if (!subGrouop)
             {
                 var subSelected = ((Prodotto)listPRoduct.GetItemAtPosition(e.Position)).SubGroup;
-                var subQuery = query.Where(s => s[s.Count - 1].Contains(subSelected)).ToList();
+                var subQuery = query.Where(s => s[3].Contains(subSelected)).ToList();
                GetInSubAsync(subQuery);
                 subGrouop = !subGrouop;
             }
@@ -137,7 +137,7 @@ namespace GestioneSarin2
                 {
                     ImageUrl = sDirectoryItem[15],
                     Name = name,
-                    QuantityPrice = $"{sDirectoryItem[6]}pz/{sDirectoryItem[12]}€",
+                    QuantityPrice = $"{sDirectoryItem[7]}pz/{sDirectoryItem[12]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
                     UnitPrice = sDirectoryItem[12],
@@ -164,9 +164,9 @@ namespace GestioneSarin2
                 var name = ti.ToLower(sDirectoryItem[5]);
                 var ptemp = new Prodotto
                 {
-                    ImageUrl = sDirectoryItem[15],
+                    ImageUrl = sDirectoryItem[16],
                     Name = name,
-                    QuantityPrice = $"{sDirectoryItem[6]}pz/{sDirectoryItem[12]}€",
+                    QuantityPrice = $"{sDirectoryItem[7]}pz/{sDirectoryItem[12]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
                     UnitPrice = sDirectoryItem[12],
@@ -175,7 +175,7 @@ namespace GestioneSarin2
                 };
                 listtemp.Add(ptemp);
                 listPRoduct.Adapter = new ProdottoAdapter(listtemp);
-                await Task.Delay(TimeSpan.FromMilliseconds(500));
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
             }
             subqueryList = listtemp;
             listPRoduct.Enabled = true;

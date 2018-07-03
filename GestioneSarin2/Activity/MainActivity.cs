@@ -184,8 +184,9 @@ namespace GestioneSarin2
                                 streamWriter.WriteLine(prod);
                             }
                             //WAIT iva nel database
-                            tot = Math.Round(tot, 2);
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            var totNoIva2 = Helper.GetTot(listprod);
+                            var totIva = Helper.GetTotIva(listprod) + totNoIva2;
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
                         }
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
@@ -247,10 +248,9 @@ namespace GestioneSarin2
                     listView.Adapter = new ProdottoAdapter(templist);
 
                     alertall.Dismiss();
-                    var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                    var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
-                    tot = Math.Round(tot, 2);
-                    toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+22%={tot}";
+                    var totNoIva = Helper.GetTot(listprod);
+                    var totIva = Helper.GetTotIva(listprod) + totNoIva;
+                    toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+IVA={totIva}";
                 });
             builder.Show();
 
@@ -287,7 +287,7 @@ namespace GestioneSarin2
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
             if (!File.Exists(path + "/catalogo.csv"))
             {
-                Helper.GetData(this);
+                Helper.GetArticoli(this);
             }
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
             navigation.SetOnNavigationItemSelectedListener(this);
@@ -339,10 +339,9 @@ namespace GestioneSarin2
 
                 }
                 listView.Adapter = new ProdottoAdapter(templist);
-                var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
-                tot = Math.Round(tot, 2);
-                toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+22%={tot}";
+                var totNoIva = Helper.GetTot(listprod);
+                var totIva = Helper.GetTotIva(listprod) + totNoIva;
+                toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+IVA={totIva}";
                 
             }
             catch (Exception)
@@ -354,6 +353,12 @@ namespace GestioneSarin2
             FirebaseMessaging.Instance.SubscribeToTopic("all");
 
 
+        }
+
+        public override void OnBackPressed()
+        {
+            StartActivity(typeof(ActivityHome));
+            base.OnBackPressed();
         }
 
         private void ListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
@@ -508,7 +513,7 @@ namespace GestioneSarin2
             switch (id)
             {
                 case Resource.Id.Aggiorna_Il_Database:
-                    Helper.GetData(this,true);
+                    Helper.GetArticoli(this,true);
                     break;
                 case Resource.Id.Cliente:
                     SetCodCliFor();
@@ -544,9 +549,10 @@ namespace GestioneSarin2
                                 streamWriter.WriteLine(prod);
                             }
                             //WAIT iva nel database
-                            var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                            var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 20;
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            
+                            var totNoIva = Helper.GetTot(listprod);
+                            var totIva = Helper.GetTotIva(listprod) + totNoIva;
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
                             streamWriter.Write('#');
                         }
                         Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();

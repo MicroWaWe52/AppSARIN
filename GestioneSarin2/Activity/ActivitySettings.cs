@@ -17,13 +17,14 @@ using Java.Lang;
 
 namespace GestioneSarin2.Activity
 {
-    [Activity(Label = "ActivitySettings", MainLauncher = false)]
-    public class ActivitySettings : PreferenceActivity, ISharedPreferencesOnSharedPreferenceChangeListener
+    [Activity(Label = "ActivitySettings", MainLauncher = false,Theme = "@style/AppTheme")]
+    public class ActivitySettings : PreferenceActivity, ISharedPreferencesOnSharedPreferenceChangeListener, Preference.IOnPreferenceClickListener
     {
 
         public static readonly string KeyIp = "pref_key_ip";
         public static readonly string KeyUsern = "pref_key_usern";
         public static readonly string KeyPassw = "pref_key_passw";
+        public static readonly string KeyUpdate = "pref_key_update";
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -38,7 +39,7 @@ namespace GestioneSarin2.Activity
             {
                 pref = FindPreference(key);
                 var valurpref = sharedPref.GetString(key, "");
-                if (valurpref!="")
+                if (valurpref != "")
                 {
                     pref.Summary = valurpref;
                 }
@@ -74,12 +75,24 @@ namespace GestioneSarin2.Activity
         {
             base.OnResume();
             PreferenceScreen.SharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
+            FindPreference(KeyUpdate).PreferenceClick += ActivitySettings_PreferenceClick_Update            ;
+        }
+
+        private void ActivitySettings_PreferenceClick_Update(object sender, Preference.PreferenceClickEventArgs e)
+        {
+            Helper.GetClienti(this,true);
+            Helper.GetArticoli(this,true);
         }
 
         protected override void OnPause()
         {
             base.OnPause();
             PreferenceScreen.SharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        public bool OnPreferenceClick(Preference preference)
+        {
+            return false;
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,6 +13,7 @@ using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
 {
@@ -24,6 +26,10 @@ namespace GestioneSarin2.Activity
         private RadioButton descRadioButton;
         private RadioButton pivaRadioButton;
         private RadioButton codRadioButton;
+        private List<List<string>> clienti;
+        List<string> descliforlist = new List<string>();
+        List<string> partitaivalist = new List<string>();
+        List<string> codcliforlist = new List<string>();
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -34,30 +40,22 @@ namespace GestioneSarin2.Activity
             descRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchDesc);
             pivaRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchIva);
             codRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchCod);
-
+            custListView.ItemClick += CustListView_ItemClick;
             // Create your application here
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                .DirectoryDownloads).AbsolutePath;
-            var clienti = Helper.GetClienti(path);
-            var descliforlist = new List<string>();
-            var partitaivalist = new List<string>();
-            var codcliforlist = new List<string>();
+                .DirectoryDownloads).AbsolutePath+"/Sarin";
+            clienti = Helper.GetClienti(path);
+           
             foreach (var cliente in clienti)
             {
-                codcliforlist.Add(cliente[7]);
-                var parttemp = cliente[15];
-                if (parttemp.Length != 0)
-                {
-                    parttemp = parttemp.Substring(1);
-                }
+                codcliforlist.Add(cliente[0]);
+                var parttemp = cliente[8];
                 partitaivalist.Add(parttemp);
 
 
-                descliforlist.Add(cliente[12]);
+                descliforlist.Add(cliente[1]);
             }
-            descliforlist.Sort();
-            partitaivalist.Sort();
-            codcliforlist.Sort();
+          
             descliforlist.RemoveAt(0);
             custRadioGroup.CheckedChange += (s, e) =>
             {
@@ -82,17 +80,6 @@ namespace GestioneSarin2.Activity
             };
             custListView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,
                 descliforlist);
-            string codclifor;
-            switch (custRadioGroup.CheckedRadioButtonId)
-            {
-                case 1:
-                    codclifor = clienti.First(list => list[12] == custEditText.Text)[7]; break;
-                case 2:
-                    codclifor = clienti.First(list => list[15] == "0" + custEditText.Text)[7]; break;
-                case 3:
-                    codclifor = custEditText.Text; break;
-
-            }
 
             custEditText.TextChanged += (send, arg) =>
             {
@@ -108,7 +95,7 @@ namespace GestioneSarin2.Activity
                 {
                     var ada = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,
                         partitaivalist);
-                    ada.Filter.InvokeFilter(custEditText.Text);
+                    ada.Filter.InvokeFilter('0'+custEditText.Text);
 
                     custListView.Adapter = ada;
                 }
@@ -123,5 +110,36 @@ namespace GestioneSarin2.Activity
             };
         }
 
+        private void CustListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var codclifor = "";
+            List<string> items = new List<string>();
+            for (int i = 0; i < custListView.Adapter.Count; i++)
+            {
+                items.Add(custListView.Adapter.GetItem(i).ToString());
+            }
+            if (custRadioGroup.CheckedRadioButtonId == descRadioButton.Id)
+            {
+               
+                codclifor = clienti.First(cod => cod[1] == items[e.Position])[0];
+            }
+            else if (custRadioGroup.CheckedRadioButtonId == pivaRadioButton.Id)
+            {
+                codclifor = clienti.First(list => list[8] == items[e.Position])[0];
+            }
+            else if (custRadioGroup.CheckedRadioButtonId == codRadioButton.Id)
+            {
+                codclifor =items[e.Position];
+            }
+
+            using (StreamWriter stream = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
+            {
+                 stream.WriteLine(codclifor);
+            }
+            Intent inte =new Intent(this,typeof(MainActivity));
+            inte.PutExtra("first", false);
+            StartActivity(inte);
+
+        }
     }
 }

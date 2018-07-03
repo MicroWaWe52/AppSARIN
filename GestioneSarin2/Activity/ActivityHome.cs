@@ -52,7 +52,7 @@ namespace GestioneSarin2
             {
                 RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
             }
-            // Create your application here
+
         }
 
         private void SettButton_Click(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace GestioneSarin2
              var ip = sharedPref.GetString(ActivitySettings.KeyIp,"");
             if (ip!="")
             {
-                StartActivity(typeof(MainActivity));
+                StartActivity(typeof(ActivityCustomers));
 
             }
             else

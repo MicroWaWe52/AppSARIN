@@ -15,4 +15,8 @@
     android:key="pref_key_passw"
     android:summary="Password d'accesso al server"
     android:title="Password" />
+  <Preference 
+    android:key="pref_key_update"
+    android:summary="Aggiorna tutto"
+    android:title="Aggiorna"/>
 </PreferenceScreen>

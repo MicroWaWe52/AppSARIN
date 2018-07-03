@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using Android.Content;
 using Android.Preferences;
 using GestioneSarin2.Activity;
@@ -19,14 +20,14 @@ namespace GestioneSarin2
 
         public static List<string> GetGroup(Context context)
         {
-            var data = table ?? GetData(context);
+            var data = table ?? GetArticoli(context);
 
-            var descgruppolist=new List<string>();
+            var descgruppolist = new List<string>();
             foreach (var row in data)
             {
-                descgruppolist.Add(row[row.Count-2]);
+                descgruppolist.Add(row[21]);
             }
-            var output= descgruppolist
+            var output = descgruppolist
                 .GroupBy(word => word)
                 .OrderByDescending(group => group.Count())
                 .Select(group => group.Key)
@@ -38,19 +39,35 @@ namespace GestioneSarin2
 
         public static decimal GetTot(List<string> prod)
         {
-            decimal TOTALE=0;
+            decimal TOTALE = 0;
             foreach (var singprod in prod)
             {
-               var prodsplit= singprod.Split(';');
+                var prodsplit = singprod.Split(';');
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
                 TOTALE += Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(prodsplit[2]);
             }
 
-            TOTALE = Math.Round(TOTALE,2);
+            TOTALE = Math.Round(TOTALE, 2);
             return TOTALE;
         }
 
-        public static List<List<string>> GetData(Context context, bool force = false)
+        public static decimal GetTotIva(List<string> prod)
+        {
+            decimal Tot = 0;
+            foreach (var singprod in prod)
+            {
+                var prodsplit = singprod.Split(';');
+                prodsplit[2] = prodsplit[2].Replace(',', '.');
+                var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(prodsplit[2]);
+                var ivatem = Convert.ToDecimal(table.First(prodl => prodl[4] == prodsplit[0])[6]);
+                Tot += (ttemp / 100) * ivatem;
+            }
+
+            Tot = Math.Round(Tot, 2);
+            return Tot;
+        }
+
+        public static List<List<string>> GetArticoli(Context context, bool force = false)
         {
             /* //  FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://217.133.0.34/" + "_catandr.xls");
 
@@ -68,13 +85,22 @@ namespace GestioneSarin2
 
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
-            if (!File.Exists(path+"/catalogo.csv")||force)
+            if (!File.Exists(path + "/catalogo.csv") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
-                var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                using (var client = new WebClient())
+                using (WebClient request = new WebClient())
                 {
-                    client.DownloadFile(new Uri($"http://www.{ip}.com/DasGappArchives/_catandr.csv"), path + "/catalogo.csv");
+                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    request.Credentials = new NetworkCredential(usern, passw);
+
+                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                    byte[] fileData = request.DownloadData($"ftp://{ip}/_Articoli.csv");
+                    using (FileStream file = new FileStream(path + "/catalogo.csv", FileMode.Create))
+                    {
+                        file.Write(fileData, 0, fileData.Length);
+                        file.Close();
+                    }
                 }
             }
             var tableTemp = new List<List<string>>();
@@ -92,8 +118,8 @@ namespace GestioneSarin2
             table = tableTemp;
             return tableTemp;
         }
-       
-        public static List<List<string>> GetData(string path)
+
+        public static List<List<string>> GetArticoli(string path)
         {
 
             try
@@ -119,8 +145,9 @@ namespace GestioneSarin2
             }
         }
 
-        public static bool GetMIssPhoto(string path,Context context)
-        {   var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
+        public static bool GetMIssPhoto(string path, Context context)
+        {
+            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
             var pathdow = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                 .DirectoryDownloads).AbsolutePath;
             var pathsplit = path.Split('/');
@@ -129,13 +156,14 @@ namespace GestioneSarin2
                 var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                 var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
                 request.Credentials = new NetworkCredential(usern, passw);
-             
+
                 var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
                 byte[] fileData = request.DownloadData($"ftp:/{ip}/{pathsplit[pathsplit.Length - 1]}");
-                using (FileStream file = new FileStream(pathdow + $"/{pathsplit[pathsplit.Length-1]}", FileMode.Create))
+                using (StreamWriter file = new StreamWriter(pathdow + $"/{pathsplit[pathsplit.Length - 1]}"))
                 {
-                    file.Write(fileData, 0, fileData.Length);
+                    file.Write(fileData);
                     file.Close();
+
                 }
             }
             return true;
@@ -146,7 +174,7 @@ namespace GestioneSarin2
             try
             {
                 var tableTemp = new List<List<string>>();
-                using (var fs = new StreamReader(path+"/clienti.csv"))
+                using (var fs = new StreamReader(path + "/clienti.csv"))
                 {
                     while (!fs.EndOfStream)
                     {
@@ -163,22 +191,53 @@ namespace GestioneSarin2
                 throw new NotSupportedException(e.Message);
             }
         }
+        public static List<List<string>> GetClienti(Context context, bool force = false)
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/clienti.csv") || force)
+            {
+                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
+
+                using (WebClient request = new WebClient())
+                {
+                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    request.Credentials = new NetworkCredential(usern, passw);
+
+                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                    byte[] fileData = request.DownloadData($"ftp://{ip}/_clienti.csv");
+                    using (FileStream file = new FileStream(path + "/clienti.csv", FileMode.Create))
+                    {
+                        file.Write(fileData, 0, fileData.Length);
+                        file.Close();
+                    }
+                }
+            }
+
+
+            try
+            {
+                var tableTemp = new List<List<string>>();
+                using (var fs = new StreamReader(path + "/clienti.csv"))
+                {
+                    while (!fs.EndOfStream)
+                    {
+                        var row = fs.ReadLine();
+                        if (row == null) continue;
+                        var columns = row.Split(';');
+                        tableTemp.Add(columns.ToList());
+                    }
+                }
+                return tableTemp;
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(e.Message);
+            }
+
+        }
+
+
     }
 }
-
-    struct DirectoryItem
-    {
-        public Uri BaseUri;
-
-        public string AbsolutePath => $"{BaseUri}/{Name}";
-
-        public DateTime DateCreated;
-        public bool IsDirectory;
-        public string Name;
-        public List<DirectoryItem> Items;
-    }
-
-
-
-
-
