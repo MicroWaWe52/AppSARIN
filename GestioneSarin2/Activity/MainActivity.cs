@@ -186,7 +186,7 @@ namespace GestioneSarin2
                             //WAIT iva nel database
                             var totNoIva2 = Helper.GetTot(listprod);
                             var totIva = Helper.GetTotIva(listprod) + totNoIva2;
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest}");
                         }
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
@@ -278,6 +278,7 @@ namespace GestioneSarin2
         }
 
         private Toolbar toolbar;
+        private string codDest;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -311,7 +312,9 @@ namespace GestioneSarin2
             {
                 using (StreamReader stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
                 {
-                    codclifor = stream.ReadLine();
+                    var line = stream.ReadLine()?.Split('/');
+                    codclifor = line?[0];
+                    codDest = line?[1];
                 }
             }
             try
@@ -552,7 +555,7 @@ namespace GestioneSarin2
                             
                             var totNoIva = Helper.GetTot(listprod);
                             var totIva = Helper.GetTotIva(listprod) + totNoIva;
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()}");
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest}");
                             streamWriter.Write('#');
                         }
                         Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();

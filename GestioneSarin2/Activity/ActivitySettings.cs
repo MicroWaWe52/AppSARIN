@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -17,7 +17,7 @@ using Java.Lang;
 
 namespace GestioneSarin2.Activity
 {
-    [Activity(Label = "ActivitySettings", MainLauncher = false,Theme = "@style/AppTheme")]
+    [Activity(Label = "ActivitySettings", MainLauncher = false, Theme = "@style/AppTheme")]
     public class ActivitySettings : PreferenceActivity, ISharedPreferencesOnSharedPreferenceChangeListener, Preference.IOnPreferenceClickListener
     {
 
@@ -75,13 +75,26 @@ namespace GestioneSarin2.Activity
         {
             base.OnResume();
             PreferenceScreen.SharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-            FindPreference(KeyUpdate).PreferenceClick += ActivitySettings_PreferenceClick_Update            ;
+            FindPreference(KeyUpdate).PreferenceClick += ActivitySettings_PreferenceClick_Update;
         }
 
         private void ActivitySettings_PreferenceClick_Update(object sender, Preference.PreferenceClickEventArgs e)
         {
-            Helper.GetClienti(this,true);
-            Helper.GetArticoli(this,true);
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            Task.Factory.StartNew(() =>
+           {
+               if (!Directory.Exists(path))
+               {
+                   Directory.CreateDirectory(path);
+               }
+               Helper.GetClienti(this, true);
+               Helper.GetArticoli(this, true);
+               Helper.GetDest(this, true);
+               Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+
+           });
+            Toast.MakeText(this, "Aggiornamento in corso...", ToastLength.Short).Show();
         }
 
         protected override void OnPause()

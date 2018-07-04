@@ -28,11 +28,11 @@ namespace GestioneSarin2
             SetContentView(Resource.Layout.layoutHistory);
             // Create your application here
             listViewHist = FindViewById<ListView>(Resource.Id.listViewHist);
-            var pathcli = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "";
-            var clienti = Helper.GetClienti(pathcli);
+          
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var clienti = Helper.GetClienti(path);
+       
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

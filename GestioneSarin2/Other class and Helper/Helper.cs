@@ -67,6 +67,44 @@ namespace GestioneSarin2
             return Tot;
         }
 
+        public static List<List<string>> GetDest(Context contex, bool force = false)
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/destdiv.csv") || force)
+            {
+                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(contex);
+                using (WebClient request = new WebClient())
+                {
+                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    request.Credentials = new NetworkCredential(usern, passw);
+
+                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                    byte[] fileData = request.DownloadData($"ftp://{ip}/_destdiv.csv");
+                    using (FileStream file = new FileStream(path + "/destdiv.csv", FileMode.Create))
+                    {
+                        file.Write(fileData, 0, fileData.Length);
+                        file.Close();
+                    }
+                }
+               
+            }
+            var tableTemp = new List<List<string>>();
+            using (var fs = new StreamReader(path + "/destdiv.csv"))
+            {
+                while (!fs.EndOfStream)
+                {
+                    var row = fs.ReadLine();
+                    if (row == null) continue;
+                    var columns = row.Split(';');
+                    tableTemp.Add(columns.ToList());
+                }
+            }
+
+            return tableTemp;
+        }
+
         public static List<List<string>> GetArticoli(Context context, bool force = false)
         {
             /* //  FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://217.133.0.34/" + "_catandr.xls");

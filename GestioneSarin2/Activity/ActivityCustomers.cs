@@ -13,6 +13,7 @@ using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
@@ -42,9 +43,14 @@ namespace GestioneSarin2.Activity
             codRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchCod);
             custListView.ItemClick += CustListView_ItemClick;
             // Create your application here
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                .DirectoryDownloads).AbsolutePath+"/Sarin";
-            clienti = Helper.GetClienti(path);
+            try
+            {
+                clienti = Helper.GetClienti(this);
+            }
+            catch (Exception e)
+            {
+                clienti = Helper.GetClienti(this,true);
+            }
            
             foreach (var cliente in clienti)
             {
@@ -110,9 +116,12 @@ namespace GestioneSarin2.Activity
             };
         }
 
+        private string codclifor;
+        private List<List<string>> query;
+        Dictionary<string,List<string>> dictDest = new Dictionary<string, List<string>>();
         private void CustListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            var codclifor = "";
+            query = Helper.GetDest(this);
             List<string> items = new List<string>();
             for (int i = 0; i < custListView.Adapter.Count; i++)
             {
@@ -132,14 +141,48 @@ namespace GestioneSarin2.Activity
                 codclifor =items[e.Position];
             }
 
+            var builder = new AlertDialog.Builder(this);
+            
+            var output = query
+                .GroupBy(word => word[0])
+                .Select(group => group.Key)
+                .ToList();
+            foreach (var group in output)
+            {
+                var l = query.Where(p => p[0] == group).ToList();
+                var addList=new List<string>();
+                foreach (var add in l)
+                {
+                    addList.Add(add[9] == "" ? add[1] : add[9]);
+                }
+                dictDest.Add(group, addList);
+            }
+
+            var listv = new ListView(this)
+            {
+                Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,dictDest[codclifor])
+            };
+            builder.SetTitle("Seleziona destinazione");
+            builder.SetCancelable(true);
+            listv.ItemClick += Listv_ItemClick;
+            builder.SetView(listv);
+            builder.Show();
+
+
+
+        }
+
+        private void Listv_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var list = dictDest[codclifor];
+            var codDest = query.First(p => p[9] == list[e.Position])[2];
             using (StreamWriter stream = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
             {
-                 stream.WriteLine(codclifor);
+                stream.WriteLine(codclifor + '/' + codDest);
             }
-            Intent inte =new Intent(this,typeof(MainActivity));
+            Intent inte = new Intent(this, typeof(MainActivity));
             inte.PutExtra("first", false);
             StartActivity(inte);
-
         }
     }
 }

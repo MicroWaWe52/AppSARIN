@@ -2678,8 +2678,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d009a
 			public const int coordinator = 2131558554;
 			
-			// aapt resource value: 0x7f0d00ab
-			public const int custSearch = 2131558571;
+			// aapt resource value: 0x7f0d00a7
+			public const int custSearch = 2131558567;
 			
 			// aapt resource value: 0x7f0d0074
 			public const int custom = 2131558516;
@@ -2729,8 +2729,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d0048
 			public const int enterAlwaysCollapsed = 2131558472;
 			
-			// aapt resource value: 0x7f0d00aa
-			public const int etPasswordLayout = 2131558570;
+			// aapt resource value: 0x7f0d00a6
+			public const int etPasswordLayout = 2131558566;
 			
 			// aapt resource value: 0x7f0d0049
 			public const int exitUntilCollapsed = 2131558473;
@@ -2924,17 +2924,17 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d007c
 			public const int radio = 2131558524;
 			
-			// aapt resource value: 0x7f0d00a9
-			public const int radioButtonSearchCod = 2131558569;
+			// aapt resource value: 0x7f0d00ab
+			public const int radioButtonSearchCod = 2131558571;
 			
-			// aapt resource value: 0x7f0d00a7
-			public const int radioButtonSearchDesc = 2131558567;
+			// aapt resource value: 0x7f0d00a9
+			public const int radioButtonSearchDesc = 2131558569;
+			
+			// aapt resource value: 0x7f0d00aa
+			public const int radioButtonSearchIva = 2131558570;
 			
 			// aapt resource value: 0x7f0d00a8
-			public const int radioButtonSearchIva = 2131558568;
-			
-			// aapt resource value: 0x7f0d00a6
-			public const int radioGroupSearchCust = 2131558566;
+			public const int radioGroupSearchCust = 2131558568;
 			
 			// aapt resource value: 0x7f0d0051
 			public const int right = 2131558481;
