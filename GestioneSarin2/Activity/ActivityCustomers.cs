@@ -51,7 +51,7 @@ namespace GestioneSarin2.Activity
             {
                 clienti = Helper.GetClienti(this,true);
             }
-           
+              
             foreach (var cliente in clienti)
             {
                 codcliforlist.Add(cliente[0]);
@@ -63,6 +63,16 @@ namespace GestioneSarin2.Activity
             }
           
             descliforlist.RemoveAt(0);
+            descliforlist = descliforlist
+                .GroupBy(word => word)
+                .Select(group => group.Key).ToList();
+            partitaivalist = partitaivalist
+                .GroupBy(word => word)
+                .Select(group => group.Key).ToList();
+            codcliforlist = codcliforlist
+                .GroupBy(word => word)
+                .Select(group => group.Key).ToList();
+
             custRadioGroup.CheckedChange += (s, e) =>
             {
                 if (custRadioGroup.CheckedRadioButtonId == descRadioButton.Id)
@@ -118,11 +128,12 @@ namespace GestioneSarin2.Activity
 
         private string codclifor;
         private List<List<string>> query;
-        Dictionary<string,List<string>> dictDest = new Dictionary<string, List<string>>();
+        private Dictionary<string, List<string>> dictDest;
         private void CustListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             query = Helper.GetDest(this);
             List<string> items = new List<string>();
+            dictDest = new Dictionary<string, List<string>>();
             for (int i = 0; i < custListView.Adapter.Count; i++)
             {
                 items.Add(custListView.Adapter.GetItem(i).ToString());
