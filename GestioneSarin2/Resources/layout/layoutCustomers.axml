@@ -29,15 +29,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:background="@drawable/checkbox_background"
             android:text="Descrizione"
             android:id="@+id/radioButtonSearchDesc" />
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/checkbox_background"
             android:text="P. IVA"
             android:id="@+id/radioButtonSearchIva" />
         <RadioButton
             android:layout_width="wrap_content"
+            android:background="@drawable/checkbox_background"
             android:layout_height="wrap_content"
             android:text="Codice"
             android:id="@+id/radioButtonSearchCod" />

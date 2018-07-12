@@ -66,7 +66,7 @@ namespace GestioneSarin2
             
             if (!Directory.Exists(path))
             {
-                Toast.MakeText(this, "Aggiornamento in ocrso...\r\n un secondo", ToastLength.Short).Show();
+                Toast.MakeText(this, "Aggiornamento in corso...\r\n un secondo", ToastLength.Short).Show();
                Directory.CreateDirectory(path);
                 Task.Factory.StartNew(() =>
                 {

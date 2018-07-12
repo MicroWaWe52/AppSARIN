@@ -29,6 +29,7 @@ namespace GestioneSarin2.Activity
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+
             var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
 
             base.OnCreate(savedInstanceState);
@@ -45,6 +46,7 @@ namespace GestioneSarin2.Activity
                     pref.Summary = valurpref;
                 }
             }
+
 
             // Create your application here
         }

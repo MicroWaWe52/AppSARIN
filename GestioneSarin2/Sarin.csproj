@@ -66,6 +66,7 @@
     <Compile Include="Activity\ActivityPreset.cs" />
     <Compile Include="Activity\ActivitySettings.cs" />
     <Compile Include="Adapter and Single class\ImageAdapter.cs" />
+    <Compile Include="Adapter and Single class\MyAdapter.cs" />
     <Compile Include="Other class and Helper\Helper.cs" />
     <Compile Include="Activity\MainActivity.cs" />
     <Compile Include="Other class and Helper\MyFirebaseIIDService.cs" />
@@ -129,6 +130,9 @@
       <Version>60.1142.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Base">
+      <Version>60.1142.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.GooglePlayServices.Vision">
       <Version>60.1142.1</Version>
     </PackageReference>
   </ItemGroup>
@@ -214,6 +218,17 @@
     <AndroidResource Include="Resources\layout\layoutGallery.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\RowModelCata.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layoutGalleryG.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\checkbox_background.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

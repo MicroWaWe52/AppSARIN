@@ -33,6 +33,7 @@ namespace GestioneSarin2
             {
                 descgruppolist.Add(row[21]);
             }
+
             var output = descgruppolist
                 .GroupBy(word => word)
                 .OrderByDescending(group => group.Count())
@@ -94,8 +95,8 @@ namespace GestioneSarin2
                         file.Close();
                     }
                 }
-
             }
+
             var tableTemp = new List<List<string>>();
             using (var fs = new StreamReader(path + "/destdiv.csv"))
             {
@@ -147,6 +148,7 @@ namespace GestioneSarin2
                     }
                 }
             }
+
             var tableTemp = new List<List<string>>();
             using (var fs = new StreamReader(path + "/catalogo.csv"))
             {
@@ -165,7 +167,6 @@ namespace GestioneSarin2
 
         public static List<List<string>> GetArticoli(string path)
         {
-
             try
             {
                 var tableTemp = new List<List<string>>();
@@ -193,7 +194,7 @@ namespace GestioneSarin2
         {
             var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
             var pathdow = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                .DirectoryDownloads).AbsolutePath + "/Sarin";
+                              .DirectoryDownloads).AbsolutePath + "/Sarin";
             var pathsplit = path.Split('/');
             using (WebClient request = new WebClient())
             {
@@ -202,18 +203,18 @@ namespace GestioneSarin2
                 request.Credentials = new NetworkCredential(usern, passw);
 
                 var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                var imPath= $"ftp://{ip}/foto/{pathsplit[pathsplit.Length - 1]}";
+                var imPath = $"ftp://{ip}/foto/{pathsplit[pathsplit.Length - 1]}";
                 byte[] fileData = request.DownloadData(imPath);
-              
-                using (FileStream file = new FileStream(pathdow + $"/{pathsplit[pathsplit.Length - 1]}",FileMode.Create))
+
+                using (FileStream file =
+                    new FileStream(pathdow + $"/{pathsplit[pathsplit.Length - 1]}", FileMode.Create))
                 {
                     file.Write(fileData);
                     file.Flush(true);
                     file.Close();
-
-
                 }
             }
+
             return true;
         }
 
@@ -232,6 +233,7 @@ namespace GestioneSarin2
                         tableTemp.Add(columns.ToList());
                     }
                 }
+
                 return tableTemp;
             }
             catch (Exception e)
@@ -239,6 +241,7 @@ namespace GestioneSarin2
                 throw new NotSupportedException(e.Message);
             }
         }
+
         public static List<List<string>> GetClienti(Context context, bool force = false)
         {
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
@@ -277,13 +280,13 @@ namespace GestioneSarin2
                         tableTemp.Add(columns.ToList());
                     }
                 }
+
                 return tableTemp;
             }
             catch (Exception e)
             {
                 throw new NotSupportedException(e.Message);
             }
-
         }
 
         public static async Task<bool> IsOnline()
@@ -299,10 +302,20 @@ namespace GestioneSarin2
                 sock.Close();
 
                 return true;
-
-
             }
-            catch (IOException e) { return false; }
+            catch (IOException e)
+            {
+                return false;
+            }
+        }
+
+        public static List<string> GetImgList()
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin/imacat";
+            var listFiles = Directory.GetFiles(path, "*.jpg").ToList();
+            return listFiles;
+
         }
     }
 }
