@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Android;
 using Android.App;
 using Android.Content;
@@ -52,7 +54,33 @@ namespace GestioneSarin2
             {
                 RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
             }
+            
+            
 
+        }
+
+        protected override void OnResume()
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            
+            if (!Directory.Exists(path))
+            {
+                Toast.MakeText(this, "Aggiornamento in ocrso...\r\n un secondo", ToastLength.Short).Show();
+               Directory.CreateDirectory(path);
+                Task.Factory.StartNew(() =>
+                {
+                    Helper.GetClienti(this, true);
+                    Helper.GetArticoli(this, true);
+                    Helper.GetDest(this, true);
+                    RunOnUiThread( () =>
+                    {
+                        Toast.MakeText(this,"Aggiornamento completato",ToastLength.Short).Show();
+                    });
+                });
+
+            }
+            base.OnResume();
         }
 
         private void SettButton_Click(object sender, EventArgs e)
@@ -67,7 +95,7 @@ namespace GestioneSarin2
 
         private void HistButton_Click(object sender, EventArgs e)
         {
-            StartActivity(typeof(ActivityHist));
+            StartActivity(typeof(ActivityGallery));
         }
 
         private void OrdButton_Click(object sender, EventArgs e)

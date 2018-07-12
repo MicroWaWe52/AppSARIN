@@ -25,6 +25,7 @@ namespace GestioneSarin2.Activity
         public static readonly string KeyUsern = "pref_key_usern";
         public static readonly string KeyPassw = "pref_key_passw";
         public static readonly string KeyUpdate = "pref_key_update";
+        public static readonly string KeyDelete = "pref_key_delete";
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -76,6 +77,14 @@ namespace GestioneSarin2.Activity
             base.OnResume();
             PreferenceScreen.SharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             FindPreference(KeyUpdate).PreferenceClick += ActivitySettings_PreferenceClick_Update;
+            FindPreference(KeyDelete).PreferenceClick += ActivitySettings_PreferenceClick_Delete;
+        }
+
+        private void ActivitySettings_PreferenceClick_Delete(object sender, Preference.PreferenceClickEventArgs e)
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            Directory.Delete(path, true);
         }
 
         private void ActivitySettings_PreferenceClick_Update(object sender, Preference.PreferenceClickEventArgs e)
@@ -91,7 +100,10 @@ namespace GestioneSarin2.Activity
                Helper.GetClienti(this, true);
                Helper.GetArticoli(this, true);
                Helper.GetDest(this, true);
-               Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+               RunOnUiThread(() =>
+               {
+                   Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+               });
 
            });
             Toast.MakeText(this, "Aggiornamento in corso...", ToastLength.Short).Show();

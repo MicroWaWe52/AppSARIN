@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Android.Content.Res;
 using Environment = Android.OS.Environment;
 
@@ -45,7 +46,7 @@ namespace GestioneSarin2
                         var photoname = prodottolList[position].ImageUrl.Split('\\');
 
                         var path = Environment.GetExternalStoragePublicDirectory(Environment
-                            .DirectoryDownloads).AbsolutePath;
+                                       .DirectoryDownloads).AbsolutePath + "/Sarin";
                         path += "/" + photoname.Last();
                         if (!File.Exists(path))
                         {
@@ -70,7 +71,7 @@ namespace GestioneSarin2
                     var photoname = prodottolList[position].ImageUrl.Split('\\');
 
                     var path = Environment.GetExternalStoragePublicDirectory(Environment
-                        .DirectoryDownloads).AbsolutePath;
+                                   .DirectoryDownloads).AbsolutePath + "/Sarin";
                     path += "/" + photoname.Last();
                     if (!File.Exists(path))
                     {

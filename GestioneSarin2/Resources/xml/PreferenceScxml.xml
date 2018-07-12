@@ -19,4 +19,8 @@
     android:key="pref_key_update"
     android:summary="Aggiorna tutto"
     android:title="Aggiorna"/>
+  <Preference 
+    android:key="pref_key_delete"
+    android:summary="Cancella tutti gli archivi dell'app e ordini"
+    android:title="Cancella"/>
 </PreferenceScreen>

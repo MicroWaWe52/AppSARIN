@@ -43,7 +43,7 @@ namespace GestioneSarin2
             if (csvlist != null)
             {
                 var tempcsvList = csvlist.ToList();
-                tempcsvList.Remove("presets.csv");
+                tempcsvList = tempcsvList.Where(csv => csv.Contains("Ordine")).ToList();
                 Array.Copy(tempcsvList.ToArray(), csvlist, tempcsvList.Count);
                 Array.Resize(ref csvlist, tempcsvList.Count);
                 foreach (var ord in csvlist)
@@ -69,7 +69,7 @@ namespace GestioneSarin2
                     string nameTemp;
                     try
                     {
-                        nameTemp= clienti.First(list => list[7] == testa[7])[12];
+                        nameTemp= clienti.First(list => list[0] == testa[7])[1];
 
                     }
                     catch (Exception e)
@@ -79,7 +79,7 @@ namespace GestioneSarin2
 
                     listoOrdines.Add(new Ordine
                     {
-                        Date = testa.Last(),
+                        Date = testa[8],
                         Name = nameTemp,
                         Tot = testa[5],
                         CodCli= testa[7]

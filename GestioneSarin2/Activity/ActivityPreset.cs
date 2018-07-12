@@ -37,9 +37,8 @@ namespace GestioneSarin2.Activity
                 {
                     file = sw.ReadToEnd();
                 }
-                var pathcli = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                                  .DirectoryDownloads).AbsolutePath + "";
-                var clienti = Helper.GetClienti(pathcli);
+              
+                var clienti = Helper.GetClienti(path);
                 ordini = file.Split('#').ToList();
                 ordini.RemoveAt(ordini.Count - 1);
                 var listoOrdines = new List<Ordine>();
@@ -54,7 +53,7 @@ namespace GestioneSarin2.Activity
                     string nameTemp;
                     try
                     {
-                        nameTemp = clienti.First(list => list[7] == testa[5])[12];
+                        nameTemp = clienti.First(list => list[0] == testa[7])[1];
                     }
                     catch (Exception e)
                     {
@@ -62,7 +61,7 @@ namespace GestioneSarin2.Activity
                     }
                     listoOrdines.Add(new Ordine
                     {
-                        Date = testa.Last(),
+                        Date = testa[8],
                         Name = nameTemp,
                         Tot = testa[3],
                         CodCli = testa[5]
@@ -114,7 +113,7 @@ namespace GestioneSarin2.Activity
                 tempcsvList.Remove("presets.csv");
                 Array.Copy(tempcsvList.ToArray(),csvlist,tempcsvList.Count);
                 Array.Resize(ref csvlist,tempcsvList.Count);
-                foreach (var ord in csvlist)
+                foreach (var ord in csvlist.Where(f=>f.Contains("Ordine")))
                 {
                     var narr = new string(ord.Where(char.IsDigit).ToArray());
                     var n = narr.Aggregate("", (current, digit) => current + digit);

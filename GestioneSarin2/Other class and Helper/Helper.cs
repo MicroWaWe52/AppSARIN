@@ -4,12 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Android.Content;
 using Android.Preferences;
 using GestioneSarin2.Activity;
+using Java.Lang;
+using Java.Net;
 using Environment = System.Environment;
+using Exception = System.Exception;
 using File = System.IO.File;
-using Uri = System.Uri;
+using Math = System.Math;
+using Process = Android.OS.Process;
+using SocketAddress = System.Net.SocketAddress;
 
 
 namespace GestioneSarin2
@@ -88,7 +94,7 @@ namespace GestioneSarin2
                         file.Close();
                     }
                 }
-               
+
             }
             var tableTemp = new List<List<string>>();
             using (var fs = new StreamReader(path + "/destdiv.csv"))
@@ -187,7 +193,7 @@ namespace GestioneSarin2
         {
             var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
             var pathdow = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                .DirectoryDownloads).AbsolutePath;
+                .DirectoryDownloads).AbsolutePath + "/Sarin";
             var pathsplit = path.Split('/');
             using (WebClient request = new WebClient())
             {
@@ -196,11 +202,15 @@ namespace GestioneSarin2
                 request.Credentials = new NetworkCredential(usern, passw);
 
                 var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                byte[] fileData = request.DownloadData($"ftp:/{ip}/{pathsplit[pathsplit.Length - 1]}");
-                using (StreamWriter file = new StreamWriter(pathdow + $"/{pathsplit[pathsplit.Length - 1]}"))
+                var imPath= $"ftp://{ip}/foto/{pathsplit[pathsplit.Length - 1]}";
+                byte[] fileData = request.DownloadData(imPath);
+              
+                using (FileStream file = new FileStream(pathdow + $"/{pathsplit[pathsplit.Length - 1]}",FileMode.Create))
                 {
                     file.Write(fileData);
+                    file.Flush(true);
                     file.Close();
+
 
                 }
             }
@@ -276,6 +286,23 @@ namespace GestioneSarin2
 
         }
 
+        public static async Task<bool> IsOnline()
+        {
+            try
+            {
+                await Task.Delay(1);
+                int timeoutMs = 1500;
+                Socket sock = new Socket();
+                var sockaddr = new InetSocketAddress("8.8.8.8", 53);
 
+                sock.Connect(sockaddr, timeoutMs);
+                sock.Close();
+
+                return true;
+
+
+            }
+            catch (IOException e) { return false; }
+        }
     }
 }
