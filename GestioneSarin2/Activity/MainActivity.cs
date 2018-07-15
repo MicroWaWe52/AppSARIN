@@ -43,7 +43,13 @@ namespace GestioneSarin2
                     listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
                     return true;
                 case Resource.Id.navigation_dashboard:
-                    var main = new LinearLayout(this)
+                    Intent i = new Intent(this, typeof(ActivityGallery));
+                    i.PutExtra("prod", listprod.ToArray());
+                    i.PutExtra("uri", listURI.ToArray());
+                    StartActivity(i);
+                    break;
+
+             /*       var main = new LinearLayout(this)
                     {
                         Orientation = Orientation.Vertical
                     };
@@ -114,7 +120,7 @@ namespace GestioneSarin2
                     builder.SetNegativeButton("Annulla", delegate { });
                     alertall = builder.Create();
                     alertall.Show();
-                    return true;
+                    return true;*/
                 case Resource.Id.navigation_notifications:
                     if (codclifor == null)
                     {

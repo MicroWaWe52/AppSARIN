@@ -50,86 +50,13 @@ namespace GestioneSarin2.Adapter_and_Single_class
 
             i.SetScaleType(ImageView.ScaleType.FitXy);
 
-            i.Click += I_Click;
+       //     i.Click += I_Click;
             return i;
         }
 
         private void I_Click(object sender, EventArgs e)
         {
-            var ima = (ImageView)sender;
-            var id = ima.Id.ToString();
-            var digitsToAdd = 3 - id.Length;
-            var fileName = "";
-            switch (digitsToAdd)
-            {
-                case 0:
-                    fileName = $"ima-{ima.Id}";
-                    break;
-                case 1:
-                    var idTemp1 = id;
-                    idTemp1 += "0";
-                    char[] array1 = idTemp1.ToCharArray();
-                    Array.Reverse(array1);
-                    var x1 = new string(array1);
-                    fileName = $"ima-{x1}";
-                    break;
-                case 2:
-                    var idTemp2 = id;
-                    idTemp2 += "00";
-                    char[] array = idTemp2.ToCharArray();
-                    Array.Reverse(array);
-                    var x = new string(array);
-                    fileName = $"ima-{x}";
-                    break;
-            }
-            var textRecognizer = new TextRecognizer.Builder(context).Build();
-            if (!textRecognizer.IsOperational)
-            {
-                Log.Error("recogn", "dependencies not avaiable");
-            }
-            else
-            {
-                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                               .DirectoryDownloads).AbsolutePath + "/Sarin/imacat/";
-                using (Stream stream = new FileStream(path + fileName + ".jpg", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-                {
-                    var f = new Frame.Builder().SetBitmap(BitmapFactory.DecodeStream(stream)).Build();
-                    var array = textRecognizer.Detect(f);
-                    var sbuilder = new StringBuilder();
-                    for (int i = 0; i < array.Size(); i++)
-                    {
-                        TextBlock item = (TextBlock)array.ValueAt(i);
-                        sbuilder.Append(item.Value + '/');
-                    }
-
-                    var stringReco = sbuilder.ToString();
-                    var recoSplit = stringReco.Split('/');
-                    var recoFinalSplit = new List<string>();
-                    foreach (var str in recoSplit)
-                    {
-                        var splitTemp = str.Split('\n');
-                        recoFinalSplit.AddRange(splitTemp);
-                    }
-
-                    var query = new List<string>();
-                    foreach (var VARIABLE in Helper.GetArticoli(context))
-                    {
-                        query.Add(VARIABLE[4]);
-                    }
-
-                    foreach (var maybeCod in recoFinalSplit)
-                    {
-                        int inde = query.IndexOf(maybeCod);
-
-                        if (inde!=-1)
-                        {
-                            
-                        }
-                    }
-                }
-
-            }
-
+          
 
         }
     }

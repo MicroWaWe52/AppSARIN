@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -9,7 +8,6 @@
       <item name="android:textColor">@color/TextColor</item>
       <item name="android:textColorPrimary">@color/TextColor</item>
       <item name="android:windowBackground">@color/background</item>
-
     </style>
   <style name="AppThemeNo" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Customize your theme here. -->
@@ -19,13 +17,8 @@
     <item name="android:textColor">@color/TextColor</item>
     <item name="android:textColorPrimary">@color/TextColor</item>
     <item name="android:windowBackground">@color/background</item>
-
   </style>
-
   <style name="ToolbarColoredBackArrow" parent="AppTheme">
     <item name="android:textColorSecondary">@color/whiteHome</item>
   </style>
-
- 
-
 </resources>

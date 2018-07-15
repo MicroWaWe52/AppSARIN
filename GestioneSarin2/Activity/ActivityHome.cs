@@ -95,7 +95,7 @@ namespace GestioneSarin2
 
         private void HistButton_Click(object sender, EventArgs e)
         {
-            StartActivity(typeof(ActivityGallery));
+            StartActivity(typeof(ActivityHist));
         }
 
         private void OrdButton_Click(object sender, EventArgs e)
