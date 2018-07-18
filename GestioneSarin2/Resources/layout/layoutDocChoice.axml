@@ -21,14 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/BG1"
-        android:id="@+id/imageViewOrd"
+        android:id="@+id/imageViewVend"
         android:layout_above="@id/CenterIMA"
         android:layout_toLeftOf="@id/CenterIMA" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/BG2"
-        android:id="@+id/imageViewHist"
+        android:id="@+id/imageViewRapp"
         android:layout_above="@id/CenterIMA"
         android:layout_toRightOf="@id/CenterIMA" />
     <ImageView

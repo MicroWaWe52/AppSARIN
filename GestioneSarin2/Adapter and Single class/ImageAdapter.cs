@@ -48,17 +48,12 @@ namespace GestioneSarin2.Adapter_and_Single_class
                 i.SetImageBitmap(BitmapFactory.DecodeStream(stream));
             }
 
-            i.SetScaleType(ImageView.ScaleType.FitXy);
+            i.SetScaleType(ImageView.ScaleType.CenterInside);
 
-       //     i.Click += I_Click;
             return i;
         }
 
-        private void I_Click(object sender, EventArgs e)
-        {
-          
-
-        }
+       
     }
 }
 

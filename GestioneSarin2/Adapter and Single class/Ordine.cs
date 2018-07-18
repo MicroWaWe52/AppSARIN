@@ -18,5 +18,6 @@ namespace GestioneSarin2
         public string CodCli { get; set; }
         public string Date { get; set; }
         public string Tot { get; set; }
+        public string Type { get; set; }
     }
 }

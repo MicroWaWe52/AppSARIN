@@ -25,9 +25,20 @@
     android:layout_height="wrap_content"
     android:paddingLeft="5dp" />
   <TextView
-    android:id="@+id/CodCliTextViewHist"
+    android:id="@+id/TypeTextViewHist"
     android:layout_below="@id/nameTextViewHist"
     android:layout_toRightOf="@id/DataTextViewHist"
+    android:text="Type"
+    android:textColor="@color/grayDate"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="5dp"
+  />
+  <TextView
+    android:id="@+id/CodCliTextViewHist"
+    android:layout_below="@id/nameTextViewHist"
+    android:layout_toRightOf="@id/TypeTextViewHist"
     android:text="CodCli"
     android:textColor="@color/grayDate"
     android:textAppearance="?android:attr/textAppearanceSmall"

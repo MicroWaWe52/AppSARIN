@@ -43,13 +43,7 @@ namespace GestioneSarin2
                     listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
                     return true;
                 case Resource.Id.navigation_dashboard:
-                    Intent i = new Intent(this, typeof(ActivityGallery));
-                    i.PutExtra("prod", listprod.ToArray());
-                    i.PutExtra("uri", listURI.ToArray());
-                    StartActivity(i);
-                    break;
-
-             /*       var main = new LinearLayout(this)
+                    var main = new LinearLayout(this)
                     {
                         Orientation = Orientation.Vertical
                     };
@@ -58,16 +52,21 @@ namespace GestioneSarin2
                     {
                         Text = "Tutti"
                     };
-                    //todo setting code var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                     //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
 
                     var radiobuttonCat = new RadioButton(this)
                     {
                         Text = "Categorie"
                     };
+                    var radiobuttonCatal = new RadioButton(this)
+                    {
+                        Text = "Catalogo"
+                    };
                     radiogroup.Orientation = Orientation.Horizontal;
                     radiogroup.AddView(radiobuttonAll);
                     radiogroup.AddView(radiobuttonCat);
+                    radiogroup.AddView(radiobuttonCatal);
+
                     var lw = new ListView(this);
                     var prodListAll = new List<string>();
                     var textSearch = new EditText(this);
@@ -100,10 +99,19 @@ namespace GestioneSarin2
                             textSearch.Enabled = true;
 
                         }
+                        else if (id == radiobuttonCatal.Id)
+                        {
+                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new List<string> { "Apri catalogo" });
+                            lw.ItemClick -= Lw_ItemClickCat;
+                            lw.ItemClick -= Lw_ItemClickAll;
+                            lw.ItemClick += Lw_ItemClick;
+                            textSearch.Enabled = false;
+                        }
+
                     }
                     lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this));
 
-                    textSearch.TextChanged += (sender, args) =>
+                    textSearch.TextChanged += (object sender, TextChangedEventArgs args) =>
                     {
                         var newList = prodListAll.Where(p => p.Contains(textSearch.Text.ToUpper())).ToList();
                         lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, newList);
@@ -120,7 +128,7 @@ namespace GestioneSarin2
                     builder.SetNegativeButton("Annulla", delegate { });
                     alertall = builder.Create();
                     alertall.Show();
-                    return true;*/
+                    break;
                 case Resource.Id.navigation_notifications:
                     if (codclifor == null)
                     {
@@ -192,7 +200,7 @@ namespace GestioneSarin2
                             //WAIT iva nel database
                             var totNoIva2 = Helper.GetTot(listprod);
                             var totIva = Helper.GetTotIva(listprod) + totNoIva2;
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest}");
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
                         }
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
@@ -204,6 +212,14 @@ namespace GestioneSarin2
             }
 
             return false;
+        }
+
+        private void Lw_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            Intent i5 = new Intent(this, typeof(ActivityGallery));
+            i5.PutExtra("prod", listprod.ToArray());
+            i5.PutExtra("uri", listURI.ToArray());
+            StartActivity(i5);
         }
 
         private AlertDialog alertall;
@@ -351,7 +367,7 @@ namespace GestioneSarin2
                 var totNoIva = Helper.GetTot(listprod);
                 var totIva = Helper.GetTotIva(listprod) + totNoIva;
                 toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+IVA={totIva}";
-                
+
             }
             catch (Exception)
             {
@@ -522,7 +538,7 @@ namespace GestioneSarin2
             switch (id)
             {
                 case Resource.Id.Aggiorna_Il_Database:
-                    Helper.GetArticoli(this,true);
+                    Helper.GetArticoli(this, true);
                     break;
                 case Resource.Id.Cliente:
                     SetCodCliFor();
@@ -549,19 +565,19 @@ namespace GestioneSarin2
                         {
                             Directory.CreateDirectory(path);
                         }
-                     
 
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/presets.csv",true))
+
+                        using (StreamWriter streamWriter = new StreamWriter(path + "/presets.csv", true))
                         {
                             foreach (var prod in listprod)
                             {
                                 streamWriter.WriteLine(prod);
                             }
                             //WAIT iva nel database
-                            
+
                             var totNoIva = Helper.GetTot(listprod);
                             var totIva = Helper.GetTotIva(listprod) + totNoIva;
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest}");
+                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
                             streamWriter.Write('#');
                         }
                         Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();

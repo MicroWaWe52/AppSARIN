@@ -18,12 +18,12 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace GestioneSarin2
 {
-    [Activity(Label = "Storico Ordini",Theme = "@style/AppThemeNo", ParentActivity = typeof(ActivityHome))]
+    [Activity(Label = "         Storico Ordini", Theme = "@style/AppThemeNo", ParentActivity = typeof(ActivityHome))]
     public class ActivityHist : AppCompatActivity
     {
         private ListView listViewHist;
         private string[] csvlist;
-        
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             try
@@ -32,25 +32,24 @@ namespace GestioneSarin2
                 SetContentView(Resource.Layout.layoutHistory);
                 // Create your application here
                 listViewHist = FindViewById<ListView>(Resource.Id.listViewHist);
-          
+
                 var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                                .DirectoryDownloads).AbsolutePath + "/Sarin";
                 var clienti = Helper.GetClienti(path);
-       
+
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
                 var curDir = new File(path);
-                var csvlist = curDir.List();
+                var csvlistl = curDir.List().Where(name => name.Contains("Ordine")).ToArray();
                 var listoOrdines = new List<Ordine>();
-                if (csvlist != null)
                 {
-                    var tempcsvList = csvlist.ToList();
+                    var tempcsvList = csvlistl.ToList();
                     tempcsvList = tempcsvList.Where(csv => csv.Contains("Ordine")).ToList();
-                    Array.Copy(tempcsvList.ToArray(), csvlist, tempcsvList.Count);
-                    Array.Resize(ref csvlist, tempcsvList.Count);
-                    foreach (var ord in csvlist)
+                    Array.Copy(tempcsvList.ToArray(), csvlistl, tempcsvList.Count);
+                    Array.Resize(ref csvlistl, tempcsvList.Count);
+                    foreach (var ord in csvlistl)
                     {
                         var pathord = path + '/' + ord;
                         var ordDet = new List<string>();
@@ -73,7 +72,7 @@ namespace GestioneSarin2
                         string nameTemp;
                         try
                         {
-                            nameTemp= clienti.First(list => list[0] == testa[7])[1];
+                            nameTemp = clienti.First(list => list[0] == testa[7])[1];
 
                         }
                         catch (Exception e)
@@ -86,7 +85,8 @@ namespace GestioneSarin2
                             Date = testa[8],
                             Name = nameTemp,
                             Tot = testa[5],
-                            CodCli= testa[7]
+                            CodCli = testa[7],
+                            Type = testa[10]
                         });
 
                     }
@@ -94,13 +94,13 @@ namespace GestioneSarin2
                 listViewHist.Adapter = new OrdineAdapter(listoOrdines);
                 //ActionBar.SetDisplayHomeAsUpEnabled(true);
                 var toolbar = FindViewById<Toolbar>(Resource.Id.my_toolbarSett);
+                toolbar.SetTitleTextColor(Resource.Color.colorPrimary);
                 SetSupportActionBar(toolbar);
-                SupportActionBar.SetDisplayShowTitleEnabled(false);
+                SupportActionBar.SetDisplayShowTitleEnabled(true);
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             }
             catch (Exception e)
             {
-              
             }
 
 

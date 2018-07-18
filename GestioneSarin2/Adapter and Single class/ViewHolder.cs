@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace GestioneSarin2
 {
-    class ViewHolderProdotto:Java.Lang.Object
+    class ViewHolderProdotto : Java.Lang.Object
     {
         public ImageView Photo { get; set; }
         public TextView Name { get; set; }
@@ -24,5 +24,6 @@ namespace GestioneSarin2
         public TextView Data { get; set; }
         public TextView Price { get; set; }
         public TextView CodCli { get; set; }
+        public TextView Type { get; set; }
     }
 }

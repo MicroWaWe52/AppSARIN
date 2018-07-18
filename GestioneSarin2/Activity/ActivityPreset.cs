@@ -30,9 +30,9 @@ namespace GestioneSarin2.Activity
             listPres.ItemClick += ListPres_ItemClick;
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
-            string file;
             try
             {
+                string file;
                 using (var sw=new StreamReader(path+"/presets.csv"))
                 {
                     file = sw.ReadToEnd();
@@ -64,7 +64,9 @@ namespace GestioneSarin2.Activity
                         Date = testa[8],
                         Name = nameTemp,
                         Tot = testa[3],
-                        CodCli = testa[5]
+                        CodCli = testa[5],
+                        Type = testa[10]
+
                     });
 
                 }
@@ -124,7 +126,7 @@ namespace GestioneSarin2.Activity
                     }
                 }
             }
-            using (var streamWriter = new StreamWriter(path + $"/OrdineN{last + 1}.csv"))
+            using (StreamWriter streamWriter = new StreamWriter(path: path + $"/Ordine_{DateTime.Now:ddMMyyyy}_N{last + 1}.csv"))
             {
                 streamWriter.Write(order);
             }

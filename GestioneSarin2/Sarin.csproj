@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Activity\ActivityAdd.cs" />
     <Compile Include="Activity\ActivityCustomers.cs" />
+    <Compile Include="Activity\ActivityDocChoice.cs" />
     <Compile Include="Activity\ActivityGallery.cs" />
     <Compile Include="Activity\ActivityHist.cs" />
     <Compile Include="Activity\ActivityHome.cs" />
@@ -229,6 +230,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\checkbox_background.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layoutDocChoice.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

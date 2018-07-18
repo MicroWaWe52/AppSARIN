@@ -104,9 +104,9 @@ namespace GestioneSarin2
              var ip = sharedPref.GetString(ActivitySettings.KeyIp,"");
             if (ip!="")
             {
-                StartActivity(typeof(ActivityCustomers));
+                StartActivity(typeof(ActivityDocChoice));
 
-            }
+            } 
             else
             {
                 Toast.MakeText(this,"Accedi ad un server prima",ToastLength.Short).Show();
