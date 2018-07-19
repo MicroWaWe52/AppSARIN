@@ -163,45 +163,44 @@ namespace GestioneSarin2
                         {
                             Directory.CreateDirectory(path);
                         }
-                        var curDir = new Java.IO.File(path);
-                        var csvlist = curDir.List();
                         var last = 0;
-                        if (csvlist != null)
+                        try
                         {
-                            var tempcsvList = csvlist.ToList();
-                            tempcsvList.Remove("presets.csv");
-                            Array.Copy(tempcsvList.ToArray(), csvlist, tempcsvList.Count);
-                            Array.Resize(ref csvlist, tempcsvList.Count);
-                            foreach (var ord in csvlist)
+                            using (StreamReader sr = new StreamReader(path + "/docTes.csv"))
                             {
-                                var narr = new string(ord.Where(char.IsDigit).ToArray());
-                                var n = narr.Aggregate("", (current, digit) => current + digit);
+                                while (!sr.EndOfStream)
+                                {
+                                    var line = sr.ReadLine();
+                                    last = Convert.ToInt32(line?.Split(';')[0]) + 1;
+                                }
 
-                                try
-                                {
-                                    if (Convert.ToInt32(n) > last)
-                                    {
-                                        last = Convert.ToInt32(n);
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    break;
-                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            last = 0;
+                        }
+                        using (StreamWriter streamWriter = new StreamWriter(path + "/docRig.csv", true))
+                        {
+                            for (var index = 0; index < listprod.Count; index++)
+                            {
+                                var prod = listprod[index];
+                                var rig = index + ";" + prod;
+                                streamWriter.WriteLine(rig);
                             }
                         }
 
-                        using (StreamWriter streamWriter = new StreamWriter(path: path + $"/Ordine_{DateTime.Now:ddMMyyyy}_N{last + 1}.csv"))
+
+
+                        using (StreamWriter streamWriter = new StreamWriter(path + "/docTes.csv", true))
                         {
-                            foreach (var prod in listprod)
-                            {
-                                streamWriter.WriteLine(prod);
-                            }
-                            //WAIT iva nel database
                             var totNoIva2 = Helper.GetTot(listprod);
                             var totIva = Helper.GetTotIva(listprod) + totNoIva2;
-                            streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
+                            streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
                         }
+
+
+
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
                         listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
@@ -226,21 +225,27 @@ namespace GestioneSarin2
         private void Lw_ItemClickAll(object sender, AdapterView.ItemClickEventArgs e)
         {
             var itemName = ((ListView)sender).GetItemAtPosition(e.Position).ToString();
+            var layout = new LinearLayout(this) {Orientation = Orientation.Vertical};
+            var textQta = new EditText(this) { Hint = "Quantità" };
+            var textPPart = new EditText(this) { Hint = "Prezzo particolare" };
+            var textScon = new EditText(this) { Hint = "Sconto" };
+            var textNote=new EditText(this){Hint="Note aggiuntive"};
+            layout.AddView(textQta);
+            layout.AddView(textPPart);
+            layout.AddView(textScon);
+            layout.AddView(textNote);
 
-            //listProd.Add(subqueryList[e.Position].CodArt + ';' + text.Text.Replace(',','.') + ';' + subqueryList[e.Position].UnitPrice);
-            var text = new EditText(this);
-
-            text.SetRawInputType(InputTypes.ClassNumber);
+            textQta.SetRawInputType(InputTypes.ClassNumber);
             var builder = new AlertDialog.Builder(this);
             builder.SetTitle("Seleziona la quantita");
             builder.SetCancelable(true);
-            builder.SetView(text);
+            builder.SetView(layout);
             builder.SetNegativeButton("Annulla", delegate { });
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
                     var psel = Helper.table.First(p => p[5] == itemName);
-                    listprod.Add(psel[4] + ";" + text.Text.Replace(',', '.') + ";" + psel[12]);
+                    listprod.Add($"{psel[4]};{textQta.Text.Replace(',', '.')};{psel[12]};{textPPart.Text};{textScon.Text};{textNote.Text}");
                     var urisplit = psel[15].Split('\\');
                     listURI.Add(urisplit.Last());
 
@@ -260,9 +265,11 @@ namespace GestioneSarin2
                         var ptemp = new Prodotto();
                         ptemp.ImageUrl = prod.uri;
                         var split = prod.prodotto.Split(';');
-                        var namet = query.First(p => p[4] == split[0])[5];
+                        var pqueryed = query.First(p => p[4] == split[0]);
+                        var namet = pqueryed[5];
                         namet = textInfo.ToLower(namet);
                         ptemp.Name = textInfo.ToTitleCase(namet);
+                        ptemp.CodArt = pqueryed[4];
                         ptemp.QuantityPrice = split[1] + '/' + split[2];
                         templist.Add(ptemp);
 
@@ -315,6 +322,7 @@ namespace GestioneSarin2
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
             navigation.SetOnNavigationItemSelectedListener(this);
             listView = FindViewById<ListView>(Resource.Id.listViewMainProd);
+            listView.ItemClick += ListView_ItemClick;
             listView.ItemLongClick += ListView_ItemLongClick;
             toolbar = FindViewById<Toolbar>(Resource.Id.my_toolbarMain);
             SetSupportActionBar(toolbar);
@@ -356,7 +364,9 @@ namespace GestioneSarin2
                     var ptemp = new Prodotto();
                     ptemp.ImageUrl = prod.uri;
                     var split = prod.prodotto.Split(';');
-                    var namet = query.First(p => p[4] == split[0])[5];
+                    var pqueryed = query.First(p => p[4] == split[0]);
+                    var namet = pqueryed[5];
+                    ptemp.CodArt = pqueryed[4];
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
@@ -378,6 +388,53 @@ namespace GestioneSarin2
             FirebaseMessaging.Instance.SubscribeToTopic("all");
 
 
+        }
+
+        private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var prod = listprod[e.Position];
+            var prodSplit = prod.Split(';');
+            var editTexQ = new EditText(this);
+            editTexQ.Text = prodSplit[1];
+            var builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Modifica quantità");
+            builder.SetView(editTexQ);
+            builder.SetCancelable(true);
+            builder.SetNegativeButton("Annulla", delegate { });
+            builder.SetPositiveButton("Conferma", delegate
+            {
+                prodSplit[1] = editTexQ.Text;
+                var pTemp = prodSplit.Aggregate((current, next) => current + ";" + next);
+                listprod[e.Position] = pTemp;
+                var totNoIva = Helper.GetTot(listprod);
+                var totIva = Helper.GetTotIva(listprod) + totNoIva;
+
+                var templist = new List<Prodotto>();
+                var finalList = listprod.Zip(listURI, (p, u) => new
+                {
+                    prodotto = p,
+                    uri = u
+                }).ToList();
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+                foreach (var prodAda in finalList)
+                {
+                    var ptemp = new Prodotto { ImageUrl = prodAda.uri };
+                    var split = prodAda.prodotto.Split(';');
+                    var pqueryed = query.First(p => p[4] == split[0]);
+                    var namet = pqueryed[5];
+                    namet = textInfo.ToLower(namet);
+                    ptemp.Name = textInfo.ToTitleCase(namet);
+                    ptemp.QuantityPrice = split[1] + '/' + split[2];
+                    ptemp.CodArt = pqueryed[4];
+                    templist.Add(ptemp);
+
+                }
+                listView.Adapter = new ProdottoAdapter(templist);
+                toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+IVA={totIva}";
+
+            });
+            builder.Show();
         }
 
         public override void OnBackPressed()
@@ -415,9 +472,11 @@ namespace GestioneSarin2
                     var ptemp = new Prodotto();
                     ptemp.ImageUrl = prod.uri;
                     var split = prod.prodotto.Split(';');
-                    var namet = query.First(p => p[4] == split[0])[5];
+                    var pqueryed = query.First(p => p[4] == split[0]);
+                    var namet = pqueryed[5];
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
+                    ptemp.CodArt = pqueryed[4];
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
                     templist.Add(ptemp);
 

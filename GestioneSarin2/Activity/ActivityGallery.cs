@@ -172,18 +172,26 @@ namespace GestioneSarin2.Activity
         public void Order(List<string> query)
         {
 
-            var text = new EditText(this);
+            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+            var textQta = new EditText(this) { Hint = "Quantità" };
+            var textPPart = new EditText(this) { Hint = "Prezzo particolare" };
+            var textScon = new EditText(this) { Hint = "Sconto" };
+            var textNote = new EditText(this) { Hint = "Note aggiuntive" };
+            layout.AddView(textQta);
+            layout.AddView(textPPart);
+            layout.AddView(textScon);
+            layout.AddView(textNote);
 
-            text.SetRawInputType(InputTypes.ClassNumber);
+            textQta.SetRawInputType(InputTypes.ClassNumber);
             var builder = new Android.App.AlertDialog.Builder(this);
-            builder.SetTitle("Seleziona la quantita");
+            builder.SetTitle("Aggiungi informazioni");
             builder.SetCancelable(true);
-            builder.SetView(text);
+            builder.SetView(layout);
             builder.SetNegativeButton("Annulla", delegate { });
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
-                    listProd.Add(query[4] + ';' + text.Text.Replace(',', '.') + ';' + query[12]);
+                    listProd.Add($"{query[4]};{textQta.Text.Replace(',', '.')};{query[12]};{textPPart.Text};{textScon.Text}");
                     Intent i = new Intent(this, typeof(MainActivity));
                     var urisplit = query[16].Split('\\');
                     listURI.Add(urisplit.Last());

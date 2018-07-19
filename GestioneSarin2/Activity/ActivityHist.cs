@@ -8,10 +8,12 @@ using System.Text;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using GestioneSarin2.Activity;
 using Environment = System.Environment;
 using File = Java.IO.File;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -22,7 +24,7 @@ namespace GestioneSarin2
     public class ActivityHist : AppCompatActivity
     {
         private ListView listViewHist;
-        private string[] csvlist;
+        private List<string> csvlist;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,6 +48,7 @@ namespace GestioneSarin2
                 var listoOrdines = new List<Ordine>();
                 {
                     var tempcsvList = csvlistl.ToList();
+                    csvlist = tempcsvList;
                     tempcsvList = tempcsvList.Where(csv => csv.Contains("Ordine")).ToList();
                     Array.Copy(tempcsvList.ToArray(), csvlistl, tempcsvList.Count);
                     Array.Resize(ref csvlistl, tempcsvList.Count);
@@ -118,17 +121,21 @@ namespace GestioneSarin2
             {
                 case Resource.Id.sendHistory:
                     var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                                   .DirectoryDownloads).AbsolutePath + "/Sarin";
+                                   .DirectoryDownloads).AbsolutePath + "/Sarin/";
+                    var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                     foreach (var csv in csvlist)
                     {
+                        var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                        var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                        var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
                         using (var reader = new StreamReader(path + csv))
                         using (var client = new WebClient())
                         {
-                            client.Credentials = new NetworkCredential("spigam", "123456");
+                            client.Credentials = new NetworkCredential(usern, passw);
 
                             var file = Encoding.UTF8.GetBytes(reader.ReadToEnd());
 
-                            client.UploadData(new Uri($"ftp://217.133.0.34/{csv}.csv"), file);
+                            client.UploadData(new Uri($"ftp://{ip}/{csv}"), file);
                         }
                     }
                     break;

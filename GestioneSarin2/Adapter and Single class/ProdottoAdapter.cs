@@ -98,7 +98,19 @@ namespace GestioneSarin2
             holder.Name.SetTypeface(tvName, TypefaceStyle.Normal);
             holder.Name.Text = textInfo.ToTitleCase(prodottolList[position].Name);
             holder.QuantPrice.SetTypeface(tvName, TypefaceStyle.Normal);
-            holder.QuantPrice.Text = prodottolList[position].QuantityPrice;
+            var qpSplit = prodottolList[position].QuantityPrice.Split('/');
+            if (qpSplit.Length < 2) return view;
+            var qta = new string(qpSplit[0].Where(char.IsDigit).ToArray());
+            var puni = qpSplit[1];
+            puni = puni.Replace("€",string.Empty);
+            var ttemp = Convert.ToDecimal(Convert.ToInt32(qta) * float.Parse(puni.Replace(',','.')));
+            var ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[6]);
+
+            var totIva = (ttemp / 100) * ivatem;
+            var qpString = $"Qta:{qpSplit[0]}    P.Uni {qpSplit[1]}     Tot+IVA:{totIva}";
+            holder.QuantPrice.Text = qpString;
+
+
 
             return view;
         }

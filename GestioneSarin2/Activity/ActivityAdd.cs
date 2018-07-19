@@ -20,7 +20,7 @@ using AlertDialog = Android.Support.V7.App.AlertDialog;
 namespace GestioneSarin2
 {
 
-    [Activity(Label = "ActivityAdd", Theme = "@style/AppThemeNo",NoHistory = true)]
+    [Activity(Label = "ActivityAdd", Theme = "@style/AppThemeNo", NoHistory = true)]
     public class ActivityAdd : AppCompatActivity
     {
         public string GroupSel;
@@ -92,23 +92,32 @@ namespace GestioneSarin2
             {
                 var subSelected = ((Prodotto)listPRoduct.GetItemAtPosition(e.Position)).SubGroup;
                 var subQuery = query.Where(s => s[3].Contains(subSelected)).ToList();
-               GetInSubAsync(subQuery);
+                GetInSubAsync(subQuery);
                 subGrouop = !subGrouop;
             }
             else
             {
-                var text = new EditText(this);
-                
-                text.SetRawInputType(InputTypes.ClassNumber);
+                var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+                var textQta = new EditText(this) { Hint = "Quantità" };
+                var textPPart = new EditText(this) { Hint = "Prezzo particolare" };
+                var textScon = new EditText(this) { Hint = "Sconto" };
+                var textNote = new EditText(this) { Hint = "Note aggiuntive" };
+                layout.AddView(textQta);
+                layout.AddView(textPPart);
+                layout.AddView(textScon);
+                layout.AddView(textNote);
+
+                textQta.SetRawInputType(InputTypes.ClassNumber);
                 var builder = new AlertDialog.Builder(this);
                 builder.SetTitle("Seleziona la quantita");
                 builder.SetCancelable(true);
-                builder.SetView(text);
+                
+                builder.SetView(layout);
                 builder.SetNegativeButton("Annulla", delegate { });
                 builder.SetPositiveButton("Conferma",
                     delegate
                     {
-                        listProd.Add(subqueryList[e.Position].CodArt + ';' + text.Text.Replace(',','.') + ';' + subqueryList[e.Position].UnitPrice);
+                        listProd.Add($"{subqueryList[e.Position].Name};{textQta.Text.Replace(',', '.')};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text}");
                         Intent i = new Intent(this, typeof(MainActivity));
                         var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
                         listURI.Add(urisplit.Last());
@@ -141,18 +150,18 @@ namespace GestioneSarin2
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
                     UnitPrice = sDirectoryItem[12],
-                    CodArt=sDirectoryItem[4]
+                    CodArt = sDirectoryItem[4]
 
                 };
                 listtemp.Add(ptemp);
             }
             listPRoduct.Adapter = new ProdottoAdapter(listtemp);
             subqueryList = listtemp;
-          
+
 
         }
 
-        public async void  GetInSubAsync(List<List<string>> querys)
+        public async void GetInSubAsync(List<List<string>> querys)
         {
             listPRoduct.Enabled = false;
 

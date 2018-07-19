@@ -18,7 +18,7 @@ using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
 {
-    [Activity(Label = "ActivityCustomers", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "ActivityCustomers", Theme = "@style/AppTheme", MainLauncher = false)]
     public class ActivityCustomers : AppCompatActivity
     {
         private RadioGroup custRadioGroup;
