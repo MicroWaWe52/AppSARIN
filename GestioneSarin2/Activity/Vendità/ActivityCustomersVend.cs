@@ -7,6 +7,8 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.View;
@@ -42,6 +44,11 @@ namespace GestioneSarin2.Activity
             pivaRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchIva);
             codRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchCod);
             custListView.ItemClick += CustListView_ItemClick;
+            AssetManager am = Assets;
+            Typeface tvName = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            codRadioButton.SetTypeface(tvName,TypefaceStyle.Normal);
+            descRadioButton.SetTypeface(tvName,TypefaceStyle.Normal);
+            codRadioButton.SetTypeface(tvName,TypefaceStyle.Normal);
             // Create your application here
             try
             {
@@ -191,8 +198,10 @@ namespace GestioneSarin2.Activity
             {
                 stream.WriteLine(codclifor + '/' + codDest);
             }
-            Intent inte = new Intent(this, typeof(MainActivity));
+            Intent inte = new Intent(this, typeof(ActivityCartVend));
             inte.PutExtra("first", false);
+            var type = Intent.GetIntExtra("Type", 0);
+            inte.PutExtra("Type", type);
             StartActivity(inte);
         }
     }

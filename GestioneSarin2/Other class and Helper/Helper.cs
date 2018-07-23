@@ -51,7 +51,13 @@ namespace GestioneSarin2
             {
                 var prodsplit = singprod.Split(';');
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
-                TOTALE += Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(prodsplit[2]);
+                if (!float.TryParse(prodsplit[2], out var qta))
+                {
+                    var qtaSplit = prodsplit[2].Split('/')[1].ToCharArray();
+                    qta = float.Parse(qtaSplit.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch));
+
+                }
+                TOTALE += Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
             }
 
             TOTALE = Math.Round(TOTALE, 2);
@@ -65,9 +71,25 @@ namespace GestioneSarin2
             {
                 var prodsplit = singprod.Split(';');
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
-                var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(prodsplit[2]);
-                var ivatem = Convert.ToDecimal(table.First(prodl => prodl[4] == prodsplit[0])[6]);
-                Tot += (ttemp / 100) * ivatem;
+                if (!float.TryParse(prodsplit[2], out var qta))
+                {
+                    var qtaSplit = prodsplit[2].Split('/')[1].ToCharArray();
+                    qta = float.Parse(qtaSplit.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch))
+                        .Aggregate("", (current, ch) => current + ch));
+                    var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
+                    var ivatem = Convert.ToDecimal(table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
+                    Tot += (ttemp / 100) * ivatem;
+                }
+                else
+                {
+                    var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
+                    var ivatem = Convert.ToDecimal(table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
+                    Tot += (ttemp / 100) * ivatem;
+                }
+
+                
+
+
             }
 
             Tot = Math.Round(Tot, 2);

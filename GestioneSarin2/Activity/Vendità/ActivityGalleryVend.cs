@@ -28,7 +28,7 @@ using Void = Java.Lang.Void;
 namespace GestioneSarin2.Activity
 {
     [Activity(Label = "ActivityGallery", Theme = "@style/AppThemeNo")]
-    public class ActivityGallery : Android.App.Activity
+    public class ActivityGalleryVend : Android.App.Activity
     {
         private RecyclerView recyclerView;
         private List<string> listProd;
@@ -191,8 +191,8 @@ namespace GestioneSarin2.Activity
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
-                    listProd.Add($"{query[4]};{textQta.Text.Replace(',', '.')};{query[12]};{textPPart.Text};{textScon.Text}");
-                    Intent i = new Intent(this, typeof(MainActivity));
+                    listProd.Add($"{query[5]};{textQta.Text.Replace(',', '.')};{query[12]};{textPPart.Text};{textScon.Text}");
+                    Intent i = new Intent(this, typeof(ActivityCartVend));
                     var urisplit = query[16].Split('\\');
                     listURI.Add(urisplit.Last());
                     var uriarr = listURI.ToArray();
@@ -200,6 +200,8 @@ namespace GestioneSarin2.Activity
                     i.PutExtra("prod", array);
                     i.PutExtra("uri", uriarr);
                     i.PutExtra("first", false);
+                    i.PutExtra("Type", Intent.GetIntExtra("Type", 0));
+
                     StartActivity(i);
 
                 });

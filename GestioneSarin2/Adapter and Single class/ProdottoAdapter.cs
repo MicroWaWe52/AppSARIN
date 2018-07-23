@@ -101,13 +101,16 @@ namespace GestioneSarin2
             var qpSplit = prodottolList[position].QuantityPrice.Split('/');
             if (qpSplit.Length < 2) return view;
             var qta = new string(qpSplit[0].Where(char.IsDigit).ToArray());
-            var puni = qpSplit[1];
-            puni = puni.Replace("€",string.Empty);
-            var ttemp = Convert.ToDecimal(Convert.ToInt32(qta) * float.Parse(puni.Replace(',','.')));
+            var puni = qpSplit.Last();
+            puni = puni.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch);
+
+            var ttemp = Convert.ToDecimal(Convert.ToInt32(qta) * float.Parse(puni.Replace(',', '.')));
             var ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[6]);
 
-            var totIva = (ttemp / 100) * ivatem;
-            var qpString = $"Qta:{qpSplit[0]}    P.Uni {qpSplit[1]}     Tot+IVA:{totIva}";
+            var totIva = ttemp+(ttemp / 100) * ivatem;
+            totIva = Math.Round(totIva, 2);
+
+            var qpString = $"Qta:{qpSplit[0]}    P.Uni {qpSplit.Last()}     Tot+IVA:{totIva}";
             holder.QuantPrice.Text = qpString;
 
 

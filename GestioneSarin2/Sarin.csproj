@@ -58,18 +58,19 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activity\ActivityAdd.cs" />
-    <Compile Include="Activity\ActivityCustomers.cs" />
-    <Compile Include="Activity\ActivityDocChoice.cs" />
-    <Compile Include="Activity\ActivityGallery.cs" />
-    <Compile Include="Activity\ActivityHist.cs" />
-    <Compile Include="Activity\ActivityHome.cs" />
-    <Compile Include="Activity\ActivityPreset.cs" />
-    <Compile Include="Activity\ActivitySettings.cs" />
+    <Compile Include="Activity\Vendità\ActivityAddVend.cs" />
+    <Compile Include="Activity\Vendità\ActivityCustomersVend.cs" />
+    <Compile Include="Activity\Home-General\ActivityDocChoice.cs" />
+    <Compile Include="Activity\Vendità\ActivityGalleryVend.cs" />
+    <Compile Include="Activity\Home-General\ActivityHist.cs" />
+    <Compile Include="Activity\Home-General\ActivityHome.cs" />
+    <Compile Include="Activity\Home-General\ActivityPreset.cs" />
+    <Compile Include="Activity\Home-General\ActivitySettings.cs" />
     <Compile Include="Adapter and Single class\ImageAdapter.cs" />
     <Compile Include="Adapter and Single class\MyAdapter.cs" />
+    <Compile Include="Other class and Helper\DocType.cs" />
     <Compile Include="Other class and Helper\Helper.cs" />
-    <Compile Include="Activity\MainActivity.cs" />
+    <Compile Include="Activity\Vendità\ActivityCartVend.cs" />
     <Compile Include="Other class and Helper\MyFirebaseIIDService.cs" />
     <Compile Include="Adapter and Single class\Ordine.cs" />
     <Compile Include="Adapter and Single class\OrdineAdapter.cs" />
@@ -235,6 +236,33 @@
     <AndroidResource Include="Resources\layout\layoutDocChoice.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\BG42.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\BG12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\BG32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\BG22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\buttonbackground.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\b.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\a.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\edit_text_design.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\mycursor.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

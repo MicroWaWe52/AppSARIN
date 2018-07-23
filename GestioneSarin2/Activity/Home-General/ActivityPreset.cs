@@ -126,7 +126,7 @@ namespace GestioneSarin2.Activity
                     }
                 }
             }
-            using (StreamWriter streamWriter = new StreamWriter(path: path + $"/Ordine_{DateTime.Now:ddMMyyyy}_N{last + 1}.csv"))
+            using (StreamWriter streamWriter = new StreamWriter( path + $"/Ordine_{DateTime.Now:ddMMyyyy}_N{last + 1}.csv"))
             {
                 streamWriter.Write(order);
             }

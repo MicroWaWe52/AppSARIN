@@ -118,7 +118,7 @@ namespace GestioneSarin2
                     delegate
                     {
                         listProd.Add($"{subqueryList[e.Position].Name};{textQta.Text.Replace(',', '.')};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text}");
-                        Intent i = new Intent(this, typeof(MainActivity));
+                        Intent i = new Intent(this, typeof(ActivityCartVend));
                         var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
                         listURI.Add(urisplit.Last());
                         var uriarr = listURI.ToArray();
@@ -126,6 +126,7 @@ namespace GestioneSarin2
                         i.PutExtra("prod", array);
                         i.PutExtra("uri", uriarr);
                         i.PutExtra("first", false);
+                        i.PutExtra("Type", Intent.GetIntExtra("Type",0));
                         StartActivity(i);
 
                     });
