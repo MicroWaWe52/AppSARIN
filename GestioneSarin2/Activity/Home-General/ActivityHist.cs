@@ -99,6 +99,7 @@ namespace GestioneSarin2
         {
             var builder = new AlertDialog.Builder(this);
             builder.SetTitle("Sei sicuro di voler modificare l'ordine");
+            builder.SetMessage("Proseguendo con la modifica l'ordine verrà cancellato per la modifica");
             builder.SetCancelable(true);
             builder.SetNegativeButton("No", delegate { });
             builder.SetPositiveButton("Si", delegate
@@ -108,12 +109,18 @@ namespace GestioneSarin2
                 var tesList = new List<string>();
                 using (var sw = new StreamReader(path + "/doctes.csv"))
                 {
-                    tesList.Add(sw.ReadLine());
+                    while (!sw.EndOfStream)
+                    {
+                        tesList.Add(sw.ReadLine());
+
+                    }
                 }
 
                 var tesSel = tesList[e.Position];
                 var tesSplit = tesSel.Split(';');
-                var type =tesSplit[8];
+                var type = tesSplit[8];
+                var cli = tesSplit[5];
+                var codDest = tesSplit[7];
                 //aggiungere altri tipi di docuimento quando richiesto
                 switch (type)
                 {
@@ -127,33 +134,100 @@ namespace GestioneSarin2
                         type = 0.ToString();
                         break;
                 }
-
-                var nDoc = tesSplit[1];
-                var rigList=new List<string>();
-                using (var sr=new StreamReader(path+"/docrig.csv"))
+                using (StreamWriter stream = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
                 {
-                    var rig = sr.ReadLine();
-                    var rigsplit = rig.Split(';');
-                    if (rigsplit[1]==nDoc)
+                    stream.WriteLine(cli + '/' + codDest);
+                }
+                var nDoc = tesSplit[0];
+                var rigList = new List<string>();
+                using (var sr = new StreamReader(path + "/docrig.csv"))
+                {
+                    while (!sr.EndOfStream)
                     {
-                        var codDesc = Helper.table.First(p => p[4] == rigsplit[2])[5];
-                        var prodFin = codDesc;
-                        for (var i = 2; i < rigsplit.Length-1; i++)
+                        var rig = sr.ReadLine();
+                        var rigsplit = rig.Split(';');
+                        if (rigsplit[1] == nDoc)
                         {
-                            prodFin += ';' + rigsplit[i];
+                            var codDesc = Helper.GetArticoli(this).First(p => p[4] == rigsplit[2])[5];
+                            var prodFin = codDesc;
+                            for (var i = 2; i < rigsplit.Length - 1; i++)
+                            {
+                                prodFin += ';' + rigsplit[i];
+                            }
+                            rigList.Add(prodFin);
                         }
-                        rigList.Add(prodFin);
                     }
+
                 }
 
-                var listprod=new List<string>();
-                var listUri=new List<string>();
+                var listprod = new List<string>();
+                var listUri = new List<string>();
                 foreach (var prod in rigList)
                 {
                     var prodSplit = prod.Split(';');
-                    var descPRod=Helper.table.First(p=>p[4])
-                    listprod.Add();
+                    var descPRod = Helper.table.First(p => p[5] == prodSplit[0])[5];
+                    var prodFin = descPRod;
+                    for (var i = 2; i < prodSplit.Length; i++)
+                    {
+                        prodFin += ';' + prodSplit[i];
+                    }
+                    listprod.Add(prodFin);
+                    listUri.Add(Helper.table.First(p => p[5] == descPRod)[16].Split('\\').Last());
                 }
+                var inte = new Intent(this, typeof(ActivityCartVend));
+                inte.PutExtra("Type", Convert.ToInt32(type));
+                inte.PutExtra("prod", listprod.ToArray());
+                inte.PutExtra("uri", listUri.ToArray());
+                inte.PutExtra("ndoc", nDoc);
+                inte.PutExtra("mod", true);
+                inte.PutExtra("first", false);
+              
+                var tesListr = new List<string>();
+                using (var sw = new StreamReader(path + "/doctes.csv"))
+                {
+                    while (!sw.EndOfStream)
+                    {
+                        tesListr.Add(sw.ReadLine());
+                    }
+                }
+
+                if (tesListr.Count == 1)
+                {
+                    System.IO.File.Delete(path + "/doctes.csv");
+                    System.IO.File.Delete(path + "/docrig.csv");
+                }
+                else
+                {
+                    using (var sw = new StreamWriter(path + "/doctes.csv"))
+                    {
+                        for (var i = 0; i < tesListr.Count; i++)
+                        {
+                            if (i != Convert.ToInt32(nDoc))
+                            {
+                                sw.WriteLine(tesListr[i]);
+                            }
+                        }
+                    }
+                    var rigListr = new List<string>();
+                    var rigListTemp = new List<string>();
+                    using (var sr = new StreamReader(path + "/docrig.csv"))
+                    {
+                        while (!sr.EndOfStream)
+                        {
+                            rigListr.Add(sr.ReadLine());
+                        }
+                    }
+                    rigListTemp.AddRange(rigListr.Where(rig => !rig.Split(';')[1].Contains(nDoc.ToString())));
+                    using (var sw = new StreamWriter(path + "/docRig.csv"))
+                    {
+                        foreach (var rig in rigListTemp)
+                        {
+                            sw.WriteLine(rig);
+                        }
+                    }
+                }
+                StartActivity(inte);
+
 
 
             });

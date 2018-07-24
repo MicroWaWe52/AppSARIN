@@ -184,11 +184,11 @@ namespace GestioneSarin2
                                 var prodSplit = prod.Split(';');
                                 var codPRd = Helper.table.First(p => p[5] == prodSplit[0].ToUpper())[4];
                                 var prodFin = codPRd;
-                                for (var i = 1; i < prodSplit.Length-1; i++)
+                                for (var i = 1; i < prodSplit.Length - 1; i++)
                                 {
                                     prodFin += ";" + prodSplit[i];
                                 }
-                                var rig = index + ";"+last +";" + prodFin;
+                                var rig = index + ";" + last + ";" + prodFin;
                                 streamWriter.WriteLine(rig);
                             }
                         }
@@ -216,6 +216,7 @@ namespace GestioneSarin2
                         Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
                         listprod = new List<string>();
                         listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
+
                     });
                     builder1.Show();
                     return true;
@@ -231,6 +232,7 @@ namespace GestioneSarin2
             i5.PutExtra("prod", listprod.ToArray());
             i5.PutExtra("uri", listURI.ToArray());
             i5.PutExtra("Type", docType);
+           
             StartActivity(i5);
         }
 
@@ -238,11 +240,11 @@ namespace GestioneSarin2
         private void Lw_ItemClickAll(object sender, AdapterView.ItemClickEventArgs e)
         {
             var itemName = ((ListView)sender).GetItemAtPosition(e.Position).ToString();
-            var layout = new LinearLayout(this) {Orientation = Orientation.Vertical};
+            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
             var textQta = new EditText(this) { Hint = "Quantità" };
             var textPPart = new EditText(this) { Hint = "Prezzo particolare" };
             var textScon = new EditText(this) { Hint = "Sconto" };
-            var textNote=new EditText(this){Hint="Note aggiuntive"};
+            var textNote = new EditText(this) { Hint = "Note aggiuntive" };
             layout.AddView(textQta);
             layout.AddView(textPPart);
             layout.AddView(textScon);
@@ -319,6 +321,8 @@ namespace GestioneSarin2
             i.PutExtra("prod", listprod.ToArray());
             i.PutExtra("uri", listURI.ToArray());
             i.PutExtra("Type", docType);
+            i.PutExtra("ndoc", Intent.GetIntExtra("ndoc", 0));
+            i.PutExtra("mod", i.GetBooleanExtra("mod", false));
             StartActivity(i);
         }
 
@@ -404,7 +408,7 @@ namespace GestioneSarin2
             IsPlayServicesAvailable();
             FirebaseMessaging.Instance.SubscribeToTopic("all");
             docType = Intent.GetIntExtra("Type", 0);
-            
+
         }
 
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -667,7 +671,7 @@ namespace GestioneSarin2
                                     streamWriter.Write('#');
                                     break;
                             }
-                            
+
                         }
                         Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();
                         listprod = new List<string>();

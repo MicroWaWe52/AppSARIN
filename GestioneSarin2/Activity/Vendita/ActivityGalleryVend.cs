@@ -201,6 +201,7 @@ namespace GestioneSarin2.Activity
                     i.PutExtra("uri", uriarr);
                     i.PutExtra("first", false);
                     i.PutExtra("Type", Intent.GetIntExtra("Type", 0));
+                  
 
                     StartActivity(i);
 

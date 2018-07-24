@@ -58,10 +58,10 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activity\Vendità\ActivityAddVend.cs" />
-    <Compile Include="Activity\Vendità\ActivityCustomersVend.cs" />
+    <Compile Include="Activity\Vendita\ActivityAddVend.cs" />
+    <Compile Include="Activity\Vendita\ActivityCustomersVend.cs" />
     <Compile Include="Activity\Home-General\ActivityDocChoice.cs" />
-    <Compile Include="Activity\Vendità\ActivityGalleryVend.cs" />
+    <Compile Include="Activity\Vendita\ActivityGalleryVend.cs" />
     <Compile Include="Activity\Home-General\ActivityHist.cs" />
     <Compile Include="Activity\Home-General\ActivityHome.cs" />
     <Compile Include="Activity\Home-General\ActivityPreset.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Adapter and Single class\MyAdapter.cs" />
     <Compile Include="Other class and Helper\DocType.cs" />
     <Compile Include="Other class and Helper\Helper.cs" />
-    <Compile Include="Activity\Vendità\ActivityCartVend.cs" />
+    <Compile Include="Activity\Vendita\ActivityCartVend.cs" />
     <Compile Include="Other class and Helper\MyFirebaseIIDService.cs" />
     <Compile Include="Adapter and Single class\Ordine.cs" />
     <Compile Include="Adapter and Single class\OrdineAdapter.cs" />
@@ -263,6 +263,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\mycursor.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\addPhoto.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

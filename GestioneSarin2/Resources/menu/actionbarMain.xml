@@ -8,5 +8,10 @@
     android:icon="@mipmap/save"
     android:title="@string/app_name"
     app:showAsAction="ifRoom"/>
+  <item
+    android:id="@+id/addPhoto"
+    android:icon="@mipmap/addPhoto"
+    android:title="@string/app_name"
+    app:showAsAction="ifRoom"/>
 
 </menu>
