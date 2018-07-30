@@ -49,13 +49,18 @@ namespace GestioneSarin2
             var sequence = st.SubSequenceFormatted(0, st.Length());
             SupportActionBar.TitleFormatted = sequence;
 
-            const string permission = Manifest.Permission.ReadExternalStorage;
-            if (CheckSelfPermission(permission) != (int)Permission.Granted)
+            const string permissiones = Manifest.Permission.ReadExternalStorage;
+            if (CheckSelfPermission(permissiones) != (int)Permission.Granted)
             {
                 RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
             }
-            
-            
+            const string permissionca = Manifest.Permission.Camera;
+            if (CheckSelfPermission(permissionca) != (int)Permission.Granted)
+            {
+                RequestPermissions(new[] { Manifest.Permission.Camera }, 6);
+            }
+
+
 
         }
 

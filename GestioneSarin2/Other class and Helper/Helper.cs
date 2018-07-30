@@ -51,13 +51,16 @@ namespace GestioneSarin2
             {
                 var prodsplit = singprod.Split(';');
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
+                var quant = prodsplit[1];
                 if (!float.TryParse(prodsplit[2], out var qta))
                 {
                     var qtaSplit = prodsplit[2].Split('/')[1].ToCharArray();
                     qta = float.Parse(qtaSplit.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch));
-
+                   
                 }
-                TOTALE += Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
+                var quants = prodsplit[1].Split();
+                quant = quants[0].Replace(',', '.');
+                TOTALE += Convert.ToDecimal(quant) * Convert.ToDecimal(qta);
             }
 
             TOTALE = Math.Round(TOTALE, 2);
@@ -87,7 +90,7 @@ namespace GestioneSarin2
                     Tot += (ttemp / 100) * ivatem;
                 }
 
-                
+
 
 
             }

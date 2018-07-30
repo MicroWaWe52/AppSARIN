@@ -38,7 +38,7 @@ namespace GestioneSarin2.Activity
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.layoutGalleryG);
             var galleryList = Helper.GetImgList();
-            Gallery layout = FindViewById<Gallery>(Resource.Id.galleryCata);
+            var layout = FindViewById<Gallery>(Resource.Id.galleryCata);
             layout.Adapter = new ImageAdapter(this, galleryList);
             try
             {
@@ -182,7 +182,6 @@ namespace GestioneSarin2.Activity
             layout.AddView(textScon);
             layout.AddView(textNote);
 
-            textQta.SetRawInputType(InputTypes.ClassNumber);
             var builder = new Android.App.AlertDialog.Builder(this);
             builder.SetTitle("Aggiungi informazioni");
             builder.SetCancelable(true);
@@ -191,7 +190,7 @@ namespace GestioneSarin2.Activity
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
-                    listProd.Add($"{query[5]};{textQta.Text.Replace(',', '.')};{query[12]};{textPPart.Text};{textScon.Text}");
+                    listProd.Add($"{query[5]};{textQta.Text.Replace(',', '.')};{query[12]};{textPPart.Text};{textScon.Text};{textNote.Text}");
                     Intent i = new Intent(this, typeof(ActivityCartVend));
                     var urisplit = query[16].Split('\\');
                     listURI.Add(urisplit.Last());
@@ -201,7 +200,8 @@ namespace GestioneSarin2.Activity
                     i.PutExtra("uri", uriarr);
                     i.PutExtra("first", false);
                     i.PutExtra("Type", Intent.GetIntExtra("Type", 0));
-                  
+                    i.PutExtra("nprog", Intent.GetIntExtra("nprog", 0));
+
 
                     StartActivity(i);
 

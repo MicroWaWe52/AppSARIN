@@ -11,6 +11,7 @@ using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using GestioneSarin2.Activity;
@@ -26,7 +27,10 @@ namespace GestioneSarin2
     public class ActivityHist : AppCompatActivity
     {
         private ListView listViewHist;
-        private List<string> csvlist;
+
+        readonly string pathpp = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                            .DirectoryDownloads).AbsolutePath + "/Sarin";
+        private List<string> csvlist=new List<string>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -233,7 +237,7 @@ namespace GestioneSarin2
             });
             builder.Show();
         }
-
+        
         private void ListViewHist_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
         {
             var builder = new AlertDialog.Builder(this);
@@ -310,6 +314,14 @@ namespace GestioneSarin2
                     var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                                    .DirectoryDownloads).AbsolutePath + "/Sarin/";
                     var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                    csvlist.Add(path+"/doctes.csv");
+                    csvlist.Add(path+"docrig.csv");
+                    var directory = new File(pathpp);
+                    var files = directory.ListFiles();
+                    foreach (var t in files)
+                    {
+                        csvlist.Add(t.Name);
+                    }
                     foreach (var csv in csvlist)
                     {
                         var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");

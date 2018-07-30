@@ -2,6 +2,8 @@
 using Android.Content;
 using Android.Gms.Common;
 using Android.OS;
+using Android.Preferences;
+using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Text;
@@ -9,15 +11,18 @@ using Android.Views;
 using Android.Widget;
 using Firebase.Messaging;
 using GestioneSarin2.Activity;
+using GestioneSarin2.Other_class_and_Helper;
+using Java.IO;
+using Java.Nio.Channels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using GestioneSarin2.Other_class_and_Helper;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
+using File = System.IO.File;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace GestioneSarin2
@@ -131,11 +136,7 @@ namespace GestioneSarin2
                         Toast.MakeText(this, "Selezionare un cliente prima!", ToastLength.Short).Show();
                         break;
                     }
-                    var layout = new LinearLayout(this);
-                    layout.Orientation = Orientation.Vertical;
-                    var edittextAgente = new EditText(this);
-                    edittextAgente.Hint = "Codice agente";
-                    layout.AddView(edittextAgente, 0);
+                   
                     var builder1 = new AlertDialog.Builder(this);
                     builder1.SetTitle("Conferma ordine");
                     var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
@@ -143,16 +144,11 @@ namespace GestioneSarin2
                     tot = Math.Round(tot, 2);
                     builder1.SetMessage("Totale Ordine:" + tot);
                     builder1.SetCancelable(true);
-                    builder1.SetView(layout);
                     builder1.SetNegativeButton("Annulla", delegate { });
                     builder1.SetPositiveButton("Conferma", delegate
                     {
 
-                        if (!edittextAgente.Text.StartsWith("C") && edittextAgente.Text.Length != 6)
-                        {
-                            Toast.MakeText(this, "Codice agente non valido", ToastLength.Short).Show();
-                            return;
-                        }
+                     
                         var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                             .DirectoryDownloads).AbsolutePath + "/Sarin";
                         if (!Directory.Exists(path))
@@ -200,13 +196,22 @@ namespace GestioneSarin2
                             var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                             var totIva = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
                             //aggiungere tipi
+                            var zero = nProgPhoto;
+                            var ns = "";
+                            while (zero > 0)
+                            {
+                                ns += zero + "-";
+                                zero--;
+                            }
+                            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                            var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
                             switch (docType)
                             {
                                 case (int)DocType.Vendita:
-                                    streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
+                                    streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL;{ns}");
                                     break;
                                 case (int)DocType.Rapportino:
-                                    streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};RAPLA");
+                                    streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};RAPLA;{ns}");
                                     break;
                             }
                         }
@@ -232,7 +237,7 @@ namespace GestioneSarin2
             i5.PutExtra("prod", listprod.ToArray());
             i5.PutExtra("uri", listURI.ToArray());
             i5.PutExtra("Type", docType);
-           
+            i5.PutExtra("nprog", nProgPhoto);
             StartActivity(i5);
         }
 
@@ -250,7 +255,6 @@ namespace GestioneSarin2
             layout.AddView(textScon);
             layout.AddView(textNote);
 
-            textQta.SetRawInputType(InputTypes.ClassNumber);
             var builder = new AlertDialog.Builder(this);
             builder.SetTitle("Seleziona la quantita");
             builder.SetCancelable(true);
@@ -287,6 +291,8 @@ namespace GestioneSarin2
                         ptemp.Name = textInfo.ToTitleCase(namet);
                         ptemp.CodArt = pqueryed[4];
                         ptemp.QuantityPrice = split[1] + '/' + split[2];
+                        ptemp.Note = split[5];
+                        ptemp.Sconto = split[4];
                         templist.Add(ptemp);
 
                     }
@@ -323,6 +329,7 @@ namespace GestioneSarin2
             i.PutExtra("Type", docType);
             i.PutExtra("ndoc", Intent.GetIntExtra("ndoc", 0));
             i.PutExtra("mod", i.GetBooleanExtra("mod", false));
+            i.PutExtra("nprog", nProgPhoto);
             StartActivity(i);
         }
 
@@ -390,6 +397,9 @@ namespace GestioneSarin2
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
+                    ptemp.Note = split[5];
+                    ptemp.Sconto = split[4];
+
                     templist.Add(ptemp);
 
                 }
@@ -408,6 +418,7 @@ namespace GestioneSarin2
             IsPlayServicesAvailable();
             FirebaseMessaging.Instance.SubscribeToTopic("all");
             docType = Intent.GetIntExtra("Type", 0);
+            nProgPhoto = Intent.GetIntExtra("nprog", 0);
 
         }
 
@@ -627,21 +638,15 @@ namespace GestioneSarin2
                     SetCodCliFor();
                     break;
                 case Resource.Id.savePres:
-                    var edittextAgente = new EditText(this);
-                    edittextAgente.Hint = "Codice agente";
+                   
                     var builder = new AlertDialog.Builder(this);
                     builder.SetTitle("Vuoi saalvare quest'ordine?");
                     builder.SetCancelable(true);
-                    builder.SetView(edittextAgente);
                     builder.SetNegativeButton("No", delegate { });
                     builder.SetPositiveButton("Si", delegate
                     {
 
-                        if (!edittextAgente.Text.StartsWith("C") && edittextAgente.Text.Length != 6)
-                        {
-                            Toast.MakeText(this, "Codice agente non valido", ToastLength.Short).Show();
-                            return;
-                        }
+                      
                         var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                             .DirectoryDownloads).AbsolutePath + "/Sarin";
                         if (!Directory.Exists(path))
@@ -660,14 +665,20 @@ namespace GestioneSarin2
                             var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
                             tot = Math.Round(tot, 2);
                             //aggiungere tipi
+                            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                            var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
                             switch (docType)
                             {
                                 case (int)DocType.Vendita:
-                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
+                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
                                     streamWriter.Write('#');
                                     break;
                                 case (int)DocType.Rapportino:
-                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{edittextAgente.Text};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};RAPLA");
+                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};RAPLA");
+                                    streamWriter.Write('#');
+                                    break;
+                                default:
+                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
                                     streamWriter.Write('#');
                                     break;
                             }
@@ -679,11 +690,74 @@ namespace GestioneSarin2
                     });
                     builder.Show();
                     break;
+                case Resource.Id.addPhoto:
+                    Intent getIntent = new Intent(Intent.ActionGetContent);
+                    getIntent.SetType("image/*");
+
+                    Intent pickIntent = new Intent(Intent.ActionPick, MediaStore.Images.Media.ExternalContentUri);
+                    pickIntent.SetType("image/*");
+
+                    Intent chooserIntent = Intent.CreateChooser(getIntent, "Select Image");
+                    chooserIntent.PutExtra(Intent.ExtraInitialIntents, new IParcelable[] { pickIntent });
+
+                    StartActivityForResult(chooserIntent, PICK_IMAGE);
+
+                    break;
 
 
             }
             return base.OnOptionsItemSelected(item);
         }
+        public static readonly int PICK_IMAGE = 1;
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (requestCode == PICK_IMAGE && resultCode == Result.Ok)
+            {
+                var d = data.Data;
+                var picturePath = GetPath(this, d);
+            }
+        }
+
+        private int nProgPhoto;
+        public string GetPath(Context context, Android.Net.Uri uri)
+        {
+            var result = "";
+            var proj = new[] { MediaStore.Images.Media.InterfaceConsts.Data };
+            var cursor = context.ContentResolver.Query(uri, proj, null, null, null);
+            if (cursor != null)
+            {
+                if (cursor.MoveToFirst())
+                {
+                    var columnIndex = cursor.GetColumnIndexOrThrow(proj[0]);
+                    result = cursor.GetString(columnIndex);
+                }
+                cursor.Close();
+            }
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin/photoa";
+            nProgPhoto++;
+
+            var img = new Java.IO.File(result);
+            var newImg = new Java.IO.File(path + $"/{DateTime.Now:yyyy-mm-dd}-codag-{codclifor}-{nProgPhoto}.jpg");
+            FileChannel inputChannel = null;
+            FileChannel outputChannel = null;
+            try
+            {
+                inputChannel = new FileInputStream(img).Channel;
+                outputChannel = new FileOutputStream(newImg).Channel;
+                outputChannel.TransferFrom(inputChannel, 0, inputChannel.Size());
+            }
+            finally
+            {
+                inputChannel?.Close();
+                outputChannel?.Close();
+                inputChannel?.Dispose();
+                outputChannel?.Dispose();
+            }
+            return result ?? "Not found";
+        }
+
         public bool IsPlayServicesAvailable()
         {
             string x;

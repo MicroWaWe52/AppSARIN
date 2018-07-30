@@ -26,6 +26,8 @@ namespace GestioneSarin2.Activity
         public static readonly string KeyPassw = "pref_key_passw";
         public static readonly string KeyUpdate = "pref_key_update";
         public static readonly string KeyDelete = "pref_key_delete";
+        public static readonly string KeyCodAge = "pref_key_codAge";
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -72,6 +74,11 @@ namespace GestioneSarin2.Activity
                 connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
                 connectionPref.Summary = sharedPreferences.GetString(key, "");
 
+            }else if (key.Equals(KeyCodAge))
+            {
+                Preference connectionPref = FindPreference(key);
+                connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
+                connectionPref.Summary = sharedPreferences.GetString(key, "");
             }
         }
         protected override void OnResume()

@@ -2534,11 +2534,11 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d003a
 			public const int ALT = 2131558458;
 			
-			// aapt resource value: 0x7f0d00de
-			public const int Agente = 2131558622;
+			// aapt resource value: 0x7f0d00df
+			public const int Agente = 2131558623;
 			
-			// aapt resource value: 0x7f0d00dc
-			public const int Aggiorna_Il_Database = 2131558620;
+			// aapt resource value: 0x7f0d00dd
+			public const int Aggiorna_Il_Database = 2131558621;
 			
 			// aapt resource value: 0x7f0d00ac
 			public const int BG = 2131558572;
@@ -2549,8 +2549,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d00ad
 			public const int CenterIMA = 2131558573;
 			
-			// aapt resource value: 0x7f0d00dd
-			public const int Cliente = 2131558621;
+			// aapt resource value: 0x7f0d00de
+			public const int Cliente = 2131558622;
 			
 			// aapt resource value: 0x7f0d00d5
 			public const int CodCliTextViewHist = 2131558613;
@@ -2641,6 +2641,9 @@ namespace GestioneSarin2
 			
 			// aapt resource value: 0x7f0d002f
 			public const int add = 2131558447;
+			
+			// aapt resource value: 0x7f0d00dc
+			public const int addPhoto = 2131558620;
 			
 			// aapt resource value: 0x7f0d001d
 			public const int adjust_height = 2131558429;
@@ -2924,17 +2927,17 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d0095
 			public const int navigation = 2131558549;
 			
-			// aapt resource value: 0x7f0d00e0
-			public const int navigation_dashboard = 2131558624;
+			// aapt resource value: 0x7f0d00e1
+			public const int navigation_dashboard = 2131558625;
 			
 			// aapt resource value: 0x7f0d009f
 			public const int navigation_header_container = 2131558559;
 			
-			// aapt resource value: 0x7f0d00df
-			public const int navigation_home = 2131558623;
+			// aapt resource value: 0x7f0d00e0
+			public const int navigation_home = 2131558624;
 			
-			// aapt resource value: 0x7f0d00e1
-			public const int navigation_notifications = 2131558625;
+			// aapt resource value: 0x7f0d00e2
+			public const int navigation_notifications = 2131558626;
 			
 			// aapt resource value: 0x7f0d0043
 			public const int never = 2131558467;
@@ -3029,8 +3032,8 @@ namespace GestioneSarin2
 			// aapt resource value: 0x7f0d005c
 			public const int scrollable = 2131558492;
 			
-			// aapt resource value: 0x7f0d00e2
-			public const int searchCusotmers = 2131558626;
+			// aapt resource value: 0x7f0d00e3
+			public const int searchCusotmers = 2131558627;
 			
 			// aapt resource value: 0x7f0d0087
 			public const int search_badge = 2131558535;
@@ -3532,19 +3535,22 @@ namespace GestioneSarin2
 		{
 			
 			// aapt resource value: 0x7f030000
-			public const int ic_launcher = 2130903040;
+			public const int add = 2130903040;
 			
 			// aapt resource value: 0x7f030001
-			public const int ic_launcher_foreground = 2130903041;
+			public const int ic_launcher = 2130903041;
 			
 			// aapt resource value: 0x7f030002
-			public const int ic_launcher_round = 2130903042;
+			public const int ic_launcher_foreground = 2130903042;
 			
 			// aapt resource value: 0x7f030003
-			public const int save = 2130903043;
+			public const int ic_launcher_round = 2130903043;
 			
 			// aapt resource value: 0x7f030004
-			public const int send = 2130903044;
+			public const int save = 2130903044;
+			
+			// aapt resource value: 0x7f030005
+			public const int send = 2130903045;
 			
 			static Mipmap()
 			{
@@ -4954,7 +4960,10 @@ namespace GestioneSarin2
 		{
 			
 			// aapt resource value: 0x7f070000
-			public const int PreferenceScxml = 2131165184;
+			public const int file_paths = 2131165184;
+			
+			// aapt resource value: 0x7f070001
+			public const int PreferenceScxml = 2131165185;
 			
 			static Xml()
 			{

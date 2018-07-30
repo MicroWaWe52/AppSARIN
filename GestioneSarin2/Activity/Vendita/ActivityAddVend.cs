@@ -107,7 +107,6 @@ namespace GestioneSarin2
                 layout.AddView(textScon);
                 layout.AddView(textNote);
 
-                textQta.SetRawInputType(InputTypes.ClassNumber);
                 var builder = new AlertDialog.Builder(this);
                 builder.SetTitle("Seleziona la quantita");
                 builder.SetCancelable(true);
@@ -117,7 +116,8 @@ namespace GestioneSarin2
                 builder.SetPositiveButton("Conferma",
                     delegate
                     {
-                        listProd.Add($"{subqueryList[e.Position].Name};{textQta.Text.Replace(',', '.')};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text}");
+                        listProd.Add($"{subqueryList[e.Position].Name};{textQta.Text.Replace(',', '.')};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text};{textNote.Text}");
+                        subqueryList[e.Position].Note = textNote.Text;
                         Intent i = new Intent(this, typeof(ActivityCartVend));
                         var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
                         listURI.Add(urisplit.Last());
@@ -127,7 +127,9 @@ namespace GestioneSarin2
                         i.PutExtra("uri", uriarr);
                         i.PutExtra("first", false);
                         i.PutExtra("Type", Intent.GetIntExtra("Type",0));
-                      
+                        var nprog = Intent.GetIntExtra("nprog", 0);
+                        i.PutExtra("nprog", nprog);
+
 
                         StartActivity(i);
 
@@ -182,7 +184,8 @@ namespace GestioneSarin2
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
                     UnitPrice = sDirectoryItem[12],
-                    CodArt = sDirectoryItem[4]
+                    CodArt = sDirectoryItem[4],
+
 
                 };
                 listtemp.Add(ptemp);

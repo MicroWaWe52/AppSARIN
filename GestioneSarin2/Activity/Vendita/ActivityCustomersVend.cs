@@ -202,6 +202,8 @@ namespace GestioneSarin2.Activity
             inte.PutExtra("first", false);
             var type = Intent.GetIntExtra("Type", 0);
             inte.PutExtra("Type", type);
+            inte.PutExtra("nprog", Intent.GetIntExtra("nprog", 0));
+
             StartActivity(inte);
         }
     }

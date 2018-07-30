@@ -15,6 +15,10 @@
     android:key="pref_key_passw"
     android:summary="Password d'accesso al server"
     android:title="Password" />
+  <EditTextPreference
+    android:key="pref_key_codAge"
+    android:summary="Codice agente usato nei documenti"
+    android:title="Codice agente"/>
   <Preference 
     android:key="pref_key_update"
     android:summary="Aggiorna tutto"

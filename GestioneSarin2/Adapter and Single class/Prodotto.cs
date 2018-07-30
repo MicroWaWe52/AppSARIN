@@ -23,5 +23,7 @@ namespace GestioneSarin2
         public string UnitPrice { get; set; }
         public string CodArt { get; set; }
         public string IVA { get; set; }
+        public string Note { get; set; }
+        public string Sconto { get; set; }
     }
 }
