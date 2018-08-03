@@ -52,7 +52,10 @@ namespace GestioneSarin2
             {
                 listURI = new List<string>();
             }
-            query = Helper.table.Where(s => s[21] == GroupSel).ToList();
+
+            var groups = Helper.GetGroup(this);
+            var codGroup = groups[0][groups[1].IndexOf(GroupSel)];
+            query = Helper.GetArticoli(this).Where(s => s[3] == codGroup).ToList();
             var subGroupList = new List<string>();
             foreach (var row in query)
             {
@@ -75,7 +78,7 @@ namespace GestioneSarin2
                     Grouop = query.First(list => list[3].Equals(subGroup))[2],
                     SubGroup = query.First(list => list[3].Equals(subGroup))[3],
 
-                    Name = textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup))[5]),
+                    Name =/* textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup))[1]),*/GroupSel,
                     QuantityPrice = ""
                 };
                 pListSub.Add(psub);
@@ -110,13 +113,18 @@ namespace GestioneSarin2
                 var builder = new AlertDialog.Builder(this);
                 builder.SetTitle("Seleziona la quantita");
                 builder.SetCancelable(true);
-                
+
                 builder.SetView(layout);
                 builder.SetNegativeButton("Annulla", delegate { });
                 builder.SetPositiveButton("Conferma",
                     delegate
                     {
-                        listProd.Add($"{subqueryList[e.Position].Name};{textQta.Text.Replace(',', '.')};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text};{textNote.Text}");
+                        var qta = textQta.Text.Replace(',', '.');
+                        if (!qta.Contains('.'))
+                        {
+                            qta += ".00";
+                        }
+                        listProd.Add($"{subqueryList[e.Position].CodArt};{qta};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text};{textNote.Text}");
                         subqueryList[e.Position].Note = textNote.Text;
                         Intent i = new Intent(this, typeof(ActivityCartVend));
                         var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
@@ -126,7 +134,7 @@ namespace GestioneSarin2
                         i.PutExtra("prod", array);
                         i.PutExtra("uri", uriarr);
                         i.PutExtra("first", false);
-                        i.PutExtra("Type", Intent.GetIntExtra("Type",0));
+                        i.PutExtra("Type", Intent.GetIntExtra("Type", 0));
                         var nprog = Intent.GetIntExtra("nprog", 0);
                         i.PutExtra("nprog", nprog);
 
@@ -146,7 +154,7 @@ namespace GestioneSarin2
             var listtemp = new List<Prodotto>();
             foreach (var sDirectoryItem in querys)
             {
-                var name = ti.ToLower(sDirectoryItem[5]);
+                var name = ti.ToLower(sDirectoryItem[0]);
                 var ptemp = new Prodotto
                 {
                     ImageUrl = sDirectoryItem[15],
@@ -175,16 +183,16 @@ namespace GestioneSarin2
             var listtemp = new List<Prodotto>();
             foreach (var sDirectoryItem in querys)
             {
-                var name = ti.ToLower(sDirectoryItem[5]);
+                var name = ti.ToLower(sDirectoryItem[1]);
                 var ptemp = new Prodotto
                 {
                     ImageUrl = sDirectoryItem[16],
                     Name = name,
-                    QuantityPrice = $"{sDirectoryItem[7]}pz/{sDirectoryItem[12]}€",
+                    QuantityPrice = $"{sDirectoryItem[7]}{sDirectoryItem[2]}/{sDirectoryItem[4]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
-                    UnitPrice = sDirectoryItem[12],
-                    CodArt = sDirectoryItem[4],
+                    UnitPrice = sDirectoryItem[4],
+                    CodArt = sDirectoryItem[0],
 
 
                 };

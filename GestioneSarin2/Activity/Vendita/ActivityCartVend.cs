@@ -78,8 +78,10 @@ namespace GestioneSarin2
                         var id = args.CheckedId;
                         if (id == radiobuttonCat.Id)
                         {
-                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this));
+                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this)[1]);
                             lw.ItemClick -= Lw_ItemClickAll;
+                            lw.ItemClick -= Lw_ItemClickCatalogo;
+
                             lw.ItemClick += Lw_ItemClickCat;
                             textSearch.Enabled = false;
 
@@ -90,12 +92,14 @@ namespace GestioneSarin2
                             for (var i = 1; i < Helper.table.Count; i++)
                             {
                                 var prod = Helper.table[i];
-                                prodList.Add(prod[5]);
+                                prodList.Add(prod[1]);
                             }
 
                             prodListAll = prodList;
                             lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodList);
                             lw.ItemClick -= Lw_ItemClickCat;
+                            lw.ItemClick -= Lw_ItemClickCatalogo;
+
                             lw.ItemClick += Lw_ItemClickAll;
                             textSearch.Enabled = true;
 
@@ -105,12 +109,12 @@ namespace GestioneSarin2
                             lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new List<string> { "Apri catalogo" });
                             lw.ItemClick -= Lw_ItemClickCat;
                             lw.ItemClick -= Lw_ItemClickAll;
-                            lw.ItemClick += Lw_ItemClick;
+                            lw.ItemClick += Lw_ItemClickCatalogo;
                             textSearch.Enabled = false;
                         }
 
                     }
-                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this));
+                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this)[1]);
 
                     textSearch.TextChanged += (object sender, TextChangedEventArgs args) =>
                     {
@@ -136,9 +140,17 @@ namespace GestioneSarin2
                         Toast.MakeText(this, "Selezionare un cliente prima!", ToastLength.Short).Show();
                         break;
                     }
-                   
+
                     var builder1 = new AlertDialog.Builder(this);
+                    var editSconto = new EditText(this){Hint = "Sconto"};
+                    var editNote = new EditText(this){Hint = "Note"};
+                    var editAcc = new EditText(this){Hint = "Acconto"};
+                    var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+                    layout.AddView(editSconto);
+                    layout.AddView(editNote);
+                    layout.AddView(editAcc);
                     builder1.SetTitle("Conferma ordine");
+                    builder1.SetView(layout);
                     var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                     var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
                     tot = Math.Round(tot, 2);
@@ -148,7 +160,7 @@ namespace GestioneSarin2
                     builder1.SetPositiveButton("Conferma", delegate
                     {
 
-                     
+
                         var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                             .DirectoryDownloads).AbsolutePath + "/Sarin";
                         if (!Directory.Exists(path))
@@ -172,26 +184,30 @@ namespace GestioneSarin2
                         {
                             last = 0;
                         }
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/docRig.csv", true))
+                        using (StreamWriter streamWriter = new StreamWriter(path + "/docRig.txt", true))
                         {
                             for (var index = 0; index < listprod.Count; index++)
                             {
                                 var prod = listprod[index];
                                 var prodSplit = prod.Split(';');
-                                var codPRd = Helper.table.First(p => p[5] == prodSplit[0].ToUpper())[4];
+                                var prodFirst = Helper.table.First(p => p[0] == prodSplit[0].ToUpper()).ToList();
+                                var codPRd = prodFirst[0];
+
                                 var prodFin = codPRd;
                                 for (var i = 1; i < prodSplit.Length - 1; i++)
                                 {
                                     prodFin += ";" + prodSplit[i];
                                 }
-                                var rig = index + ";" + last + ";" + prodFin;
+                                //  var rig = index + ";" + last + ";" + prodFin;
+                                var pUni = prodSplit[4];
+                                var rig = $"{last};{index+1};{docType};{DateTime.Now.ToShortDateString()};{index+1};{prodSplit[0]};{prodSplit[2]};{prodSplit[1]};{prodSplit[4]};{pUni}";
                                 streamWriter.WriteLine(rig);
                             }
                         }
 
 
 
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/docTes.csv", true))
+                        using (StreamWriter streamWriter = new StreamWriter(path + "/docTes.txt", true))
                         {
                             var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                             var totIva = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
@@ -208,10 +224,11 @@ namespace GestioneSarin2
                             switch (docType)
                             {
                                 case (int)DocType.Vendita:
-                                    streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL;{ns}");
+                                    //  streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL;{ns}");
+                                    streamWriter.Write($"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}");//todo sconti testa note testa acconto
                                     break;
                                 case (int)DocType.Rapportino:
-                                    streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};RAPLA;{ns}");
+                                    streamWriter.Write($"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}");//todo sconti testa note testa acconto
                                     break;
                             }
                         }
@@ -231,7 +248,7 @@ namespace GestioneSarin2
             return false;
         }
 
-        private void Lw_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        private void Lw_ItemClickCatalogo(object sender, AdapterView.ItemClickEventArgs e)
         {
             Intent i5 = new Intent(this, typeof(ActivityGalleryVend));
             i5.PutExtra("prod", listprod.ToArray());
@@ -263,10 +280,10 @@ namespace GestioneSarin2
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
-                    var psel = Helper.table.First(p => p[5] == itemName);
-                    listprod.Add($"{psel[5]};{textQta.Text.Replace(',', '.')};{psel[12]};{textPPart.Text};{textScon.Text};{textNote.Text}");
+                    var psel = Helper.table.First(p => p[1] == itemName);
+                    listprod.Add($"{psel[1]};{textQta.Text.Replace(',', '.')};{psel[4]};{textPPart.Text};{textScon.Text};{textNote.Text}");
                     var urisplit = psel[15].Split('\\');
-                    listURI.Add(urisplit.Last());
+                    listURI.Add("\\");
 
 
 
@@ -285,8 +302,8 @@ namespace GestioneSarin2
                         ptemp.ImageUrl = prod.uri;
                         var split = prod.prodotto.Split(';');//todo crash in differentmode of adding (seems fixed now keep eyes on it)
 
-                        var pqueryed = query.First(p => p[5] == split[0].ToUpper());
-                        var namet = pqueryed[5];
+                        var pqueryed = query.First(p => p[1] == split[0].ToUpper());
+                        var namet = pqueryed[1];
                         namet = textInfo.ToLower(namet);
                         ptemp.Name = textInfo.ToTitleCase(namet);
                         ptemp.CodArt = pqueryed[4];
@@ -391,9 +408,9 @@ namespace GestioneSarin2
                     var ptemp = new Prodotto();
                     ptemp.ImageUrl = prod.uri;
                     var split = prod.prodotto.Split(';');
-                    var pqueryed = query.First(p => p[5] == split[0].ToUpper());
-                    var namet = pqueryed[5];
-                    ptemp.CodArt = pqueryed[4];
+                    var pqueryed = query.First(p => p[0] == split[0].ToUpper());
+                    var namet = pqueryed[1];
+                    ptemp.CodArt = pqueryed[0];
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
@@ -638,7 +655,7 @@ namespace GestioneSarin2
                     SetCodCliFor();
                     break;
                 case Resource.Id.savePres:
-                   
+
                     var builder = new AlertDialog.Builder(this);
                     builder.SetTitle("Vuoi saalvare quest'ordine?");
                     builder.SetCancelable(true);
@@ -646,7 +663,7 @@ namespace GestioneSarin2
                     builder.SetPositiveButton("Si", delegate
                     {
 
-                      
+
                         var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                             .DirectoryDownloads).AbsolutePath + "/Sarin";
                         if (!Directory.Exists(path))

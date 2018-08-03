@@ -1,21 +1,16 @@
-﻿using System;
+﻿using Android.Content;
+using Android.Preferences;
+using GestioneSarin2.Activity;
+using Java.Net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Android.Content;
-using Android.Preferences;
-using GestioneSarin2.Activity;
-using Java.Lang;
-using Java.Net;
-using Environment = System.Environment;
 using Exception = System.Exception;
 using File = System.IO.File;
 using Math = System.Math;
-using Process = Android.OS.Process;
-using SocketAddress = System.Net.SocketAddress;
 
 
 namespace GestioneSarin2
@@ -24,9 +19,9 @@ namespace GestioneSarin2
     {
         public static List<List<string>> table;
 
-        public static List<string> GetGroup(Context context)
+        public static List<List<string>> GetGroup(Context context, bool force = false)
         {
-            var data = table ?? GetArticoli(context);
+            /*var data = table ?? GetArticoli(context);
 
             var descgruppolist = new List<string>();
             foreach (var row in data)
@@ -41,35 +36,69 @@ namespace GestioneSarin2
                 .ToList();
             output.Remove("desgruppo");
             output.Reverse();
-            return output;
+            return output;*/
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/maggrp.txt") || force)
+            {
+                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
+                using (WebClient request = new WebClient())
+                {
+                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
+                    request.Credentials = new NetworkCredential(usern, passw);
+
+                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                    var fileData = request.DownloadData($"ftp://{ip}/{codA}/import/maggrp.txt");
+                    using (var file = new FileStream(path + "/maggrp.txt", FileMode.Create))
+                    {
+                        file.Write(fileData, 0, fileData.Length);
+                        file.Close();
+                    }
+                }
+            }
+
+            var tableTemp = new List<List<string>> { new List<string>(), new List<string>() };
+            using (var fs = new StreamReader(path + "/maggrp.txt"))
+            {
+                while (!fs.EndOfStream)
+                {
+                    var split = fs.ReadLine()?.Split(';');
+                    if (split == null) continue;
+                    tableTemp[0].Add(split[0]);
+                    tableTemp[1].Add(split[1]);
+                }
+            }
+
+            return tableTemp;
         }
 
         public static decimal GetTot(List<string> prod)
         {
-            decimal TOTALE = 0;
+            decimal totale = 0;
             foreach (var singprod in prod)
             {
                 var prodsplit = singprod.Split(';');
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
-                var quant = prodsplit[1];
                 if (!float.TryParse(prodsplit[2], out var qta))
                 {
                     var qtaSplit = prodsplit[2].Split('/')[1].ToCharArray();
                     qta = float.Parse(qtaSplit.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch));
-                   
+
                 }
                 var quants = prodsplit[1].Split();
-                quant = quants[0].Replace(',', '.');
-                TOTALE += Convert.ToDecimal(quant) * Convert.ToDecimal(qta);
+                var quant = quants[0].Replace(',', '.');
+                totale += Convert.ToDecimal(quant) * Convert.ToDecimal(qta);
             }
 
-            TOTALE = Math.Round(TOTALE, 2);
-            return TOTALE;
+            totale = Math.Round(totale, 2);
+            return totale;
         }
 
         public static decimal GetTotIva(List<string> prod)
         {
-            decimal Tot = 0;
+            decimal tot = 0;
             foreach (var singprod in prod)
             {
                 var prodsplit = singprod.Split(';');
@@ -81,13 +110,13 @@ namespace GestioneSarin2
                         .Aggregate("", (current, ch) => current + ch));
                     var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
                     var ivatem = Convert.ToDecimal(table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
-                    Tot += (ttemp / 100) * ivatem;
+                    tot += (ttemp / 100) * ivatem;
                 }
                 else
                 {
                     var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
                     var ivatem = Convert.ToDecimal(table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
-                    Tot += (ttemp / 100) * ivatem;
+                    tot += (ttemp / 100) * ivatem;
                 }
 
 
@@ -95,11 +124,11 @@ namespace GestioneSarin2
 
             }
 
-            Tot = Math.Round(Tot, 2);
-            return Tot;
+            tot = Math.Round(tot, 2);
+            return tot;
         }
 
-        public static List<List<string>> GetDest(Context contex, bool force = false)
+        /*public static List<List<string>> GetDest(Context contex, bool force = false)
         {
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
@@ -111,9 +140,10 @@ namespace GestioneSarin2
                     var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                     var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
                     request.Credentials = new NetworkCredential(usern, passw);
+                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
 
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                    byte[] fileData = request.DownloadData($"ftp://{ip}/_destdiv.csv");
+                    byte[] fileData = request.DownloadData($"ftp://{ip}/{codA}/import/_destdiv.csv");
                     using (FileStream file = new FileStream(path + "/destdiv.csv", FileMode.Create))
                     {
                         file.Write(fileData, 0, fileData.Length);
@@ -135,7 +165,7 @@ namespace GestioneSarin2
             }
 
             return tableTemp;
-        }
+        }*/
 
         public static List<List<string>> GetArticoli(Context context, bool force = false)
         {
@@ -155,18 +185,19 @@ namespace GestioneSarin2
 
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
-            if (!File.Exists(path + "/catalogo.csv") || force)
+            if (!File.Exists(path + "/catalogo.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
                 using (WebClient request = new WebClient())
                 {
                     var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                     var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
                     request.Credentials = new NetworkCredential(usern, passw);
 
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                    byte[] fileData = request.DownloadData($"ftp://{ip}/_Articoli.csv");
-                    using (FileStream file = new FileStream(path + "/catalogo.csv", FileMode.Create))
+                    byte[] fileData = request.DownloadData($"ftp://{ip}/{codA}/import/magart.txt");
+                    using (FileStream file = new FileStream(path + "/catalogo.txt", FileMode.Create))
                     {
                         file.Write(fileData, 0, fileData.Length);
                         file.Close();
@@ -175,7 +206,7 @@ namespace GestioneSarin2
             }
 
             var tableTemp = new List<List<string>>();
-            using (var fs = new StreamReader(path + "/catalogo.csv"))
+            using (var fs = new StreamReader(path + "/catalogo.txt"))
             {
                 while (!fs.EndOfStream)
                 {
@@ -248,7 +279,7 @@ namespace GestioneSarin2
             try
             {
                 var tableTemp = new List<List<string>>();
-                using (var fs = new StreamReader(path + "/clienti.csv"))
+                using (var fs = new StreamReader(path + "/clienti.txt"))
                 {
                     while (!fs.EndOfStream)
                     {
@@ -271,7 +302,7 @@ namespace GestioneSarin2
         {
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
-            if (!File.Exists(path + "/clienti.csv") || force)
+            if (!File.Exists(path + "/clienti.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
 
@@ -279,11 +310,12 @@ namespace GestioneSarin2
                 {
                     var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                     var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
                     request.Credentials = new NetworkCredential(usern, passw);
 
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                    byte[] fileData = request.DownloadData($"ftp://{ip}/_clienti.csv");
-                    using (FileStream file = new FileStream(path + "/clienti.csv", FileMode.Create))
+                    byte[] fileData = request.DownloadData($"ftp://{ip}/{codA}/import/anagrafe.txt");
+                    using (FileStream file = new FileStream(path + "/clienti.txt", FileMode.Create))
                     {
                         file.Write(fileData, 0, fileData.Length);
                         file.Close();
@@ -295,7 +327,7 @@ namespace GestioneSarin2
             try
             {
                 var tableTemp = new List<List<string>>();
-                using (var fs = new StreamReader(path + "/clienti.csv"))
+                using (var fs = new StreamReader(path + "/clienti.txt"))
                 {
                     while (!fs.EndOfStream)
                     {
@@ -341,6 +373,53 @@ namespace GestioneSarin2
             var listFiles = Directory.GetFiles(path, "*.jpg").ToList();
             return listFiles;
 
+        }
+
+        public static void GetAge(Context context, bool force = false)
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/docana.txt") || force)
+            {
+                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
+
+                using (WebClient request = new WebClient())
+                {
+                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
+                    request.Credentials = new NetworkCredential(usern, passw);
+
+                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                    var fileData = request.DownloadData($"ftp://{ip}/{codA}/import/docana.txt");
+                    using (FileStream file = new FileStream(path + "/docana.csv", FileMode.Create))
+                    {
+                        file.Write(fileData, 0, fileData.Length);
+                        file.Close();
+                    }
+                }
+            }
+
+
+            try
+            {
+                var tableTemp = new List<List<string>>();
+                using (var fs = new StreamReader(path + "/docana.csv"))
+                {
+                    while (!fs.EndOfStream)
+                    {
+                        var row = fs.ReadLine();
+                        if (row == null) continue;
+                        var columns = row.Split(';');
+                        tableTemp.Add(columns.ToList());
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(e.Message);
+            }
         }
     }
 }

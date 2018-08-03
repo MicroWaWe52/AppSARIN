@@ -30,7 +30,7 @@ namespace GestioneSarin2
 
         readonly string pathpp = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                             .DirectoryDownloads).AbsolutePath + "/Sarin";
-        private List<string> csvlist=new List<string>();
+        private List<string> csvlist = new List<string>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -185,7 +185,7 @@ namespace GestioneSarin2
                 inte.PutExtra("ndoc", nDoc);
                 inte.PutExtra("mod", true);
                 inte.PutExtra("first", false);
-              
+
                 var tesListr = new List<string>();
                 using (var sw = new StreamReader(path + "/doctes.csv"))
                 {
@@ -237,7 +237,7 @@ namespace GestioneSarin2
             });
             builder.Show();
         }
-        
+
         private void ListViewHist_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
         {
             var builder = new AlertDialog.Builder(this);
@@ -312,30 +312,42 @@ namespace GestioneSarin2
             {
                 case Resource.Id.sendHistory:
                     var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                                   .DirectoryDownloads).AbsolutePath + "/Sarin/";
+                                   .DirectoryDownloads).AbsolutePath + "/Sarin";
                     var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                    csvlist.Add(path+"/doctes.csv");
-                    csvlist.Add(path+"docrig.csv");
-                    var directory = new File(pathpp);
+                    csvlist.Add(path + "/doctes.csv");
+                    csvlist.Add(path + "/docrig.csv");
+                    var directory = new File(pathpp+"/photoa");
                     var files = directory.ListFiles();
-                    foreach (var t in files)
-                    {
-                        csvlist.Add(t.Name);
-                    }
+                    if (files != null)
+                        foreach (var t in files)
+                        {
+                            csvlist.Add(t.Name);
+                        }
+
                     foreach (var csv in csvlist)
                     {
                         var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                         var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
                         var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                        using (var reader = new StreamReader(path + csv))
-                        using (var client = new WebClient())
+                        using (var reader = new StreamReader(csv))
                         {
-                            client.Credentials = new NetworkCredential(usern, passw);
+                            var name = csv.Split('/').Last();
+                            var url = $"ftp://{ip}/{name}";
+                            var request = (FtpWebRequest)WebRequest.Create(url);
+                            request.Method = WebRequestMethods.Ftp.UploadFile;
+                            request.Credentials = new NetworkCredential(usern, passw);
 
-                            var file = Encoding.UTF8.GetBytes(reader.ReadToEnd());
 
-                            client.UploadData(new Uri($"ftp://{ip}/{csv}"), file);
+                            var fileContents = Encoding.UTF8.GetBytes(reader.ReadToEnd());
+                            reader.Close();
+                            request.ContentLength = fileContents.Length;
+
+                            var requestStream = request.GetRequestStream();
+                            requestStream.Write(fileContents, 0, fileContents.Length);
+                            requestStream.Close();
                         }
+
+
                     }
                     break;
 

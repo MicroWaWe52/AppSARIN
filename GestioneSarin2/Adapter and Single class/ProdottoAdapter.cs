@@ -104,7 +104,15 @@ namespace GestioneSarin2
             puni = puni.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch);
 
             var ttemp = Convert.ToDecimal(Convert.ToInt32(qta) * float.Parse(puni.Replace(',', '.')));
-            var ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[6]);
+            decimal ivatem=22;
+            try
+            {
+                ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[6]);
+            }
+            catch (Exception e)
+            {
+               
+            }
 
             var totIva = ttemp + (ttemp / 100) * ivatem;
             totIva = Math.Round(totIva, 2);

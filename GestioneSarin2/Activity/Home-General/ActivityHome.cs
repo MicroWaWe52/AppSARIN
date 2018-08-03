@@ -59,31 +59,44 @@ namespace GestioneSarin2
             {
                 RequestPermissions(new[] { Manifest.Permission.Camera }, 6);
             }
-
-
-
+            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+            var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+            if (ip != "") Helper.GetArticoli(this);
         }
 
         protected override void OnResume()
         {
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
-            
-            if (!Directory.Exists(path))
-            {
-                Toast.MakeText(this, "Aggiornamento in corso...\r\n un secondo", ToastLength.Short).Show();
-               Directory.CreateDirectory(path);
-                Task.Factory.StartNew(() =>
-                {
-                    Helper.GetClienti(this, true);
-                    Helper.GetArticoli(this, true);
-                    Helper.GetDest(this, true);
-                    RunOnUiThread( () =>
-                    {
-                        Toast.MakeText(this,"Aggiornamento completato",ToastLength.Short).Show();
-                    });
-                });
 
+            try
+            {
+                const string permissiones = Manifest.Permission.ReadExternalStorage;
+                if (CheckSelfPermission(permissiones) == (int)Permission.Granted)
+                {
+                    if (!Directory.Exists(path))
+                    {
+                        Toast.MakeText(this, "Aggiornamento in corso...\r\n un secondo", ToastLength.Short).Show();
+                        Directory.CreateDirectory(path);
+                        Task.Factory.StartNew(() =>
+                        {
+                            Helper.GetClienti(this, true);
+                            Helper.GetArticoli(this, true);
+                            // Helper.getde(this, true);
+                            Helper.GetAge(this, true);
+
+                            RunOnUiThread(() =>
+                            {
+                                Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+                            });
+                        });
+
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
             }
             base.OnResume();
         }
@@ -106,15 +119,15 @@ namespace GestioneSarin2
         private void OrdButton_Click(object sender, EventArgs e)
         {
             var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-             var ip = sharedPref.GetString(ActivitySettings.KeyIp,"");
-            if (ip!="")
+            var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+            if (ip != "")
             {
                 StartActivity(typeof(ActivityDocChoice));
 
-            } 
+            }
             else
             {
-                Toast.MakeText(this,"Accedi ad un server prima",ToastLength.Short).Show();
+                Toast.MakeText(this, "Accedi ad un server prima", ToastLength.Short).Show();
             }
 
         }

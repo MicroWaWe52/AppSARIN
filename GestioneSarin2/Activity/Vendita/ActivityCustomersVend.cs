@@ -46,9 +46,9 @@ namespace GestioneSarin2.Activity
             custListView.ItemClick += CustListView_ItemClick;
             AssetManager am = Assets;
             Typeface tvName = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
-            codRadioButton.SetTypeface(tvName,TypefaceStyle.Normal);
-            descRadioButton.SetTypeface(tvName,TypefaceStyle.Normal);
-            codRadioButton.SetTypeface(tvName,TypefaceStyle.Normal);
+            codRadioButton.SetTypeface(tvName, TypefaceStyle.Normal);
+            descRadioButton.SetTypeface(tvName, TypefaceStyle.Normal);
+            codRadioButton.SetTypeface(tvName, TypefaceStyle.Normal);
             // Create your application here
             try
             {
@@ -56,20 +56,19 @@ namespace GestioneSarin2.Activity
             }
             catch (Exception e)
             {
-                clienti = Helper.GetClienti(this,true);
+                clienti = Helper.GetClienti(this, true);
             }
-              
+
             foreach (var cliente in clienti)
             {
                 codcliforlist.Add(cliente[0]);
-                var parttemp = cliente[8];
+                var parttemp = cliente[3];
                 partitaivalist.Add(parttemp);
 
 
                 descliforlist.Add(cliente[1]);
             }
-          
-            descliforlist.RemoveAt(0);
+
             descliforlist = descliforlist
                 .GroupBy(word => word)
                 .Select(group => group.Key).ToList();
@@ -118,7 +117,7 @@ namespace GestioneSarin2.Activity
                 {
                     var ada = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,
                         partitaivalist);
-                    ada.Filter.InvokeFilter('0'+custEditText.Text);
+                    ada.Filter.InvokeFilter('0' + custEditText.Text);
 
                     custListView.Adapter = ada;
                 }
@@ -138,7 +137,7 @@ namespace GestioneSarin2.Activity
         private Dictionary<string, List<string>> dictDest;
         private void CustListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            query = Helper.GetDest(this);
+            query = Helper.GetClienti(this);
             List<string> items = new List<string>();
             dictDest = new Dictionary<string, List<string>>();
             for (int i = 0; i < custListView.Adapter.Count; i++)
@@ -147,38 +146,49 @@ namespace GestioneSarin2.Activity
             }
             if (custRadioGroup.CheckedRadioButtonId == descRadioButton.Id)
             {
-               
+
                 codclifor = clienti.First(cod => cod[1] == items[e.Position])[0];
             }
             else if (custRadioGroup.CheckedRadioButtonId == pivaRadioButton.Id)
             {
-                codclifor = clienti.First(list => list[8] == items[e.Position])[0];
+                codclifor = clienti.First(list => list[3] == items[e.Position])[0];
             }
             else if (custRadioGroup.CheckedRadioButtonId == codRadioButton.Id)
             {
-                codclifor =items[e.Position];
+                codclifor = items[e.Position];
             }
 
             var builder = new AlertDialog.Builder(this);
-            
+
             var output = query
-                .GroupBy(word => word[0])
+                .GroupBy(word =>
+                {
+                    var codde = word[0].ToCharArray();
+                    var ret= new string(codde.Take(6).ToArray());
+                    return ret;
+                })
                 .Select(group => group.Key)
                 .ToList();
             foreach (var group in output)
             {
-                var l = query.Where(p => p[0] == group).ToList();
-                var addList=new List<string>();
+                var l = query.Where(p =>
+                {
+                    var codde = p[0].ToCharArray();
+                    var ret = new string(codde.Take(6).ToArray());
+                    return ret== group;
+                }).ToList();
+                var addList = new List<string>();
                 foreach (var add in l)
                 {
-                    addList.Add(add[9] == "" ? add[1] : add[9]);
+                    addList.Add(add[1]);
                 }
                 dictDest.Add(group, addList);
             }
 
+            var c = new string(codclifor.Take(6).ToArray());
             var listv = new ListView(this)
             {
-                Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,dictDest[codclifor])
+                Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, dictDest[c])
             };
             builder.SetTitle("Seleziona destinazione");
             builder.SetCancelable(true);
@@ -192,11 +202,13 @@ namespace GestioneSarin2.Activity
 
         private void Listv_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            var list = dictDest[codclifor];
-            var codDest = query.First(p => p[9] == list[e.Position])[2];
+            var codCli = new string(codclifor.Take(6).ToArray());
+
+            codclifor = query.First(ci => ci[1] == dictDest[codCli][e.Position])[0];
+            var codDest=new string(codclifor.Skip(6).ToArray());
             using (StreamWriter stream = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
             {
-                stream.WriteLine(codclifor + '/' + codDest);
+                stream.WriteLine(codCli + '/' + codDest);
             }
             Intent inte = new Intent(this, typeof(ActivityCartVend));
             inte.PutExtra("first", false);

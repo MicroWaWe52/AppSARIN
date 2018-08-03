@@ -108,7 +108,8 @@ namespace GestioneSarin2.Activity
                }
                Helper.GetClienti(this, true);
                Helper.GetArticoli(this, true);
-               Helper.GetDest(this, true);
+              // Helper.GetDest(this, true);
+               Helper.GetAge(this,true);
                RunOnUiThread(() =>
                {
                    Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
