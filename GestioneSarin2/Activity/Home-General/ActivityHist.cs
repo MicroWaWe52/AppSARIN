@@ -23,7 +23,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace GestioneSarin2
 {
-    [Activity(Label = "         Storico Ordini", Theme = "@style/AppThemeNo", ParentActivity = typeof(ActivityHome))]
+    [Activity(Label = "", Theme = "@style/AppThemeNo", ParentActivity = typeof(ActivityHome))]
     public class ActivityHist : AppCompatActivity
     {
         private ListView listViewHist;
@@ -53,9 +53,8 @@ namespace GestioneSarin2
 
         protected void Refresh()
         {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
-            var clienti = Helper.GetClienti(path);
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+            var clienti = Helper.GetClienti(this);
 
             if (!Directory.Exists(path))
             {
@@ -67,7 +66,7 @@ namespace GestioneSarin2
             {
 
 
-                var pathord = path + "/docTes.csv";
+                var pathord = path + "/docTes.txt";
                 var ordDet = new List<string>();
                 using (var streamWriter = new StreamReader(pathord))
                 {
@@ -79,18 +78,16 @@ namespace GestioneSarin2
                     ).ToList();
 
                 }
-                ordDet.RemoveAt(ordDet.Count - 1);
                 foreach (var ord in ordDet)
                 {
                     var testa = ord.Split(';');
                     var nameTemp = clienti.First(list => ("C" + list[0]).Contains(testa[5]))[1];
                     listoOrdines.Add(new Ordine
                     {
-                        Date = testa[6],
+                        Date = testa[3],
                         Name = nameTemp,
-                        Tot = testa[3],
-                        CodCli = testa[5],
-                        Type = testa[8]
+                        CodCli = testa[4],
+                        Type = testa[1]
                     });
                 }
 

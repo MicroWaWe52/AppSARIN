@@ -21,11 +21,12 @@ using Android.Widget;
 using GestioneSarin2.Activity;
 using Java.Lang;
 using ActionBar = Android.Support.V7.App.ActionBar;
+using Environment = System.Environment;
 using Path = System.IO.Path;
 
 namespace GestioneSarin2
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppThemeNo", MainLauncher = true)]
     public class ActivityHome : AppCompatActivity
     {
         private ImageView ordButton;
@@ -45,11 +46,6 @@ namespace GestioneSarin2
             histButton.Click += HistButton_Click;
             presetButton.Click += PresetButton_Click;
             settButton.Click += SettButton_Click;
-            var st = new SpannableString("Nome ditta");
-            st.SetSpan(new TypefaceSpan("FiraSans-Regular.otf"), 0, st.Length(), SpanTypes.ExclusiveExclusive);
-            var sequence = st.SubSequenceFormatted(0, st.Length());
-            SupportActionBar.TitleFormatted = sequence;
-
             const string permissiones = Manifest.Permission.ReadExternalStorage;
             if (CheckSelfPermission(permissiones) != (int)Permission.Granted)
             {
@@ -65,59 +61,13 @@ namespace GestioneSarin2
             {
                 RequestPermissions(new[] { Manifest.Permission.WriteExternalStorage }, 7);
             }
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
+            if (File.Exists(path + "/first.first")) return;
+            StartActivity(typeof(ActivitySettings));
+            File.Create(path + "/first.first");
         }
-
-        /*protected override void OnResume()
-        {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
-
-            try
-            {
-                const string permissiones = Manifest.Permission.WriteExternalStorage;
-                if (CheckSelfPermission(permissiones) == (int)Permission.Granted)
-                {
-                    if (!Directory.Exists(path))
-                    {
-                        Toast.MakeText(this, "Aggiornamento in corso...\r\n un secondo", ToastLength.Short).Show();
-                        Directory.CreateDirectory(path);
-                        Task.Factory.StartNew(() =>
-                        {
-                            Helper.GetClienti(this, true);
-                            Helper.GetArticoli(this, true);
-                            Helper.GetAge(this, true);
-
-                            RunOnUiThread(() =>
-                            {
-                                Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
-                            });
-                        });
-
-                    }
-                    else
-                    {
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-                        var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                        var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                        var codage = sharedPref.GetString(ActivitySettings.KeyPassw, "");
-                        if (ip != "" && codage != "")
-                        {
-                            Helper.GetArticoli(this);
-                        }
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            base.OnResume();
-        }*/
-
+        
         private void SettButton_Click(object sender, EventArgs e)
         {
             StartActivity(typeof(ActivitySettings));
@@ -146,7 +96,7 @@ namespace GestioneSarin2
             {
                 Toast.MakeText(this, "Accedi ad un server prima", ToastLength.Short).Show();
             }
-
         }
     }
+   
 }

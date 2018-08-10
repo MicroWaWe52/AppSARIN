@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Preferences;
-using Android.Runtime;
-using Android.Support.V4.App;
-using Android.Support.V7.App;
-using Android.Views;
 using Android.Widget;
-using Java.Lang;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
@@ -106,17 +98,26 @@ namespace GestioneSarin2.Activity
             {
                 Directory.CreateDirectory(path);
             }
-            Helper.GetClienti(this, true);
             Task.Factory.StartNew(() =>
             {
-               
-              
-                Helper.GetArticoli(this, true);
-                Helper.GetAge(this, true);
-                Helper.GetGroup(this, true);
+                try
+                {
+                    Helper.GetClienti(this, true);
+                    Helper.GetArticoli(this, true);
+                    Helper.GetAge(this, true);
+                    Helper.GetGroup(this, true);
+                }
+                catch
+                {
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, "Aggiornamento non riuscito", ToastLength.Short).Show();
+                    });
+                }
                 RunOnUiThread(() =>
                 {
                     Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+                    File.Create(path + "/first.dow");
                 });
 
             });
@@ -132,6 +133,21 @@ namespace GestioneSarin2.Activity
         public bool OnPreferenceClick(Preference preference)
         {
             return false;
+        }
+
+        public override void OnBackPressed()
+        {
+           
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
+            if (!File.Exists(path+"/first.dow"))
+            {
+               Toast.MakeText(this,"Scarica i file almeno una volta prima",ToastLength.Short).Show(); 
+            }
+            else
+            {
+                base.OnBackPressed();
+            }
         }
     }
 

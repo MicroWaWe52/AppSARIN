@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Console = System.Console;
 using Environment = System.Environment;
 using File = System.IO.File;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -282,7 +283,7 @@ namespace GestioneSarin2
                 delegate
                 {
                     var psel = Helper.table.First(p => p[1] == itemName);
-                    listprod.Add($"{psel[1]};{textQta.Text.Replace(',', '.')};{psel[4]};{textPPart.Text};{textScon.Text};{textNote.Text}");
+                    listprod.Add($"{psel[0]};{textQta.Text.Replace(',', '.')};{psel[4]};{textPPart.Text};{textScon.Text};{textNote.Text}");
                     var urisplit = psel[15].Split('\\');
                     listURI.Add("\\");
 
@@ -302,15 +303,22 @@ namespace GestioneSarin2
                         var ptemp = new Prodotto { ImageUrl = prod.uri };
                         var split = prod.prodotto.Split(';');//todo crash in differentmode of adding (seems fixed now keep eyes on it)
 
-                        var pqueryed = query.First(p => p[1] == split[0].ToUpper());
+                        var pqueryed = query.First(p => p[0] == split[0].ToUpper());
                         var namet = pqueryed[1];
                         namet = textInfo.ToLower(namet);
                         ptemp.Name = textInfo.ToTitleCase(namet);
                         ptemp.CodArt = pqueryed[4];
-                        if (Convert.ToDecimal(split[3]) != 0)
+                        try
                         {
-                            split[2] = split[3];
-                            split[3] = "";
+                            if (Convert.ToDecimal(split[3]) != 0)
+                            {
+                                split[2] = split[3];
+                                split[3] = "";
+                            }
+                        }
+                        catch
+                        {
+                           
                         }
                         ptemp.QuantityPrice = split[1] + '/' + split[2];
                         ptemp.Note = split[5];
@@ -424,10 +432,17 @@ namespace GestioneSarin2
                     ptemp.CodArt = pqueryed[0];
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
-                    if (Convert.ToDecimal(split[3]) != 0)
+                    try
                     {
-                        split[2] = split[3];
-                        split[3] = "";
+                        if (Convert.ToDecimal(split[3]) != 0)
+                        {
+                            split[2] = split[3];
+                            split[3] = "";
+                        }
+                    }
+                    catch 
+                    {
+                        
                     }
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
                     ptemp.Note = split[5];
@@ -533,7 +548,7 @@ namespace GestioneSarin2
                     listView.Adapter = null;
                     return;
                 }
-
+                //todo delete
                 var templist = new List<Prodotto>();
                 var finalList = listprod.Zip(listURI, (p, u) => new
                 {
@@ -547,11 +562,11 @@ namespace GestioneSarin2
                     var ptemp = new Prodotto();
                     ptemp.ImageUrl = prod.uri;
                     var split = prod.prodotto.Split(';');
-                    var pqueryed = query.First(p => p[5] == split[0]);
-                    var namet = pqueryed[5];
+                    var pqueryed = query.First(p => p[0] == split[0]);
+                    var namet = pqueryed[1];
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
-                    ptemp.CodArt = pqueryed[4];
+                    ptemp.CodArt = pqueryed[0];
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
                     templist.Add(ptemp);
 

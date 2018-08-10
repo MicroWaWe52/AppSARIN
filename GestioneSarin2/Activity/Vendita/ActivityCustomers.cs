@@ -20,7 +20,7 @@ using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
 {
-    [Activity(Label = "ActivityCustomers", Theme = "@style/AppTheme", MainLauncher = false)]
+    [Activity(Label = "", Theme = "@style/AppTheme", MainLauncher = false)]
     public class ActivityCustomers : AppCompatActivity
     {
         private RadioGroup custRadioGroup;
@@ -130,6 +130,7 @@ namespace GestioneSarin2.Activity
                     custListView.Adapter = ada;
                 }
             };
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 
         private string codclifor;

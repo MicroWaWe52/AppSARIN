@@ -16,7 +16,7 @@ using GestioneSarin2.Other_class_and_Helper;
 
 namespace GestioneSarin2.Activity
 {
-    [Activity(Label = "ActivityDocChoice", Theme = "@style/AppTheme")]
+    [Activity(Label = "ActivityDocChoice", Theme = "@style/AppThemeNo")]
     public class ActivityDocChoice : AppCompatActivity
     {
         private Button rappoButton;
@@ -25,6 +25,7 @@ namespace GestioneSarin2.Activity
         private Button bollButton;
         private Button genButton;
         private Button fattButton;
+        private Button incaButton;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -36,19 +37,27 @@ namespace GestioneSarin2.Activity
             bollButton = FindViewById<Button>(Resource.Id.imageViewBoll);
             fattButton = FindViewById<Button>(Resource.Id.imageViewFatt);
             genButton = FindViewById<Button>(Resource.Id.imageViewGen);
+            incaButton = FindViewById<Button>(Resource.Id.imageViewInca);
 
             rappoButton.Click += RappoButtonClick;
             vendButton.Click += VendButtonClick;
+            prevButton.Click += PrevButton_Click;
             AssetManager am = Assets;
-            Typeface tvName = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
-            rappoButton.SetTypeface(tvName,TypefaceStyle.Normal);
-            vendButton.SetTypeface(tvName, TypefaceStyle.Normal);
-            prevButton.SetTypeface(tvName, TypefaceStyle.Normal);
-            bollButton.SetTypeface(tvName, TypefaceStyle.Normal);
-            genButton.SetTypeface(tvName, TypefaceStyle.Normal);
-            fattButton.SetTypeface(tvName, TypefaceStyle.Normal);
+            Typeface tvDoc = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            rappoButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            vendButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            prevButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            bollButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            genButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            fattButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            incaButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
 
 
+        }
+
+        private void PrevButton_Click(object sender, EventArgs e)
+        {
+            StartActivity(typeof(Activitytextexpan));
         }
 
         private void VendButtonClick(object sender, EventArgs e)

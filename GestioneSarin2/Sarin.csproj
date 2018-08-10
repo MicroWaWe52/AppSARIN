@@ -58,6 +58,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activity\Activitytextexpan.cs" />
     <Compile Include="Activity\Vendita\ActivityAdd.cs" />
     <Compile Include="Activity\Vendita\ActivityCustomers.cs" />
     <Compile Include="Activity\Home-General\ActivityDocChoice.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Activity\Home-General\ActivityHome.cs" />
     <Compile Include="Activity\Home-General\ActivityPreset.cs" />
     <Compile Include="Activity\Home-General\ActivitySettings.cs" />
+    <Compile Include="Adapter and Single class\CartAdapter.cs" />
     <Compile Include="Adapter and Single class\ImageAdapter.cs" />
     <Compile Include="Adapter and Single class\MyAdapter.cs" />
     <Compile Include="Other class and Helper\DocType.cs" />
@@ -274,6 +276,17 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\arrays.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\groupLayout.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\itemLayout.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\textExpan.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

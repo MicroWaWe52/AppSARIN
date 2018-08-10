@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="6"
+    android:weightSum="7"
     android:orientation="vertical">
     <Button
         android:layout_width="fill_parent"
@@ -10,8 +10,8 @@
         android:text="Ordine"
         android:textAllCaps="false"
         android:id="@+id/imageViewOrd"
-        android:background="#40373c"
-        android:textColor="#f2efe8"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/background"
         android:layout_weight="1"
         android:textSize="25dp" />
     <Button
@@ -20,8 +20,8 @@
         android:text="Preventivo"
         android:textAllCaps="false"
         android:id="@+id/imageViewPrev"
-        android:background="#f2efe8"
-        android:textColor="#40373c"
+        android:background="@color/background"
+        android:textColor="@color/colorPrimary"
         android:layout_weight="1"
         android:textSize="25dp" />
     <Button
@@ -30,8 +30,8 @@
         android:text="Bolla"
         android:textAllCaps="false"
         android:id="@+id/imageViewBoll"
-        android:background="#40373c"
-        android:textColor="#f2efe8"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/background"
         android:layout_weight="1"
         android:textSize="25dp" />
     <Button
@@ -40,8 +40,8 @@
         android:text="Fattura"
         android:textAllCaps="false"
         android:id="@+id/imageViewFatt"
-        android:background="#f2efe8"
-        android:textColor="#40373c"
+        android:background="@color/background"
+        android:textColor="@color/colorPrimary"
         android:layout_weight="1"
         android:textSize="25dp" />
     <Button
@@ -50,8 +50,8 @@
         android:text="Generico"
         android:textAllCaps="false"
         android:id="@+id/imageViewGen"
-        android:background="#40373c"
-        android:textColor="#f2efe8"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/background"
         android:layout_weight="1"
         android:textSize="25dp" />
     <Button
@@ -60,8 +60,18 @@
         android:text="Rapportino Lavoro"
         android:textAllCaps="false"
         android:id="@+id/imageViewRapp"
-        android:background="#f2efe8"
-        android:textColor="#40373c"
+        android:background="@color/background"
+        android:textColor="@color/colorPrimary"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Incassi"
+        android:textAllCaps="false"
+        android:id="@+id/imageViewInca"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/background"
         android:layout_weight="1"
         android:textSize="25dp" />
 </LinearLayout>
