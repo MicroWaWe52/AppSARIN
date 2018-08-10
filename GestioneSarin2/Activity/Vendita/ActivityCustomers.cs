@@ -210,7 +210,7 @@ namespace GestioneSarin2.Activity
             {
                 stream.WriteLine(codCli + '/' + codDest);
             }
-            Intent inte = new Intent(this, typeof(ActivityCartVend));
+            Intent inte = new Intent(this, typeof(ActivityCart));
             inte.PutExtra("first", false);
             var type = Intent.GetIntExtra("Type", 0);
             inte.PutExtra("Type", type);

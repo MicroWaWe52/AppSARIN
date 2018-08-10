@@ -99,40 +99,50 @@ namespace GestioneSarin2
             holder.QuantPrice.SetTypeface(tvName, TypefaceStyle.Normal);
             var qpSplit = prodottolList[position].QuantityPrice.Split('/');
             if (qpSplit.Length < 2) return view;
-            var qta = new string(qpSplit[0].Where(char.IsDigit).ToArray());
-            var puni = qpSplit.Last().Replace(',','.');
-            puni = puni.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch);
+            var qta = new string((from c in qpSplit[0]
+                                  where char.IsDigit(c) || char.IsPunctuation(c)
+                                  select c
+                 ).ToArray());
 
-            var ttemp = Convert.ToDecimal(Convert.ToInt32(qta) * float.Parse(puni.Replace(',', '.')));
-            decimal ivatem=22;
+            var puni = qpSplit.Last().Replace(',', '.');
+
+            puni = new string((from c in puni
+                               where char.IsDigit(c) || char.IsPunctuation(c)
+                               select c
+                  ).ToArray());
+
+            var ttemp = Convert.ToDecimal(Convert.ToSingle(qta) * float.Parse(puni.Replace(',', '.')));
+            decimal ivatem = 22;
             try
             {
-                ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[6]);
+                ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[13]);
             }
             catch (Exception e)
             {
-               
+
             }
 
             var totIva = ttemp + (ttemp / 100) * ivatem;
             totIva = Math.Round(totIva, 2);
-            decimal tot=0;
+            decimal tot = 0;
             try
             {
 
-                var valsconto = ttemp / 100 * Convert.ToDecimal(prodottolList[position].Sconto);
-                tot = ttemp - valsconto;
+                var valsconto = totIva / 100 * Convert.ToDecimal(prodottolList[position].Sconto);
+                tot = totIva - valsconto;
                 tot = Math.Round(tot, 2);
             }
-            catch (Exception e)
+            catch
             {
-                
+                // ignored
             }
-            var qpString = $"Q.:{qpSplit[0]}    Pz.U:{puni}     Imp:{ttemp}     Sc:{prodottolList[position].Sconto}        Tot:{tot}    IVA:{ivatem}";
+
+            if (prodottolList[position].Sconto == "")
+            {
+                prodottolList[position].Sconto = "0.00";
+            }
+            var qpString = Convert.ToDecimal(qta) == 0 ? $"Pz.U:{puni}" : $"Q.:{qpSplit[0]}    Pz.U:{Convert.ToDecimal(puni)}     Imp:{ttemp}     Sc:{prodottolList[position].Sconto}        Tot:{tot}    IVA:{ivatem}";
             holder.QuantPrice.Text = qpString;
-
-
-
             return view;
         }
 

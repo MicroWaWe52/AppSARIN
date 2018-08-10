@@ -136,7 +136,7 @@ namespace GestioneSarin2
                         }
                         listProd.Add($"{subqueryList[e.Position].CodArt};{qta};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text};{textNote.Text}");
                         subqueryList[e.Position].Note = textNote.Text;
-                        Intent i = new Intent(this, typeof(ActivityCartVend));
+                        Intent i = new Intent(this, typeof(ActivityCart));
                         var urisplit = subqueryList[e.Position].ImageUrl.Split('\\');
                         listURI.Add(urisplit.Last());
                         var uriarr = listURI.ToArray();

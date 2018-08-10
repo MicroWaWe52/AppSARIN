@@ -37,8 +37,8 @@ namespace GestioneSarin2
             output.Remove("desgruppo");
             output.Reverse();
             return output;*/
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             if (!File.Exists(path + "/maggrp.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -183,8 +183,8 @@ namespace GestioneSarin2
 
              }*/
 
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             if (!File.Exists(path + "/catalogo.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -249,8 +249,8 @@ namespace GestioneSarin2
         public static bool GetMIssPhoto(string path, Context context)
         {
             var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
-            var pathdow = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                              .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var pathdow = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             var pathsplit = path.Split('/');
             using (var request = new WebClient())
             {
@@ -376,8 +376,8 @@ namespace GestioneSarin2
 
         public static List<List<string>> GetAge(Context context, bool force = false)
         {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             if (!File.Exists(path + "/docana.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -423,8 +423,8 @@ namespace GestioneSarin2
         }
         public static void GetDoc(Context context, bool force = false)
         {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             if (!File.Exists(path + "/docana.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);

@@ -28,7 +28,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace GestioneSarin2
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppThemeNo", MainLauncher = false, ParentActivity = typeof(ActivityHome))]
-    public class ActivityCartVend : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
+    public class ActivityCart : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
         private List<string> listprod;
         private List<List<string>> query = Helper.table;
@@ -142,9 +142,9 @@ namespace GestioneSarin2
                     }
 
                     var builder1 = new AlertDialog.Builder(this);
-                    var editSconto = new EditText(this){Hint = "Sconto"};
-                    var editNote = new EditText(this){Hint = "Note"};
-                    var editAcc = new EditText(this){Hint = "Acconto"};
+                    var editSconto = new EditText(this) { Hint = "Sconto" };
+                    var editNote = new EditText(this) { Hint = "Note" };
+                    var editAcc = new EditText(this) { Hint = "Acconto" };
                     var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
                     layout.AddView(editSconto);
                     layout.AddView(editNote);
@@ -161,8 +161,8 @@ namespace GestioneSarin2
                     {
 
 
-                        var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                            .DirectoryDownloads).AbsolutePath + "/Sarin";
+                        var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
                         if (!Directory.Exists(path))
                         {
                             Directory.CreateDirectory(path);
@@ -200,7 +200,7 @@ namespace GestioneSarin2
                                 }
                                 //  var rig = index + ";" + last + ";" + prodFin;
                                 var pUni = prodSplit[4];
-                                var rig = $"{last};{index+1};{docType};{DateTime.Now.ToShortDateString()};{index+1};{prodSplit[0]};{prodSplit[2]};{prodSplit[1]};{prodSplit[4]};{pUni}";
+                                var rig = $"{last};{index + 1};{docType};{DateTime.Now.ToShortDateString()};{index + 1};{prodSplit[0]};{prodSplit[2]};{prodSplit[1]};{prodSplit[4]};{pUni}";
                                 streamWriter.WriteLine(rig);
                             }
                         }
@@ -223,11 +223,11 @@ namespace GestioneSarin2
                             var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
                             switch (docType)
                             {
-                                case (int) DocType.Vendita:
+                                case (int)DocType.Vendita:
                                     streamWriter.Write(
                                         $"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
                                     break;
-                                case (int) DocType.Rapportino:
+                                case (int)DocType.Rapportino:
                                     streamWriter.Write(
                                         $"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
                                     break;
@@ -251,7 +251,7 @@ namespace GestioneSarin2
 
         private void Lw_ItemClickCatalogo(object sender, AdapterView.ItemClickEventArgs e)
         {
-            Intent i5 = new Intent(this, typeof(ActivityGalleryVend));
+            Intent i5 = new Intent(this, typeof(ActivityGallery));
             i5.PutExtra("prod", listprod.ToArray());
             i5.PutExtra("uri", listURI.ToArray());
             i5.PutExtra("Type", docType);
@@ -299,7 +299,7 @@ namespace GestioneSarin2
                     query = Helper.table;
                     foreach (var prod in finalList)
                     {
-                        var ptemp = new Prodotto {ImageUrl = prod.uri};
+                        var ptemp = new Prodotto { ImageUrl = prod.uri };
                         var split = prod.prodotto.Split(';');//todo crash in differentmode of adding (seems fixed now keep eyes on it)
 
                         var pqueryed = query.First(p => p[1] == split[0].ToUpper());
@@ -307,9 +307,19 @@ namespace GestioneSarin2
                         namet = textInfo.ToLower(namet);
                         ptemp.Name = textInfo.ToTitleCase(namet);
                         ptemp.CodArt = pqueryed[4];
+                        if (Convert.ToDecimal(split[3]) != 0)
+                        {
+                            split[2] = split[3];
+                            split[3] = "";
+                        }
                         ptemp.QuantityPrice = split[1] + '/' + split[2];
                         ptemp.Note = split[5];
+                        if (split[4] == "")
+                        {
+                            split[4] = "0";
+                        }
                         ptemp.Sconto = split[4];
+                        ptemp.IVA = pqueryed[13];
                         templist.Add(ptemp);
 
                     }
@@ -414,6 +424,11 @@ namespace GestioneSarin2
                     ptemp.CodArt = pqueryed[0];
                     namet = textInfo.ToLower(namet);
                     ptemp.Name = textInfo.ToTitleCase(namet);
+                    if (Convert.ToDecimal(split[3]) != 0)
+                    {
+                        split[2] = split[3];
+                        split[3] = "";
+                    }
                     ptemp.QuantityPrice = split[1] + '/' + split[2];
                     ptemp.Note = split[5];
                     ptemp.Sconto = split[4];
@@ -444,21 +459,28 @@ namespace GestioneSarin2
         {
             var prod = listprod[e.Position];
             var prodSplit = prod.Split(';');
-            var editTexQ = new EditText(this);
-            editTexQ.Text = prodSplit[1];
+            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+            var editTexQ = new EditText(this) { Text = prodSplit[1], Hint = "Quantità" };
+            var editTexS = new EditText(this) { Text = prodSplit[4], Hint = "Sconto" };
+            var editTextP = new EditText(this) { Text = prodSplit[3], Hint = "Prezzo particolare" };
+            var editTexN = new EditText(this) { Text = prodSplit[5], Hint = "Note" };
+            layout.AddView(editTexQ);
+            layout.AddView(editTexS);
+            layout.AddView(editTextP);
+            layout.AddView(editTexN);
             var builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Modifica quantità");
-            builder.SetView(editTexQ);
+            builder.SetTitle("Modifica informazioni riga");
+            builder.SetView(layout);
             builder.SetCancelable(true);
             builder.SetNegativeButton("Annulla", delegate { });
             builder.SetPositiveButton("Conferma", delegate
             {
                 prodSplit[1] = editTexQ.Text;
+                prodSplit[4] = editTexS.Text;
+                prodSplit[5] = editTexN.Text;
+                prodSplit[3] = editTextP.Text;
                 var pTemp = prodSplit.Aggregate((current, next) => current + ";" + next);
                 listprod[e.Position] = pTemp;
-                var totNoIva = Helper.GetTot(listprod);
-                var totIva = Helper.GetTotIva(listprod) + totNoIva;
-
                 var templist = new List<Prodotto>();
                 var finalList = listprod.Zip(listURI, (p, u) => new
                 {

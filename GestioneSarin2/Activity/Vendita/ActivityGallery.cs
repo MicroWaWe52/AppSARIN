@@ -28,7 +28,7 @@ using Void = Java.Lang.Void;
 namespace GestioneSarin2.Activity
 {
     [Activity(Label = "ActivityGallery", Theme = "@style/AppThemeNo")]
-    public class ActivityGalleryVend : Android.App.Activity
+    public class ActivityGallery : Android.App.Activity
     {
         private RecyclerView recyclerView;
         private List<string> listProd;
@@ -191,7 +191,7 @@ namespace GestioneSarin2.Activity
                 delegate
                 {
                     listProd.Add($"{query[5]};{textQta.Text.Replace(',', '.')};{query[12]};{textPPart.Text};{textScon.Text};{textNote.Text}");
-                    Intent i = new Intent(this, typeof(ActivityCartVend));
+                    Intent i = new Intent(this, typeof(ActivityCart));
                     var urisplit = query[16].Split('\\');
                     listURI.Add(urisplit.Last());
                     var uriarr = listURI.ToArray();

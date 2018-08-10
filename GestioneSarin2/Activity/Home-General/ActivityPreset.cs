@@ -28,8 +28,8 @@ namespace GestioneSarin2.Activity
             SetContentView(Resource.Layout.layoutPreset);
             listPres = FindViewById<ListView>(Resource.Id.listViewPres);
             listPres.ItemClick += ListPres_ItemClick;
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             try
             {
                 string file;
@@ -98,10 +98,9 @@ namespace GestioneSarin2.Activity
             var ordsplit = order.Split(';');
             
              order = order.Replace(ordsplit.Last(), DateTime.Now.ToShortDateString());
-            
-            
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

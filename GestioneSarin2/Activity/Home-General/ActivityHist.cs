@@ -178,7 +178,7 @@ namespace GestioneSarin2
                     listprod.Add(prodFin);
                     listUri.Add(Helper.table.First(p => p[5] == descPRod)[16].Split('\\').Last());
                 }
-                var inte = new Intent(this, typeof(ActivityCartVend));
+                var inte = new Intent(this, typeof(ActivityCart));
                 inte.PutExtra("Type", Convert.ToInt32(type));
                 inte.PutExtra("prod", listprod.ToArray());
                 inte.PutExtra("uri", listUri.ToArray());
