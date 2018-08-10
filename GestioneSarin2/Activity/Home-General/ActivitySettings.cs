@@ -14,6 +14,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Java.Lang;
+using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
 {
@@ -74,7 +75,8 @@ namespace GestioneSarin2.Activity
                 connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
                 connectionPref.Summary = sharedPreferences.GetString(key, "");
 
-            }else if (key.Equals(KeyCodAge))
+            }
+            else if (key.Equals(KeyCodAge))
             {
                 Preference connectionPref = FindPreference(key);
                 connectionPref.SetDefaultValue(sharedPreferences.GetString(key, ""));
@@ -98,24 +100,26 @@ namespace GestioneSarin2.Activity
 
         private void ActivitySettings_PreferenceClick_Update(object sender, Preference.PreferenceClickEventArgs e)
         {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
-            Task.Factory.StartNew(() =>
-           {
-               if (!Directory.Exists(path))
-               {
-                   Directory.CreateDirectory(path);
-               }
-               Helper.GetClienti(this, true);
-               Helper.GetArticoli(this, true);
-              // Helper.GetDest(this, true);
-               Helper.GetAge(this,true);
-               RunOnUiThread(() =>
-               {
-                   Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
-               });
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
-           });
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            Helper.GetClienti(this, true);
+            Task.Factory.StartNew(() =>
+            {
+               
+              
+                Helper.GetArticoli(this, true);
+                Helper.GetAge(this, true);
+                Helper.GetGroup(this, true);
+                RunOnUiThread(() =>
+                {
+                    Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+                });
+
+            });
             Toast.MakeText(this, "Aggiornamento in corso...", ToastLength.Short).Show();
         }
 

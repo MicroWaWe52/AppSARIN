@@ -9,18 +9,21 @@
         android:layout_height="match_parent"
         android:src="@drawable/BGC"
         android:id="@+id/BG"
+        android:textAllCaps="false"
         android:scaleType="fitXY"
         android:layout_centerInParent="true" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/BG"
+        android:textAllCaps="false"
         android:id="@+id/CenterIMA"
         android:layout_centerInParent="true" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/BG1"
+        android:textAllCaps="false"
         android:id="@+id/imageViewOrd"
         android:layout_above="@id/CenterIMA"
         android:layout_toLeftOf="@id/CenterIMA" />
@@ -28,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/BG2"
+        android:textAllCaps="false"
         android:id="@+id/imageViewHist"
         android:layout_above="@id/CenterIMA"
         android:layout_toRightOf="@id/CenterIMA" />
@@ -36,12 +40,14 @@
         android:layout_height="match_parent"
         android:src="@drawable/BG3"
         android:id="@+id/imageViewPres"
+        android:textAllCaps="false"
         android:layout_below="@id/CenterIMA"
         android:layout_toLeftOf="@id/CenterIMA" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/BG4"
+        android:textAllCaps="false"
         android:id="@+id/imageViewSett"
         android:layout_below="@id/CenterIMA"
         android:layout_toRightOf="@id/CenterIMA" />

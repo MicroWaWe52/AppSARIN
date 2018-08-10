@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,6 +17,7 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Environment = System.Environment;
 
 namespace GestioneSarin2
 {
@@ -29,6 +31,7 @@ namespace GestioneSarin2
         private List<List<string>> query;
         private List<string> listProd;
         private List<string> listURI;
+        string codclifor, codDest;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -86,7 +89,14 @@ namespace GestioneSarin2
 
 
             listPRoduct.Adapter = new ProdottoAdapter(pListSub);
+           
             // Create your application here
+            using (StreamReader stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
+            {
+                var line = stream.ReadLine()?.Split('/');
+                codclifor = line?[0];
+                codDest = line?[1];
+            }
         }
 
         private void ListPRoduct_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -155,14 +165,16 @@ namespace GestioneSarin2
             foreach (var sDirectoryItem in querys)
             {
                 var name = ti.ToLower(sDirectoryItem[0]);
+                var gap=Convert.ToInt32(Helper.GetClienti(this).First(cli=>cli[0]==codclifor+codDest));
+
                 var ptemp = new Prodotto
                 {
                     ImageUrl = sDirectoryItem[15],
                     Name = name,
-                    QuantityPrice = $"{sDirectoryItem[7]}pz/{sDirectoryItem[12]}€",
+                    QuantityPrice = $"{sDirectoryItem[7]}pz/{sDirectoryItem[11+gap]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
-                    UnitPrice = sDirectoryItem[12],
+                    UnitPrice = sDirectoryItem[121+gap],
                     CodArt = sDirectoryItem[4]
 
                 };
@@ -184,11 +196,22 @@ namespace GestioneSarin2
             foreach (var sDirectoryItem in querys)
             {
                 var name = ti.ToLower(sDirectoryItem[1]);
+                var gap = 1;
+                try
+                {
+                    gap = Convert.ToInt32(Helper.GetClienti(this).First(cli => cli[0] == codclifor + codDest));
+
+                }
+                catch
+                {
+                    // ignored
+                }
+
                 var ptemp = new Prodotto
                 {
                     ImageUrl = sDirectoryItem[16],
                     Name = name,
-                    QuantityPrice = $"{sDirectoryItem[7]}{sDirectoryItem[2]}/{sDirectoryItem[4]}€",
+                    QuantityPrice = $"{sDirectoryItem[7]}{sDirectoryItem[2]}/{sDirectoryItem[3+gap]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
                     UnitPrice = sDirectoryItem[4],

@@ -223,12 +223,13 @@ namespace GestioneSarin2
                             var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
                             switch (docType)
                             {
-                                case (int)DocType.Vendita:
-                                    //  streamWriter.WriteLine($"{last};{Helper.GetTot(listprod)};22;{totIva};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL;{ns}");
-                                    streamWriter.Write($"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}");//todo sconti testa note testa acconto
+                                case (int) DocType.Vendita:
+                                    streamWriter.Write(
+                                        $"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
                                     break;
-                                case (int)DocType.Rapportino:
-                                    streamWriter.Write($"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}");//todo sconti testa note testa acconto
+                                case (int) DocType.Rapportino:
+                                    streamWriter.Write(
+                                        $"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
                                     break;
                             }
                         }
@@ -298,8 +299,7 @@ namespace GestioneSarin2
                     query = Helper.table;
                     foreach (var prod in finalList)
                     {
-                        var ptemp = new Prodotto();
-                        ptemp.ImageUrl = prod.uri;
+                        var ptemp = new Prodotto {ImageUrl = prod.uri};
                         var split = prod.prodotto.Split(';');//todo crash in differentmode of adding (seems fixed now keep eyes on it)
 
                         var pqueryed = query.First(p => p[1] == split[0].ToUpper());
@@ -403,6 +403,7 @@ namespace GestioneSarin2
                 }).ToList();
                 CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
                 TextInfo textInfo = cultureInfo.TextInfo;
+
                 foreach (var prod in finalList)
                 {
                     var ptemp = new Prodotto();
@@ -657,7 +658,7 @@ namespace GestioneSarin2
                 case Resource.Id.savePres:
 
                     var builder = new AlertDialog.Builder(this);
-                    builder.SetTitle("Vuoi saalvare quest'ordine?");
+                    builder.SetTitle("Vuoi salvare quest'ordine?");
                     builder.SetCancelable(true);
                     builder.SetNegativeButton("No", delegate { });
                     builder.SetPositiveButton("Si", delegate
@@ -729,11 +730,9 @@ namespace GestioneSarin2
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            if (requestCode == PICK_IMAGE && resultCode == Result.Ok)
-            {
-                var d = data.Data;
-                var picturePath = GetPath(this, d);
-            }
+            if (requestCode != PICK_IMAGE || resultCode != Result.Ok) return;
+            var d = data.Data;
+            var picturePath = GetPath(this, d);
         }
 
         private int nProgPhoto;

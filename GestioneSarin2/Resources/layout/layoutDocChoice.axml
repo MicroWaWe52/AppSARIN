@@ -1,48 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/BGC"
-        android:id="@+id/BG"
-        android:scaleType="fitXY"
-        android:layout_centerInParent="true" />
-    <ImageView
-        android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:weightSum="6"
+    android:orientation="vertical">
+    <Button
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/BG"
-        android:id="@+id/CenterIMA"
-        android:layout_centerInParent="true" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg12"
-        android:id="@+id/imageViewRapp"
-        android:layout_above="@id/CenterIMA"
-        android:layout_toLeftOf="@id/CenterIMA" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg22"
-        android:id="@+id/imageViewVend"
-        android:layout_above="@id/CenterIMA"
-        android:layout_toRightOf="@id/CenterIMA" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg32"
+        android:text="Ordine"
+        android:textAllCaps="false"
+        android:id="@+id/imageViewOrd"
+        android:background="#40373c"
+        android:textColor="#f2efe8"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Preventivo"
+        android:textAllCaps="false"
         android:id="@+id/imageViewPrev"
-        android:layout_below="@id/CenterIMA"
-        android:layout_toLeftOf="@id/CenterIMA" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg42"
+        android:background="#f2efe8"
+        android:textColor="#40373c"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Bolla"
+        android:textAllCaps="false"
         android:id="@+id/imageViewBoll"
-        android:layout_below="@id/CenterIMA"
-        android:layout_toRightOf="@id/CenterIMA" />
-</RelativeLayout>
+        android:background="#40373c"
+        android:textColor="#f2efe8"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Fattura"
+        android:textAllCaps="false"
+        android:id="@+id/imageViewFatt"
+        android:background="#f2efe8"
+        android:textColor="#40373c"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Generico"
+        android:textAllCaps="false"
+        android:id="@+id/imageViewGen"
+        android:background="#40373c"
+        android:textColor="#f2efe8"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Rapportino Lavoro"
+        android:textAllCaps="false"
+        android:id="@+id/imageViewRapp"
+        android:background="#f2efe8"
+        android:textColor="#40373c"
+        android:layout_weight="1"
+        android:textSize="25dp" />
+</LinearLayout>

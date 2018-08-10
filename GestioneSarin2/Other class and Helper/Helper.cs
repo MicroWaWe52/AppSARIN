@@ -15,7 +15,7 @@ using Math = System.Math;
 
 namespace GestioneSarin2
 {
-    static class Helper
+    internal static class Helper
     {
         public static List<List<string>> table;
 
@@ -188,7 +188,7 @@ namespace GestioneSarin2
             if (!File.Exists(path + "/catalogo.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
-                using (WebClient request = new WebClient())
+                using (var request = new WebClient())
                 {
                     var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                     var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
@@ -196,8 +196,8 @@ namespace GestioneSarin2
                     request.Credentials = new NetworkCredential(usern, passw);
 
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                    byte[] fileData = request.DownloadData($"ftp://{ip}/{codA}/import/magart.txt");
-                    using (FileStream file = new FileStream(path + "/catalogo.txt", FileMode.Create))
+                    var fileData = request.DownloadData($"ftp://{ip}/{codA}/import/magart.txt");
+                    using (var file = new FileStream(path + "/catalogo.txt", FileMode.Create))
                     {
                         file.Write(fileData, 0, fileData.Length);
                         file.Close();
@@ -252,7 +252,7 @@ namespace GestioneSarin2
             var pathdow = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                               .DirectoryDownloads).AbsolutePath + "/Sarin";
             var pathsplit = path.Split('/');
-            using (WebClient request = new WebClient())
+            using (var request = new WebClient())
             {
                 var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                 var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
@@ -260,10 +260,9 @@ namespace GestioneSarin2
 
                 var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
                 var imPath = $"ftp://{ip}/foto/{pathsplit[pathsplit.Length - 1]}";
-                byte[] fileData = request.DownloadData(imPath);
+                var fileData = request.DownloadData(imPath);
 
-                using (FileStream file =
-                    new FileStream(pathdow + $"/{pathsplit[pathsplit.Length - 1]}", FileMode.Create))
+                using (var file = new FileStream(pathdow + $"/{pathsplit[pathsplit.Length - 1]}", FileMode.Create))
                 {
                     file.Write(fileData);
                     file.Flush(true);
@@ -300,13 +299,12 @@ namespace GestioneSarin2
 
         public static List<List<string>> GetClienti(Context context, bool force = false)
         {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
             if (!File.Exists(path + "/clienti.txt") || force)
             {
                 var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
 
-                using (WebClient request = new WebClient())
+                using (var request = new WebClient())
                 {
                     var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
                     var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
@@ -314,8 +312,9 @@ namespace GestioneSarin2
                     request.Credentials = new NetworkCredential(usern, passw);
 
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                    byte[] fileData = request.DownloadData($"ftp://{ip}/{codA}/import/anagrafe.txt");
-                    using (FileStream file = new FileStream(path + "/clienti.txt", FileMode.Create))
+                    var dpath = $"ftp://{ip}/{codA}/import/anagrafe.txt";
+                    var fileData = request.DownloadData(dpath);
+                    using (var file = new FileStream(path + "/clienti.txt", FileMode.OpenOrCreate,FileAccess.Write,FileShare.ReadWrite))
                     {
                         file.Write(fileData, 0, fileData.Length);
                         file.Close();
@@ -375,7 +374,7 @@ namespace GestioneSarin2
 
         }
 
-        public static void GetAge(Context context, bool force = false)
+        public static List<List<string>> GetAge(Context context, bool force = false)
         {
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
@@ -392,7 +391,7 @@ namespace GestioneSarin2
 
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
                     var fileData = request.DownloadData($"ftp://{ip}/{codA}/import/docana.txt");
-                    using (FileStream file = new FileStream(path + "/docana.csv", FileMode.Create))
+                    using (FileStream file = new FileStream(path + "/docana.txt", FileMode.Create))
                     {
                         file.Write(fileData, 0, fileData.Length);
                         file.Close();
@@ -404,7 +403,54 @@ namespace GestioneSarin2
             try
             {
                 var tableTemp = new List<List<string>>();
-                using (var fs = new StreamReader(path + "/docana.csv"))
+                using (var fs = new StreamReader(path + "/docana.txt"))
+                {
+                    while (!fs.EndOfStream)
+                    {
+                        var row = fs.ReadLine();
+                        if (row == null) continue;
+                        var columns = row.Split(';');
+                        tableTemp.Add(columns.ToList());
+                    }
+                }
+
+                return tableTemp;
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(e.Message);
+            }
+        }
+        public static void GetDoc(Context context, bool force = false)
+        {
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/docana.txt") || force)
+            {
+                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(context);
+
+                using (WebClient request = new WebClient())
+                {
+                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
+                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
+                    request.Credentials = new NetworkCredential(usern, passw);
+
+                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                    var fileData = request.DownloadData($"ftp://{ip}/{codA}/import/docana.txt");
+                    using (FileStream file = new FileStream(path + "/docana.txt", FileMode.Create))
+                    {
+                        file.Write(fileData, 0, fileData.Length);
+                        file.Close();
+                    }
+                }
+            }
+
+
+            try
+            {
+                var tableTemp = new List<List<string>>();
+                using (var fs = new StreamReader(path + "/docana.txt"))
                 {
                     while (!fs.EndOfStream)
                     {

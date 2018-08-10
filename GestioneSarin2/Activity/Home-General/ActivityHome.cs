@@ -21,6 +21,7 @@ using Android.Widget;
 using GestioneSarin2.Activity;
 using Java.Lang;
 using ActionBar = Android.Support.V7.App.ActionBar;
+using Path = System.IO.Path;
 
 namespace GestioneSarin2
 {
@@ -59,19 +60,22 @@ namespace GestioneSarin2
             {
                 RequestPermissions(new[] { Manifest.Permission.Camera }, 6);
             }
-            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-            var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-            if (ip != "") Helper.GetArticoli(this);
+            const string permissionwe = Manifest.Permission.WriteExternalStorage;
+            if (CheckSelfPermission(permissionwe) != (int)Permission.Granted)
+            {
+                RequestPermissions(new[] { Manifest.Permission.WriteExternalStorage }, 7);
+            }
+
         }
 
-        protected override void OnResume()
+        /*protected override void OnResume()
         {
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
 
             try
             {
-                const string permissiones = Manifest.Permission.ReadExternalStorage;
+                const string permissiones = Manifest.Permission.WriteExternalStorage;
                 if (CheckSelfPermission(permissiones) == (int)Permission.Granted)
                 {
                     if (!Directory.Exists(path))
@@ -82,7 +86,6 @@ namespace GestioneSarin2
                         {
                             Helper.GetClienti(this, true);
                             Helper.GetArticoli(this, true);
-                            // Helper.getde(this, true);
                             Helper.GetAge(this, true);
 
                             RunOnUiThread(() =>
@@ -92,6 +95,20 @@ namespace GestioneSarin2
                         });
 
                     }
+                    else
+                    {
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                        var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
+                        var codage = sharedPref.GetString(ActivitySettings.KeyPassw, "");
+                        if (ip != "" && codage != "")
+                        {
+                            Helper.GetArticoli(this);
+                        }
+                    }
                 }
             }
             catch (System.Exception e)
@@ -99,7 +116,7 @@ namespace GestioneSarin2
                 Console.WriteLine(e);
             }
             base.OnResume();
-        }
+        }*/
 
         private void SettButton_Click(object sender, EventArgs e)
         {

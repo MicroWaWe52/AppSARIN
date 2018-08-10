@@ -16,6 +16,7 @@ namespace GestioneSarin2.Other_class_and_Helper
     internal enum DocType
     {
         Vendita=0,
-        Rapportino=1
+        Rapportino=1,
+
     }
 }
