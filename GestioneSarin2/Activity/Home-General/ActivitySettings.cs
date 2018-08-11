@@ -85,8 +85,8 @@ namespace GestioneSarin2.Activity
 
         private void ActivitySettings_PreferenceClick_Delete(object sender, Preference.PreferenceClickEventArgs e)
         {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             Directory.Delete(path, true);
         }
 
@@ -106,6 +106,11 @@ namespace GestioneSarin2.Activity
                     Helper.GetArticoli(this, true);
                     Helper.GetAge(this, true);
                     Helper.GetGroup(this, true);
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+                        File.Create(path + "/first.dow");
+                    });
                 }
                 catch
                 {
@@ -114,11 +119,7 @@ namespace GestioneSarin2.Activity
                         Toast.MakeText(this, "Aggiornamento non riuscito", ToastLength.Short).Show();
                     });
                 }
-                RunOnUiThread(() =>
-                {
-                    Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
-                    File.Create(path + "/first.dow");
-                });
+               
 
             });
             Toast.MakeText(this, "Aggiornamento in corso...", ToastLength.Short).Show();

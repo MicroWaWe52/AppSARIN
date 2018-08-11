@@ -21,22 +21,7 @@ namespace GestioneSarin2
 
         public static List<List<string>> GetGroup(Context context, bool force = false)
         {
-            /*var data = table ?? GetArticoli(context);
-
-            var descgruppolist = new List<string>();
-            foreach (var row in data)
-            {
-                descgruppolist.Add(row[21]);
-            }
-
-            var output = descgruppolist
-                .GroupBy(word => word)
-                .OrderByDescending(group => group.Count())
-                .Select(group => group.Key)
-                .ToList();
-            output.Remove("desgruppo");
-            output.Reverse();
-            return output;*/
+          
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
             if (!File.Exists(path + "/maggrp.txt") || force)
@@ -59,7 +44,7 @@ namespace GestioneSarin2
                 }
             }
 
-            var tableTemp = new List<List<string>> { new List<string>(), new List<string>() };
+            var tableTemp = new List<List<string>> { new List<string>(), new List<string>(),new List<string>() };
             using (var fs = new StreamReader(path + "/maggrp.txt"))
             {
                 while (!fs.EndOfStream)
@@ -68,6 +53,8 @@ namespace GestioneSarin2
                     if (split == null) continue;
                     tableTemp[0].Add(split[0]);
                     tableTemp[1].Add(split[1]);
+                    tableTemp[2].Add(split[0]+';'+split[1]);
+
                 }
             }
 

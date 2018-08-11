@@ -44,8 +44,8 @@ namespace GestioneSarin2.Activity
             pivaRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchIva);
             codRadioButton = FindViewById<RadioButton>(Resource.Id.radioButtonSearchCod);
             custListView.ItemClick += CustListView_ItemClick;
-            AssetManager am = Assets;
-            Typeface tvName = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            var am = Assets;
+            var tvName = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
             codRadioButton.SetTypeface(tvName, TypefaceStyle.Normal);
             descRadioButton.SetTypeface(tvName, TypefaceStyle.Normal);
             codRadioButton.SetTypeface(tvName, TypefaceStyle.Normal);

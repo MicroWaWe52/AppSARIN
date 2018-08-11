@@ -25,7 +25,7 @@ namespace GestioneSarin2
     [Activity(Label = "ActivityAdd", Theme = "@style/AppThemeNo", NoHistory = true)]
     public class ActivityAdd : AppCompatActivity
     {
-        public string GroupSel;
+        private string _groupSel;
         private bool subGrouop;
         private ListView listPRoduct;
         private List<List<string>> query;
@@ -38,7 +38,7 @@ namespace GestioneSarin2
             SetContentView(Resource.Layout.layoutAdd);
             listPRoduct = FindViewById<ListView>(Resource.Id.listViewProdottiact);
             listPRoduct.ItemClick += ListPRoduct_ItemClick;
-            GroupSel = Intent.GetStringExtra("gruppo");
+            _groupSel = Intent.GetStringExtra("gruppo");
             try
             {
                 listProd = Intent.GetStringArrayExtra("prod").ToList();
@@ -57,8 +57,8 @@ namespace GestioneSarin2
             }
 
             var groups = Helper.GetGroup(this);
-            var codGroup = groups[0][groups[1].IndexOf(GroupSel)];
-            query = Helper.GetArticoli(this).Where(s => s[3] == codGroup).ToList();
+            var codGroup = groups[0][groups[1].IndexOf(_groupSel)];
+            query = Helper.GetArticoli(this).Where(s => new string(s[3].Take(3).ToArray()) == codGroup).ToList();
             var subGroupList = new List<string>();
             foreach (var row in query)
             {
@@ -70,18 +70,18 @@ namespace GestioneSarin2
                 .Select(group => group.Key)
                 .ToList();
             var pListSub = new List<Prodotto>();
-            var cultureInfo = Thread.CurrentThread.CurrentCulture;
-            var textInfo = cultureInfo.TextInfo;
+  
+            var groupI = Helper.GetGroup(this)[2];
             foreach (var subGroup in output)
             {
-
+                var name = groupI.First(g => subGroup == g.Split(';')[0]).Split(';')[1];
                 var psub = new Prodotto
                 {
                     ImageUrl = query.First(list => list[3].Equals(subGroup))[16],
                     Grouop = query.First(list => list[3].Equals(subGroup))[2],
                     SubGroup = query.First(list => list[3].Equals(subGroup))[3],
 
-                    Name =/* textInfo.ToTitleCase(query.First(list => list[3].Equals(subGroup))[1]),*/GroupSel,
+                    Name = name,
                     QuantityPrice = ""
                 };
                 pListSub.Add(psub);

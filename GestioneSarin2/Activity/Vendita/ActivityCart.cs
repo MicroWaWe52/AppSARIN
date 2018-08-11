@@ -56,7 +56,7 @@ namespace GestioneSarin2
                     };
                     //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
 
-                    var radiobuttonCat = new RadioButton(this)
+                    var radiobuttonCateg = new RadioButton(this)
                     {
                         Text = "Categorie"
                     };
@@ -66,7 +66,7 @@ namespace GestioneSarin2
                     };
                     radiogroup.Orientation = Orientation.Horizontal;
                     radiogroup.AddView(radiobuttonAll);
-                    radiogroup.AddView(radiobuttonCat);
+                    radiogroup.AddView(radiobuttonCateg);
                     radiogroup.AddView(radiobuttonCatal);
 
                     var lw = new ListView(this);
@@ -77,9 +77,17 @@ namespace GestioneSarin2
                         lw.ItemClick -= Lw_ItemClickAll;
                         lw.ItemClick -= Lw_ItemClickCat;
                         var id = args.CheckedId;
-                        if (id == radiobuttonCat.Id)
+                        if (id == radiobuttonCateg.Id)
                         {
-                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this)[1]);
+                            var group = Helper.GetGroup(this);
+                            var grouptemp = group[2].Where(g => g.Split(';')[0].Length == 3).ToList();
+                            var groupfianal=new List<string>();
+                            foreach (var groupr in grouptemp)
+                            {
+                                groupfianal.Add(groupr.Split(';')[1]);
+                            }
+
+                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, groupfianal);
                             lw.ItemClick -= Lw_ItemClickAll;
                             lw.ItemClick -= Lw_ItemClickCatalogo;
 
@@ -123,7 +131,7 @@ namespace GestioneSarin2
                         lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, newList);
                     };
                     radiogroup.CheckedChange += OnRadiogroupOnCheckedChange;
-                    radiogroup.Check(radiobuttonCat.Id);
+                    radiogroup.Check(radiobuttonCateg.Id);
                     main.AddView(radiogroup);
                     main.AddView(textSearch);
                     main.AddView(lw);
@@ -374,7 +382,7 @@ namespace GestioneSarin2
         {
             base.OnCreate(savedInstanceState);
 
-            SetContentView(Resource.Layout.activity_main);
+            SetContentView(Resource.Layout.layoutCart);
             var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
                            .DirectoryDownloads).AbsolutePath + "/Sarin";
             if (!File.Exists(path + "/catalogo.csv"))

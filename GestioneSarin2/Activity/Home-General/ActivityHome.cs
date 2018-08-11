@@ -37,7 +37,7 @@ namespace GestioneSarin2
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.layoutHome);
-
+            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin");
             ordButton = FindViewById<ImageView>(Resource.Id.imageViewOrd);
             histButton = FindViewById<ImageView>(Resource.Id.imageViewHist);
             presetButton = FindViewById<ImageView>(Resource.Id.imageViewPres);
