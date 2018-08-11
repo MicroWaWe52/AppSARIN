@@ -66,18 +66,19 @@ namespace GestioneSarin2.Activity
                 partitaivalist.Add(parttemp);
 
 
-                descliforlist.Add(cliente[1]);
             }
 
-            descliforlist = descliforlist
-                .GroupBy(word => word)
-                .Select(group => group.Key).ToList();
+            
             partitaivalist = partitaivalist
                 .GroupBy(word => word)
                 .Select(group => group.Key).ToList();
             codcliforlist = codcliforlist
-                .GroupBy(word => word)
+                .GroupBy(word => new string(word.Take(6).ToArray()))
                 .Select(group => group.Key).ToList();
+            foreach (var cod in codcliforlist)
+            {
+               descliforlist.Add(clienti.First(c=>c[0].Contains(cod)).ToList()[1]);
+            }
 
             custRadioGroup.CheckedChange += (s, e) =>
             {
