@@ -115,7 +115,7 @@ namespace GestioneSarin2
             decimal ivatem = 22;
             try
             {
-                ivatem = Convert.ToDecimal(Helper.table.First(prodl => prodl[4] == prodottolList[position].CodArt)[13]);
+                ivatem = Convert.ToDecimal(Helper.Table.First(prodl => prodl[0] == prodottolList[position].CodArt)[13]);
             }
             catch (Exception e)
             {
@@ -125,6 +125,7 @@ namespace GestioneSarin2
             var totIva = ttemp + (ttemp / 100) * ivatem;
             totIva = Math.Round(totIva, 2);
             decimal tot = 0;
+            var um="";
             try
             {
 
@@ -137,11 +138,19 @@ namespace GestioneSarin2
                 // ignored
             }
 
+            try
+            {
+                um = Helper.Table.First(prodl => prodl[0] == prodottolList[position].CodArt)[2];
+            }
+            catch 
+            {
+               
+            }
             if (prodottolList[position].Sconto == "")
             {
                 prodottolList[position].Sconto = "0.00";
             }
-            var qpString = Convert.ToDecimal(qta) == 0 ? $"Pz.U:{puni}" : $"Q.:{qpSplit[0]}    Pz.U:{Convert.ToDecimal(puni)}     Imp:{ttemp}     Sc:{prodottolList[position].Sconto}        Tot:{tot}    IVA:{ivatem}";
+            var qpString = Convert.ToDecimal(qta) == 0 ? $"Pz.U:{puni}" : $"Q.:{qpSplit[0]}{um}    Pz.U:{Convert.ToDecimal(puni)}     Imp:{ttemp}     Sc:{prodottolList[position].Sconto}        Tot:{tot}    IVA:{ivatem}";
             holder.QuantPrice.Text = qpString;
             return view;
         }

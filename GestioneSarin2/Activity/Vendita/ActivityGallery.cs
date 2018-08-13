@@ -142,7 +142,7 @@ namespace GestioneSarin2.Activity
                             var prodResult = new List<string>();
                             foreach (var prod in resultl)
                             {
-                                prodResult.Add(Helper.table[prod][5]);
+                                prodResult.Add(Helper.Table[prod][5]);
                             }
                             list.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodResult);
                             list.ItemClick += List_ItemClick;
@@ -164,7 +164,7 @@ namespace GestioneSarin2.Activity
         {
             adTagle.Dismiss();
             var taglia = ((ListView)sender).Adapter.GetItem(e.Position).ToString();
-            var prod = Helper.table.First(i => i[5] == taglia);
+            var prod = Helper.Table.First(i => i[5] == taglia);
             Order(prod.ToList());
 
         }

@@ -65,7 +65,7 @@ namespace GestioneSarin2
 
             if (File.Exists(path + "/first.first")) return;
             StartActivity(typeof(ActivitySettings));
-            File.Create(path + "/first.first");
+            File.Create(path + "/first.first").Close();
         }
         
         private void SettButton_Click(object sender, EventArgs e)

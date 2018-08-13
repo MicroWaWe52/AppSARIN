@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,6 +15,8 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using ExtensionMethods;
+using GestioneSarin2;
 using GestioneSarin2.Activity;
 using GestioneSarin2.Other_class_and_Helper;
 using AlertDialog = Android.App.AlertDialog;
@@ -87,7 +90,8 @@ namespace GestioneSarin2
                         Date = testa[3],
                         Name = nameTemp,
                         CodCli = testa[4],
-                        Type = testa[1]
+                        Type = testa[1],
+                        Tot = GetTot(Convert.ToInt32(testa[2])).ToString(CultureInfo.CurrentCulture)
                     });
                 }
 
@@ -96,6 +100,38 @@ namespace GestioneSarin2
             listViewHist.Adapter = new OrdineAdapter(listoOrdines);
         }
 
+        public decimal GetTot(int idTesta)
+        {
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
+            var pathord = path + "/docRig.txt";
+            var ordPrz = new List<string>();
+            using (var streamWriter = new StreamReader(pathord))
+            {
+                while (!streamWriter.EndOfStream)
+                {
+                    var ordStr = streamWriter.ReadLine();
+                    if (ordStr?.Split(';')[0] == idTesta.ToString())
+                    {
+                        ordPrz.Add(ordStr);
+                    }
+                }
+
+            }
+
+            foreach (var rig in ordPrz)
+            {
+                var rigDet = rig.Split(';');
+                var puni = rigDet[6].ToDecimal();
+                var qta = rigDet[7].ToDecimal();
+                var sc = rigDet[8].ToDecimal();
+                var tot = qta * puni;
+                var tots = sc * tot / 100;
+                return tot - tots;
+            }
+
+            return 0;
+        }
         private void ListViewHist_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             var builder = new AlertDialog.Builder(this);
@@ -166,14 +202,14 @@ namespace GestioneSarin2
                 foreach (var prod in rigList)
                 {
                     var prodSplit = prod.Split(';');
-                    var descPRod = Helper.table.First(p => p[5] == prodSplit[0])[5];
+                    var descPRod = Helper.Table.First(p => p[5] == prodSplit[0])[5];
                     var prodFin = descPRod;
                     for (var i = 2; i < prodSplit.Length; i++)
                     {
                         prodFin += ';' + prodSplit[i];
                     }
                     listprod.Add(prodFin);
-                    listUri.Add(Helper.table.First(p => p[5] == descPRod)[16].Split('\\').Last());
+                    listUri.Add(Helper.Table.First(p => p[5] == descPRod)[16].Split('\\').Last());
                 }
                 var inte = new Intent(this, typeof(ActivityCart));
                 inte.PutExtra("Type", Convert.ToInt32(type));
@@ -313,7 +349,7 @@ namespace GestioneSarin2
                     var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                     csvlist.Add(path + "/doctes.csv");
                     csvlist.Add(path + "/docrig.csv");
-                    var directory = new File(pathpp+"/photoa");
+                    var directory = new File(pathpp + "/photoa");
                     var files = directory.ListFiles();
                     if (files != null)
                         foreach (var t in files)
@@ -352,4 +388,37 @@ namespace GestioneSarin2
             return base.OnOptionsItemSelected(item);
         }
     }
+}
+
+namespace ExtensionMethods
+{
+    public static class Extension
+    {/// <summary>
+     /// Simple converter String->Decimal
+     /// </summary>
+     /// <param name="str">Value</param>
+     /// <returns></returns>
+        public static decimal ToDecimal(this string str)
+        {
+            decimal result = 0;
+            try
+            {
+                result = Convert.ToDecimal(str);
+            }
+            catch
+            {
+                result = 0;
+            }
+
+            return result;
+        }
+
+        public static string GetName(this string codArt)
+        {
+            var artTab = Helper.Table;
+            codArt = codArt.Split(';')[0];
+            return artTab.First(prod => prod[0] == codArt)[1];
+        }
+    }
+
 }

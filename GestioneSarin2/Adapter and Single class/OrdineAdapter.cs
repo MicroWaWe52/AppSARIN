@@ -54,8 +54,7 @@ namespace GestioneSarin2
             holder.Data.SetTypeface(tvName,TypefaceStyle.Normal);
             holder.Data.Text = textInfo.ToTitleCase(ordineList[position].Date);
             holder.Price.SetTypeface(tvName, TypefaceStyle.Normal);
-            //holder.Price.Text = ordineList[position].Tot+"€";
-            holder.Price.Text = "";
+            holder.Price.Text = ordineList[position].Tot+"€";
             holder.CodCli.SetTypeface(tvName, TypefaceStyle.Normal);
             holder.CodCli.Text = ordineList[position].CodCli;
             holder.Type.SetTypeface(tvName,TypefaceStyle.Normal);

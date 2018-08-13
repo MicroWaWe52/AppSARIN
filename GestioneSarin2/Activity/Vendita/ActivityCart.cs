@@ -20,8 +20,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Android.Net.Wifi.Aware;
+using GestioneSarin2.Adapter_and_Single_class;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
-using Console = System.Console;
 using Environment = System.Environment;
 using File = System.IO.File;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -29,235 +30,132 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace GestioneSarin2
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppThemeNo", MainLauncher = false, ParentActivity = typeof(ActivityHome))]
-    public class ActivityCart : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
+    public class ActivityCart : AppCompatActivity
     {
         private List<string> listprod;
-        private List<List<string>> query = Helper.table;
-        private ListView listView;
+        private List<List<string>> query = Helper.GetArticoli(Application.Context);
+        private ExpandableListView listView;
         private List<string> listURI;
         private int docType;
-        public bool OnNavigationItemSelected(IMenuItem item)
+        private TextView totNoIvaTextView;
+        private TextView totIvaTextView;
+        List<string> group = new List<string>();
+        Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            switch (item.ItemId)
+            base.OnCreate(savedInstanceState);
+
+            SetContentView(Resource.Layout.layoutCart);
+            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
+                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            if (!File.Exists(path + "/catalogo.csv"))
             {
-                case Resource.Id.navigation_home:
-                    listprod = new List<string>();
-                    listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
-                    return true;
-                case Resource.Id.navigation_dashboard:
-                    var main = new LinearLayout(this)
-                    {
-                        Orientation = Orientation.Vertical
-                    };
-                    var radiogroup = new RadioGroup(this);
-                    var radiobuttonAll = new RadioButton(this)
-                    {
-                        Text = "Tutti"
-                    };
-                    //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
-
-                    var radiobuttonCateg = new RadioButton(this)
-                    {
-                        Text = "Categorie"
-                    };
-                    var radiobuttonCatal = new RadioButton(this)
-                    {
-                        Text = "Catalogo"
-                    };
-                    radiogroup.Orientation = Orientation.Horizontal;
-                    radiogroup.AddView(radiobuttonAll);
-                    radiogroup.AddView(radiobuttonCateg);
-                    radiogroup.AddView(radiobuttonCatal);
-
-                    var lw = new ListView(this);
-                    var prodListAll = new List<string>();
-                    var textSearch = new EditText(this);
-                    void OnRadiogroupOnCheckedChange(object sender, RadioGroup.CheckedChangeEventArgs args)
-                    {
-                        lw.ItemClick -= Lw_ItemClickAll;
-                        lw.ItemClick -= Lw_ItemClickCat;
-                        var id = args.CheckedId;
-                        if (id == radiobuttonCateg.Id)
-                        {
-                            var group = Helper.GetGroup(this);
-                            var grouptemp = group[2].Where(g => g.Split(';')[0].Length == 3).ToList();
-                            var groupfianal=new List<string>();
-                            foreach (var groupr in grouptemp)
-                            {
-                                groupfianal.Add(groupr.Split(';')[1]);
-                            }
-
-                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, groupfianal);
-                            lw.ItemClick -= Lw_ItemClickAll;
-                            lw.ItemClick -= Lw_ItemClickCatalogo;
-
-                            lw.ItemClick += Lw_ItemClickCat;
-                            textSearch.Enabled = false;
-
-                        }
-                        else if (id == radiobuttonAll.Id)
-                        {
-                            var prodList = new List<string>();
-                            for (var i = 1; i < Helper.table.Count; i++)
-                            {
-                                var prod = Helper.table[i];
-                                prodList.Add(prod[1]);
-                            }
-
-                            prodListAll = prodList;
-                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodList);
-                            lw.ItemClick -= Lw_ItemClickCat;
-                            lw.ItemClick -= Lw_ItemClickCatalogo;
-
-                            lw.ItemClick += Lw_ItemClickAll;
-                            textSearch.Enabled = true;
-
-                        }
-                        else if (id == radiobuttonCatal.Id)
-                        {
-                            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new List<string> { "Apri catalogo" });
-                            lw.ItemClick -= Lw_ItemClickCat;
-                            lw.ItemClick -= Lw_ItemClickAll;
-                            lw.ItemClick += Lw_ItemClickCatalogo;
-                            textSearch.Enabled = false;
-                        }
-
-                    }
-                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this)[1]);
-
-                    textSearch.TextChanged += (object sender, TextChangedEventArgs args) =>
-                    {
-                        var newList = prodListAll.Where(p => p.Contains(textSearch.Text.ToUpper())).ToList();
-                        lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, newList);
-                    };
-                    radiogroup.CheckedChange += OnRadiogroupOnCheckedChange;
-                    radiogroup.Check(radiobuttonCateg.Id);
-                    main.AddView(radiogroup);
-                    main.AddView(textSearch);
-                    main.AddView(lw);
-                    var builder = new AlertDialog.Builder(this);
-                    builder.SetTitle("Seleziona gruppo");
-                    builder.SetCancelable(true);
-                    builder.SetView(main);
-                    builder.SetNegativeButton("Annulla", delegate { });
-                    alertall = builder.Create();
-                    alertall.Show();
-                    break;
-                case Resource.Id.navigation_notifications:
-                    if (codclifor == null)
-                    {
-                        Toast.MakeText(this, "Selezionare un cliente prima!", ToastLength.Short).Show();
-                        break;
-                    }
-
-                    var builder1 = new AlertDialog.Builder(this);
-                    var editSconto = new EditText(this) { Hint = "Sconto" };
-                    var editNote = new EditText(this) { Hint = "Note" };
-                    var editAcc = new EditText(this) { Hint = "Acconto" };
-                    var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
-                    layout.AddView(editSconto);
-                    layout.AddView(editNote);
-                    layout.AddView(editAcc);
-                    builder1.SetTitle("Conferma ordine");
-                    builder1.SetView(layout);
-                    var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                    var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
-                    tot = Math.Round(tot, 2);
-                    builder1.SetMessage("Totale Ordine:" + tot);
-                    builder1.SetCancelable(true);
-                    builder1.SetNegativeButton("Annulla", delegate { });
-                    builder1.SetPositiveButton("Conferma", delegate
-                    {
-
-
-                        var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
-
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-                        var last = 0;
-                        try
-                        {
-                            using (StreamReader sr = new StreamReader(path + "/docTes.csv"))
-                            {
-                                while (!sr.EndOfStream)
-                                {
-                                    var line = sr.ReadLine();
-                                    last = Convert.ToInt32(line?.Split(';')[0]) + 1;
-                                }
-
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            last = 0;
-                        }
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/docRig.txt", true))
-                        {
-                            for (var index = 0; index < listprod.Count; index++)
-                            {
-                                var prod = listprod[index];
-                                var prodSplit = prod.Split(';');
-                                var prodFirst = Helper.table.First(p => p[0] == prodSplit[0].ToUpper()).ToList();
-                                var codPRd = prodFirst[0];
-
-                                var prodFin = codPRd;
-                                for (var i = 1; i < prodSplit.Length - 1; i++)
-                                {
-                                    prodFin += ";" + prodSplit[i];
-                                }
-                                //  var rig = index + ";" + last + ";" + prodFin;
-                                var pUni = prodSplit[4];
-                                var rig = $"{last};{index + 1};{docType};{DateTime.Now.ToShortDateString()};{index + 1};{prodSplit[0]};{prodSplit[2]};{prodSplit[1]};{prodSplit[4]};{pUni}";
-                                streamWriter.WriteLine(rig);
-                            }
-                        }
-
-
-
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/docTes.txt", true))
-                        {
-                            var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                            var totIva = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
-                            //aggiungere tipi
-                            var zero = nProgPhoto;
-                            var ns = "";
-                            while (zero > 0)
-                            {
-                                ns += zero + "-";
-                                zero--;
-                            }
-                            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                            var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
-                            switch (docType)
-                            {
-                                case (int)DocType.Vendita:
-                                    streamWriter.Write(
-                                        $"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
-                                    break;
-                                case (int)DocType.Rapportino:
-                                    streamWriter.Write(
-                                        $"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
-                                    break;
-                            }
-                        }
-
-
-
-                        Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
-                        listprod = new List<string>();
-                        listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
-
-                    });
-                    builder1.Show();
-                    return true;
-
+                Helper.GetArticoli(this);
             }
 
-            return false;
+            deleteButton = FindViewById<RadioButton>(Resource.Id.ButtonElimina);
+            addButton = FindViewById<RadioButton>(Resource.Id.ButtonAggiungi);
+            orderButton = FindViewById<RadioButton>(Resource.Id.ButtonOrdina);
+            totIvaTextView = FindViewById<TextView>(Resource.Id.totIvaText);
+            totNoIvaTextView = FindViewById<TextView>(Resource.Id.totNoIvaText);
+            deleteButton.Click += DeleteButton_Click;
+            addButton.Click += AddButton_Click;
+            orderButton.Click += OrderButton_Click;
+            listView = FindViewById<ExpandableListView>(Resource.Id.listViewMainProd);
+            // listView.ItemClick += ListView_ItemClick;
+            // listView.ItemLongClick += ListView_ItemLongClick;
+            toolbar = FindViewById<Toolbar>(Resource.Id.my_toolbarMain);
+            SetSupportActionBar(toolbar);
+            SupportActionBar.SetDisplayShowTitleEnabled(false);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+
+            toolbar.FindViewById<TextView>(Resource.Id.toolbar_title)
+                .SetTextColor(Android.Graphics.Color.ParseColor("#f2efe8"));
+            var prodArray = Intent.GetStringArrayExtra("prod");
+            var uriArray = Intent.GetStringArrayExtra("uri");
+
+
+            using (StreamReader stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
+            {
+                var line = stream.ReadLine()?.Split('/');
+                codclifor = line?[0];
+                codDest = line?[1];
+            }
+
+            try
+            {
+                listURI = uriArray.ToList();
+                listprod = prodArray.ToList();
+                var templist = new List<Prodotto>();
+                var finalList = listprod.Zip(listURI, (p, u) => new
+                {
+                    prodotto = p,
+                    uri = u
+                }).ToList();
+                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+
+                foreach (var prod in finalList)
+                {
+                    var ptemp = new Prodotto();
+                    ptemp.ImageUrl = prod.uri;
+                    var split = prod.prodotto.Split(';');
+                    var pqueryed = query.First(p => p[0] == split[0].ToUpper());
+                    var namet = pqueryed[1];
+                    ptemp.CodArt = pqueryed[0];
+                    namet = textInfo.ToLower(namet);
+                    ptemp.Name = textInfo.ToTitleCase(namet);
+                    try
+                    {
+                        if (Convert.ToDecimal(split[3]) != 0)
+                        {
+                            split[2] = split[3];
+                            split[3] = "";
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                    ptemp.QuantityPrice = split[1] + '/' + split[2];
+                    ptemp.Note = split[5];
+                    ptemp.Sconto = split[4];
+
+                    templist.Add(ptemp);
+
+                }
+                Setdata();
+
+                var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
+                tot = Math.Round(tot, 2);
+                totNoIvaTextView.Text = "Totale:    " + totNoIva;
+                totIvaTextView.Text = "Totale con IVA:    " + tot;
+
+            }
+            catch (Exception e)
+            {
+                listURI = new List<string>();
+                listprod = new List<string>();
+            }
+            IsPlayServicesAvailable();
+            FirebaseMessaging.Instance.SubscribeToTopic("all");
+            docType = Intent.GetIntExtra("Type", 0);
+            nProgPhoto = Intent.GetIntExtra("nprog", 0);
+
+
         }
 
+
+        protected override void OnDestroy()
+        {
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
+            {
+                File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt");
+            }
+            base.OnDestroy();
+        }
         private void Lw_ItemClickCatalogo(object sender, AdapterView.ItemClickEventArgs e)
         {
             Intent i5 = new Intent(this, typeof(ActivityGallery));
@@ -290,12 +188,10 @@ namespace GestioneSarin2
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
-                    var psel = Helper.table.First(p => p[1] == itemName);
+                    var psel = Helper.Table.First(p => p[1] == itemName);
                     listprod.Add($"{psel[0]};{textQta.Text.Replace(',', '.')};{psel[4]};{textPPart.Text};{textScon.Text};{textNote.Text}");
                     var urisplit = psel[15].Split('\\');
                     listURI.Add("\\");
-
-
 
                     var templist = new List<Prodotto>();
                     var finalList = listprod.Zip(listURI, (p, u) => new
@@ -305,9 +201,20 @@ namespace GestioneSarin2
                     }).ToList();
                     CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
                     TextInfo textInfo = cultureInfo.TextInfo;
-                    query = Helper.table;
+                    query = Helper.Table;
                     foreach (var prod in finalList)
                     {
+                        var gap = 1;
+                        try
+                        {
+                            gap = Convert.ToInt32(Helper.GetClienti(this).First(cli => cli[0] == codclifor + codDest)[12]);
+
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
                         var ptemp = new Prodotto { ImageUrl = prod.uri };
                         var split = prod.prodotto.Split(';');//todo crash in differentmode of adding (seems fixed now keep eyes on it)
 
@@ -315,7 +222,7 @@ namespace GestioneSarin2
                         var namet = pqueryed[1];
                         namet = textInfo.ToLower(namet);
                         ptemp.Name = textInfo.ToTitleCase(namet);
-                        ptemp.CodArt = pqueryed[4];
+                        ptemp.CodArt = pqueryed[0];
                         try
                         {
                             if (Convert.ToDecimal(split[3]) != 0)
@@ -326,41 +233,34 @@ namespace GestioneSarin2
                         }
                         catch
                         {
-                           
+
                         }
                         ptemp.QuantityPrice = split[1] + '/' + split[2];
                         ptemp.Note = split[5];
                         if (split[4] == "")
                         {
                             split[4] = "0";
-                        }
+                        }//TODO get totale dal nuovo carrello 
                         ptemp.Sconto = split[4];
                         ptemp.IVA = pqueryed[13];
                         templist.Add(ptemp);
+                        listprod.RemoveAt(listprod.Count - 1);
+                        listprod.Add($"{psel[0]};{textQta.Text.Replace(',', '.')};{split[2]};{textPPart.Text};{split[4]};{textNote.Text}");
+                        var urisplit2 = psel[15].Split('\\');
+                        listURI.Add("\\");
 
                     }
-                    listView.Adapter = new ProdottoAdapter(templist);
-
+                    Setdata();
                     alertall.Dismiss();
                     var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                     var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
                     tot = Math.Round(tot, 2);
-                    toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+IVA={tot}";
+                    totNoIvaTextView.Text = "Totale:    " + totNoIva;
+                    totIvaTextView.Text = "Totale con IVA:    " + tot;
                 });
             builder.Show();
 
 
-        }
-
-
-
-        protected override void OnDestroy()
-        {
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
-            {
-                File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt");
-            }
-            base.OnDestroy();
         }
 
         private void Lw_ItemClickCat(object sender, AdapterView.ItemClickEventArgs e)
@@ -378,104 +278,227 @@ namespace GestioneSarin2
 
         private Toolbar toolbar;
         private string codDest;
-        protected override void OnCreate(Bundle savedInstanceState)
+        private RadioButton deleteButton;
+        private RadioButton addButton;
+        private RadioButton orderButton;
+
+
+
+        private void OrderButton_Click(object sender, EventArgs e)
         {
-            base.OnCreate(savedInstanceState);
-
-            SetContentView(Resource.Layout.layoutCart);
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
-            if (!File.Exists(path + "/catalogo.csv"))
+            if (codclifor == null)
             {
-                Helper.GetArticoli(this);
+                Toast.MakeText(this, "Selezionare un cliente prima!", ToastLength.Short).Show();
             }
-            BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
-            navigation.SetOnNavigationItemSelectedListener(this);
-            listView = FindViewById<ListView>(Resource.Id.listViewMainProd);
-            listView.ItemClick += ListView_ItemClick;
-            listView.ItemLongClick += ListView_ItemLongClick;
-            toolbar = FindViewById<Toolbar>(Resource.Id.my_toolbarMain);
-            SetSupportActionBar(toolbar);
-            SupportActionBar.SetDisplayShowTitleEnabled(false);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
 
-            toolbar.FindViewById<TextView>(Resource.Id.toolbar_title)
-                .SetTextColor(Android.Graphics.Color.ParseColor("#f2efe8"));
-            var prodArray = Intent.GetStringArrayExtra("prod");
-            var uriArray = Intent.GetStringArrayExtra("uri");
+            var builder1 = new AlertDialog.Builder(this);
+            var editSconto = new EditText(this) { Hint = "Sconto" };
+            var editNote = new EditText(this) { Hint = "Note" };
+            var editAcc = new EditText(this) { Hint = "Acconto" };
+            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+            layout.AddView(editSconto);
+            layout.AddView(editNote);
+            layout.AddView(editAcc);
+            builder1.SetTitle("Conferma ordine");
+            builder1.SetView(layout);
+            var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+            var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
+            tot = Math.Round(tot, 2);
+            builder1.SetMessage("Totale Ordine:" + tot);
+            builder1.SetCancelable(true);
+            builder1.SetNegativeButton("Annulla", delegate { });
+            builder1.SetPositiveButton("Conferma", delegate
+            {
 
-            if (Intent.GetBooleanExtra("first", true))
-            {
-                SetCodCliFor();
-            }
-            else
-            {
-                using (StreamReader stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
+
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
+                if (!Directory.Exists(path))
                 {
-                    var line = stream.ReadLine()?.Split('/');
-                    codclifor = line?[0];
-                    codDest = line?[1];
+                    Directory.CreateDirectory(path);
                 }
-            }
-            try
-            {
-                listURI = uriArray.ToList();
-                listprod = prodArray.ToList();
-                var templist = new List<Prodotto>();
-                var finalList = listprod.Zip(listURI, (p, u) => new
+                var last = 0;
+                try
                 {
-                    prodotto = p,
-                    uri = u
-                }).ToList();
-                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-                TextInfo textInfo = cultureInfo.TextInfo;
-
-                foreach (var prod in finalList)
-                {
-                    var ptemp = new Prodotto();
-                    ptemp.ImageUrl = prod.uri;
-                    var split = prod.prodotto.Split(';');
-                    var pqueryed = query.First(p => p[0] == split[0].ToUpper());
-                    var namet = pqueryed[1];
-                    ptemp.CodArt = pqueryed[0];
-                    namet = textInfo.ToLower(namet);
-                    ptemp.Name = textInfo.ToTitleCase(namet);
-                    try
+                    using (StreamReader sr = new StreamReader(path + "/docTes.csv"))
                     {
-                        if (Convert.ToDecimal(split[3]) != 0)
+                        while (!sr.EndOfStream)
                         {
-                            split[2] = split[3];
-                            split[3] = "";
+                            var line = sr.ReadLine();
+                            last = Convert.ToInt32(line?.Split(';')[0]) + 1;
                         }
-                    }
-                    catch 
-                    {
-                        
-                    }
-                    ptemp.QuantityPrice = split[1] + '/' + split[2];
-                    ptemp.Note = split[5];
-                    ptemp.Sconto = split[4];
 
-                    templist.Add(ptemp);
+                    }
+                }
+                catch
+                {
+                    last = 0;
+                }
+                using (StreamWriter streamWriter = new StreamWriter(path + "/docRig.txt", true))
+                {
+                    for (var index = 0; index < listprod.Count; index++)
+                    {
+                        var prod = listprod[index];
+                        var prodSplit = prod.Split(';');
+                        var prodFirst = Helper.Table.First(p => p[0] == prodSplit[0].ToUpper()).ToList();
+                        var codPRd = prodFirst[0];
+
+                        var prodFin = codPRd;
+                        for (var i = 1; i < prodSplit.Length - 1; i++)
+                        {
+                            prodFin += ";" + prodSplit[i];
+                        }
+                        //  var rig = index + ";" + last + ";" + prodFin;
+                        var pUni = prodSplit[4];
+                        var rig = $"{last};{index + 1};{docType};{DateTime.Now.ToShortDateString()};{index + 1};{prodSplit[0]};{prodSplit[2]};{prodSplit[1]};{prodSplit[4]};{pUni}";
+                        streamWriter.WriteLine(rig);
+                    }
+                }
+
+
+
+                using (StreamWriter streamWriter = new StreamWriter(path + "/docTes.txt", true))
+                {
+                    var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                    var totIva = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
+                    //aggiungere tipi
+                    var zero = nProgPhoto;
+                    var ns = "";
+                    while (zero > 0)
+                    {
+                        ns += zero + "-";
+                        zero--;
+                    }
+                    var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                    var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
+                    switch (docType)
+                    {
+                        case (int)DocType.Vendita:
+                            streamWriter.Write(
+                                $"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
+                            break;
+                        case (int)DocType.Rapportino:
+                            streamWriter.Write(
+                                $"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
+                            break;
+                    }
+                }
+
+
+
+                Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
+                listprod = new List<string>();
+                listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
+
+            });
+            builder1.Show();
+        }
+
+        private void AddButton_Click(object sender, EventArgs e)
+        {
+            var main = new LinearLayout(this)
+            {
+                Orientation = Orientation.Vertical
+            };
+            var radiogroup = new RadioGroup(this);
+            var radiobuttonAll = new RadioButton(this)
+            {
+                Text = "Tutti"
+            };
+            //  var syncConnPref = sharedPref.GetBoolean(ActivitySettings.KeyAutoDelete,false);
+
+            var radiobuttonCateg = new RadioButton(this)
+            {
+                Text = "Categorie"
+            };
+            var radiobuttonCatal = new RadioButton(this)
+            {
+                Text = "Catalogo"
+            };
+            radiogroup.Orientation = Orientation.Horizontal;
+            radiogroup.AddView(radiobuttonAll);
+            radiogroup.AddView(radiobuttonCateg);
+            radiogroup.AddView(radiobuttonCatal);
+
+            var lw = new ListView(this);
+            var prodListAll = new List<string>();
+            var textSearch = new EditText(this);
+            void OnRadiogroupOnCheckedChange(object sender3, RadioGroup.CheckedChangeEventArgs args)
+            {
+                lw.ItemClick -= Lw_ItemClickAll;
+                lw.ItemClick -= Lw_ItemClickCat;
+                var id = args.CheckedId;
+                if (id == radiobuttonCateg.Id)
+                {
+                    var group = Helper.GetGroup(this);
+                    var grouptemp = group[2].Where(g => g.Split(';')[0].Length == 3).ToList();
+                    var groupfianal = new List<string>();
+                    foreach (var groupr in grouptemp)
+                    {
+                        groupfianal.Add(groupr.Split(';')[1]);
+                    }
+
+                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, groupfianal);
+                    lw.ItemClick -= Lw_ItemClickAll;
+                    lw.ItemClick -= Lw_ItemClickCatalogo;
+
+                    lw.ItemClick += Lw_ItemClickCat;
+                    textSearch.Enabled = false;
 
                 }
-                listView.Adapter = new ProdottoAdapter(templist);
-                var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
-                tot = Math.Round(tot, 2);
-                toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva}+IVA={tot}";
+                else if (id == radiobuttonAll.Id)
+                {
+                    var prodList = new List<string>();
+                    for (var i = 1; i < Helper.Table.Count; i++)
+                    {
+                        var prod = Helper.Table[i];
+                        prodList.Add(prod[1]);
+                    }
+
+                    prodListAll = prodList;
+                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodList);
+                    lw.ItemClick -= Lw_ItemClickCat;
+                    lw.ItemClick -= Lw_ItemClickCatalogo;
+
+                    lw.ItemClick += Lw_ItemClickAll;
+                    textSearch.Enabled = true;
+
+                }
+                else if (id == radiobuttonCatal.Id)
+                {
+                    lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new List<string> { "Apri catalogo" });
+                    lw.ItemClick -= Lw_ItemClickCat;
+                    lw.ItemClick -= Lw_ItemClickAll;
+                    lw.ItemClick += Lw_ItemClickCatalogo;
+                    textSearch.Enabled = false;
+                }
 
             }
-            catch (Exception e)
+            lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, Helper.GetGroup(this)[1]);
+
+            textSearch.TextChanged += (object sender2, TextChangedEventArgs args) =>
             {
-                listURI = new List<string>();
-                listprod = new List<string>();
-            }
-            IsPlayServicesAvailable();
-            FirebaseMessaging.Instance.SubscribeToTopic("all");
-            docType = Intent.GetIntExtra("Type", 0);
-            nProgPhoto = Intent.GetIntExtra("nprog", 0);
+                var newList = prodListAll.Where(p => p.Contains(textSearch.Text.ToUpper())).ToList();
+                lw.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, newList);
+            };
+            radiogroup.CheckedChange += OnRadiogroupOnCheckedChange;
+            radiogroup.Check(radiobuttonCateg.Id);
+            main.AddView(radiogroup);
+            main.AddView(textSearch);
+            main.AddView(lw);
+            var builder = new AlertDialog.Builder(this);
+            builder.SetTitle("Seleziona gruppo");
+            builder.SetCancelable(true);
+            builder.SetView(main);
+            builder.SetNegativeButton("Annulla", delegate { });
+            alertall = builder.Create();
+            alertall.Show();
+        }
 
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+            listprod = new List<string>();
+            listView.Adapter = null;
         }
 
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -525,12 +548,12 @@ namespace GestioneSarin2
                     templist.Add(ptemp);
 
                 }
-                listView.Adapter = new ProdottoAdapter(templist);
+                Setdata();
                 var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                 var tot2 = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
                 tot2 = Math.Round(tot2, 2);
-                toolbar.FindViewById<TextView>(Resource.Id.toolbar_title).Text = $"Tot:{totNoIva2}+IVA={tot2}";
-
+                totNoIvaTextView.Text = "Totale:    " + totNoIva2;
+                totIvaTextView.Text = "Totale con IVA:    " + tot2;
             });
             builder.Show();
         }
@@ -579,7 +602,7 @@ namespace GestioneSarin2
                     templist.Add(ptemp);
 
                 }
-                listView.Adapter = new ProdottoAdapter(templist);
+                Setdata();
             });
             builder.Show();
         }
@@ -592,103 +615,7 @@ namespace GestioneSarin2
             return base.OnCreateOptionsMenu(menu);
         }
 
-        public void SetCodCliFor()
-        {
-            var layoutprinc = new LinearLayout(this);
-            layoutprinc.Orientation = Orientation.Vertical;
-            var separator = new View(this);
-            separator.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, 1);
-            separator.SetBackgroundResource(Android.Resource.Color.DarkerGray);
-            var layoutRadio = new RadioGroup(this);
-            layoutRadio.Orientation = Orientation.Horizontal;
-            var radioDesc = new RadioButton(this)
-            {
-                Text = "Descrizione",
 
-            };
-            var radioIva = new RadioButton(this)
-            {
-                Text = "Partita iva"
-            };
-            var radioCod = new RadioButton(this)
-            {
-                Text = "Codice"
-            };
-            layoutRadio.AddView(radioDesc);
-            layoutRadio.AddView(radioIva);
-            layoutRadio.AddView(radioCod);
-            layoutRadio.Check(radioDesc.Id);
-            layoutprinc.AddView(layoutRadio);
-            layoutprinc.AddView(separator);
-            var searchText = new AutoCompleteTextView(this);
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                .DirectoryDownloads).AbsolutePath;
-            var clienti = Helper.GetClienti(path);
-            var descliforlist = new List<string>();
-            var partitaivalist = new List<string>();
-            var codcliforlist = new List<string>();
-            foreach (var cliente in clienti)
-            {
-                codcliforlist.Add(cliente[7]);
-                var parttemp = cliente[15];
-                if (parttemp.Length != 0)
-                {
-                    parttemp = parttemp.Substring(1);
-                }
-                partitaivalist.Add(parttemp);
-
-
-                descliforlist.Add(cliente[12]);
-            }
-            descliforlist.RemoveAt(0);
-            searchText.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, descliforlist);
-
-            layoutRadio.CheckedChange += (s, e) =>
-            {
-                switch (e.CheckedId)
-                {
-                    case 1:
-                        searchText.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,
-                            descliforlist);
-                        break;
-                    case 2:
-                        searchText.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,
-                            partitaivalist);
-                        break;
-                    case 3:
-                        searchText.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1,
-                            codcliforlist);
-                        break;
-                }
-            };
-            layoutprinc.AddView(searchText);
-            var builder1 = new AlertDialog.Builder(this);
-
-            builder1.SetTitle("Seleziona cliente");
-            builder1.SetCancelable(false);
-            builder1.SetView(layoutprinc);
-            builder1.SetPositiveButton("Conferma", delegate
-            {
-                switch (layoutRadio.CheckedRadioButtonId)
-                {
-                    case 1:
-                        codclifor = clienti.First(list => list[12] == searchText.Text)[7]; break;
-                    case 2:
-                        codclifor = clienti.First(list => list[15] == "0" + searchText.Text)[7]; break;
-                    case 3:
-                        codclifor = searchText.Text; break;
-
-                }
-
-                using (StreamWriter stream = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
-                {
-                    stream.Write(codclifor);
-                }
-
-            });
-            layoutRadio.Check(1);
-            builder1.Show();
-        }
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             var id = item.ItemId;
@@ -696,9 +623,6 @@ namespace GestioneSarin2
             {
                 case Resource.Id.Aggiorna_Il_Database:
                     Helper.GetArticoli(this, true);
-                    break;
-                case Resource.Id.Cliente:
-                    SetCodCliFor();
                     break;
                 case Resource.Id.savePres:
 
@@ -836,6 +760,25 @@ namespace GestioneSarin2
             }
             x = "Google Play Services is available.";
             return true;
+        }
+        private void Setdata()
+        {
+            group.Clear();
+            dictionary.Clear();
+            var i = 0;
+            foreach (var prod in listprod)
+            {
+                var listInfo = new List<string>();
+                listInfo.AddRange(Enumerable.Repeat(prod, 7));
+                var p = Helper.Table.Find(ppp => ppp[0] == prod.Split(';')[0]);
+                group.Add(p[0] + p[1]);
+                dictionary.Add(group[i], listInfo);
+                i++;
+            }
+
+            var ada = new CartAdapter(this, group, dictionary);
+            listView.SetAdapter(ada);
+
         }
 
     }

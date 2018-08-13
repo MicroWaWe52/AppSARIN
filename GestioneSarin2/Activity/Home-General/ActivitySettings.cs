@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Preferences;
@@ -6,6 +7,8 @@ using Android.Widget;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Android;
+using Android.Content.PM;
 using Environment = System.Environment;
 
 namespace GestioneSarin2.Activity
@@ -40,6 +43,21 @@ namespace GestioneSarin2.Activity
                 {
                     pref.Summary = valurpref;
                 }
+            }
+            const string permissiones = Manifest.Permission.ReadExternalStorage;
+            if (CheckSelfPermission(permissiones) != (int)Permission.Granted)
+            {
+                RequestPermissions(new[] { Manifest.Permission.ReadExternalStorage }, 5);
+            }
+            const string permissionca = Manifest.Permission.Camera;
+            if (CheckSelfPermission(permissionca) != (int)Permission.Granted)
+            {
+                RequestPermissions(new[] { Manifest.Permission.Camera }, 6);
+            }
+            const string permissionwe = Manifest.Permission.WriteExternalStorage;
+            if (CheckSelfPermission(permissionwe) != (int)Permission.Granted)
+            {
+                RequestPermissions(new[] { Manifest.Permission.WriteExternalStorage }, 7);
             }
 
 
@@ -108,8 +126,15 @@ namespace GestioneSarin2.Activity
                     Helper.GetGroup(this, true);
                     RunOnUiThread(() =>
                     {
-                        Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
-                        File.Create(path + "/first.dow");
+                        try
+                        {
+                            Toast.MakeText(this, "Aggiornamento completato", ToastLength.Short).Show();
+                            var fs=new FileStream(path+"/first.dow",FileMode.OpenOrCreate,FileAccess.ReadWrite,FileShare.ReadWrite);
+                            fs.Close();
+                        }
+                        catch(Exception ex)
+                        {
+                        }
                     });
                 }
                 catch

@@ -58,7 +58,8 @@ namespace GestioneSarin2
 
             var groups = Helper.GetGroup(this);
             var codGroup = groups[0][groups[1].IndexOf(_groupSel)];
-            query = Helper.GetArticoli(this).Where(s => new string(s[3].Take(3).ToArray()) == codGroup).ToList();
+            var art = Helper.GetArticoli(this);
+            query = art.Where(s => new string(s[3].Take(3).ToArray()) == codGroup).ToList();
             var subGroupList = new List<string>();
             foreach (var row in query)
             {
@@ -134,6 +135,7 @@ namespace GestioneSarin2
                         {
                             qta += ".00";
                         }
+                       
                         listProd.Add($"{subqueryList[e.Position].CodArt};{qta};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text};{textNote.Text}");
                         subqueryList[e.Position].Note = textNote.Text;
                         Intent i = new Intent(this, typeof(ActivityCart));
@@ -214,7 +216,7 @@ namespace GestioneSarin2
                     QuantityPrice = $"{sDirectoryItem[7]}{sDirectoryItem[2]}/{sDirectoryItem[3+gap]}€",
                     Grouop = sDirectoryItem[sDirectoryItem.Count - 2],
                     SubGroup = sDirectoryItem.Last(),
-                    UnitPrice = sDirectoryItem[4],
+                    UnitPrice = sDirectoryItem[3+gap],
                     CodArt = sDirectoryItem[0],
 
 

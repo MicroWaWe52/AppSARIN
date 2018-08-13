@@ -1,14 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerm"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:minWidth="25px"
-    android:minHeight="25px">
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbarMain"
+        app:theme="@style/ToolbarColoredBackArrow"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_gravity="center"
+            android:id="@+id/toolbar_title" />
+    </android.support.v7.widget.Toolbar>
+    <TextView
+        android:layout_width="match_parent"
+        android:text="Totale:    €192,70"
+        android:textColor="@color/background"
+        android:background="@color/colorPrimaryLight"
+        android:gravity="center"
+        android:elevation="4dp"
+        android:layout_height="80px"
+        android:id="@+id/totNoIvaText"
+        android:textSize="15dp"
+        android:layout_below="@id/my_toolbarMain"
+        android:textAllCaps="false" />
+    <TextView
+        android:layout_width="match_parent"
+        android:text="Totale con IVA:    €210,40"
+        android:textColor="@color/background"
+        android:background="@color/colorPrimaryLight"
+        android:gravity="center"
+        android:elevation="4dp"
+        android:layout_height="80px"
+        android:id="@+id/totIvaText"
+        android:textSize="15dp"
+        android:layout_below="@id/totNoIvaText"
+        android:textAllCaps="false" />
     <ExpandableListView
         android:minWidth="25px"
         android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:dividerHeight="0.0sp"
+        android:id="@+id/expandableListView1"
+        android:layout_below="@id/totIvaText" />
+    <RadioGroup
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/expandableListView1" />
-</LinearLayout>
+        android:layout_height="120px"
+        android:elevation="5dp"
+        android:layout_alignParentBottom="true">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="120px"
+            android:textAlignment="gravity"
+            android:gravity="center"
+            android:textColor="@color/background"
+            android:background="@drawable/BNW1"
+            android:button="@android:color/transparent"
+            android:text="Elimina"
+            android:id="@+id/ButtonElimina"
+            android:layout_weight="1"
+            android:textSize="15dp" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="120px"
+            android:textAlignment="gravity"
+            android:gravity="center"
+            android:textColor="@color/background"
+            android:background="@drawable/BNW2"
+            android:button="@android:color/transparent"
+            android:text="Aggiungi"
+            android:id="@+id/ButtonAggiungi"
+            android:layout_weight="1"
+            android:textSize="15dp" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="120px"
+            android:textAlignment="gravity"
+            android:gravity="center"
+            android:textColor="@color/background"
+            android:background="@drawable/BNW3"
+            android:button="@android:color/transparent"
+            android:text="Ordina"
+            android:id="@+id/ButtonOrdina"
+            android:layout_weight="1"
+            android:textSize="15dp" />
+    </RadioGroup>
+</RelativeLayout>

@@ -19,21 +19,99 @@
             android:layout_gravity="center"
             android:id="@+id/toolbar_title" />
     </android.support.v7.widget.Toolbar>
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:background="?android:attr/windowBackground"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/navigation" />
-    <ListView
+    <TextView
+        android:layout_width="match_parent"
+        android:text="Totale:"
+        android:textColor="@color/background"
+        android:background="@color/colorPrimaryLight"
+        android:gravity="left|center"
+        android:layout_height="80px"
+        android:textSize="15dp"
+        android:layout_below="@id/my_toolbarMain"
+        android:textAllCaps="false"
+        android:paddingLeft="80dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:text="€192,70"
+        android:textColor="@color/background"
+        android:gravity="right|center"
+        android:layout_height="80px"
+        android:id="@+id/totNoIvaText"
+        android:textSize="15dp"
+        android:textAllCaps="false"
+        android:layout_below="@id/my_toolbarMain"
+        android:paddingRight="80dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:text="Totale con IVA:"
+        android:textColor="@color/background"
+        android:background="@color/colorPrimaryLight"
+        android:gravity="left|center"
+        android:layout_height="80px"
+        android:textSize="15dp"
+        android:layout_below="@id/totNoIvaText"
+        android:textAllCaps="false"
+        android:paddingLeft="80dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:text="€210,40"
+        android:textColor="@color/background"
+        android:gravity="right|center"
+        android:layout_height="80px"
+        android:id="@+id/totIvaText"
+        android:textSize="15dp"
+        android:layout_below="@id/totNoIvaText"
+        android:textAllCaps="false"
+        android:paddingRight="80dp" />
+    <ExpandableListView
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:dividerHeight="10.0sp"
+        android:dividerHeight="0.0sp"
         android:id="@+id/listViewMainProd"
-        android:layout_below="@id/my_toolbarMain" />
+        android:layout_below="@id/totIvaText" />
+    <RadioGroup
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="120px"
+        android:elevation="5dp"
+        android:layout_alignParentBottom="true">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="120px"
+            android:textAlignment="gravity"
+            android:gravity="center"
+            android:textColor="@color/background"
+            android:background="@drawable/BNW1"
+            android:button="@android:color/transparent"
+            android:text="Elimina"
+            android:id="@+id/ButtonElimina"
+            android:layout_weight="1"
+            android:textSize="15dp" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="120px"
+            android:textAlignment="gravity"
+            android:gravity="center"
+            android:textColor="@color/background"
+            android:background="@drawable/BNW2"
+            android:button="@android:color/transparent"
+            android:text="Aggiungi"
+            android:id="@+id/ButtonAggiungi"
+            android:layout_weight="1"
+            android:textSize="15dp" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="120px"
+            android:textAlignment="gravity"
+            android:gravity="center"
+            android:textColor="@color/background"
+            android:background="@drawable/BNW3"
+            android:button="@android:color/transparent"
+            android:text="Ordina"
+            android:id="@+id/ButtonOrdina"
+            android:layout_weight="1"
+            android:textSize="15dp" />
+    </RadioGroup>
 </RelativeLayout>

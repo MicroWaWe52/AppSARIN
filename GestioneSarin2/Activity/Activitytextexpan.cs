@@ -17,29 +17,51 @@ namespace GestioneSarin2.Activity
     [Activity(Label = "DED", Theme = "@style/cartTheme")]
     public class Activitytextexpan : AppCompatActivity
     {
-        private CartAdapter adapt;
         private ExpandableListView listViewE;
-        List<string>group=new List<string>();
-        Dictionary<string,List<string>> dictionary=new Dictionary<string, List<string>>();
+        private RadioButton addButton;
+        private List<string> listprod = new List<string>();
+        List<string> group = new List<string>();
+        Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.textExpan);
             listViewE = FindViewById<ExpandableListView>(Resource.Id.expandableListView1);
-            setdata(out adapt);
-            listViewE.SetAdapter(adapt);
+            addButton = FindViewById<RadioButton>(Resource.Id.ButtonAggiungi);
+            addButton.Click += AddButton_Click;
+            ;
             // Create your application here
         }
 
-        private void setdata(out CartAdapter adapter)
+        private void AddButton_Click(object sender, EventArgs e)
         {
-            var groupa = new List<string> {"a1", "a2", "a3"};
-            var groupb=new List<string>{"b1","b2","b3","b4"};
-            group.Add("GA");
-            group.Add("GB");
-            dictionary.Add(group[0],groupa);
-            dictionary.Add(group[1],groupb);
-            adapter=new CartAdapter(this, group,dictionary);
+            listprod.Add(
+                "00.14               ;1.00;1.000NR/1.800€;;;Ciao sono una nota di dimensioni non troppo grandi ma media diciamo");
+            listprod.Add(
+                "10008               ;1.00;0.000NR/1.800€;;;Ciao sono una nota di dimensioni non troppo grandi ma media diciamo");
+
+            Setdata();
+        }
+
+        private void Setdata()
+        {
+            group.Clear();
+            dictionary.Clear();
+            var i = 0;
+            foreach (var prod in listprod)
+            {
+                var listInfo = new List<string>();
+                listInfo.AddRange(Enumerable.Repeat(prod, 7));
+                var p = Helper.Table.Find(ppp => ppp[0] == prod.Split(';')[0]);
+                group.Add(p[0] + p[1]);
+                dictionary.Add(group[i], listInfo);
+                i++;
+            }
+
+            var ada = new CartAdapter(this, group, dictionary);
+            listViewE.SetAdapter(ada);
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using ExtensionMethods;
 using Object = Java.Lang.Object;
 
 namespace GestioneSarin2.Adapter_and_Single_class
@@ -33,8 +35,7 @@ namespace GestioneSarin2.Adapter_and_Single_class
 
         public override long GetChildId(int groupPosition, int childPosition)
         {
-            var result = new List<string>();
-            ListChild.TryGetValue(ListGroup[groupPosition], out result);
+            ListChild.TryGetValue(ListGroup[groupPosition], out var result);
             return result.Count;
 
         }
@@ -45,7 +46,8 @@ namespace GestioneSarin2.Adapter_and_Single_class
             ListChild.TryGetValue(ListGroup[groupPosition], out result);
             return result.Count;
         }
-
+        //INFO
+        private ProdInfo info;
         public override View GetChildView(int groupPosition, int childPosition, bool isLastChild, View convertView, ViewGroup parent)
         {
             if (convertView == null)
@@ -55,19 +57,125 @@ namespace GestioneSarin2.Adapter_and_Single_class
             }
 
             var itemView = convertView.FindViewById<TextView>(Resource.Id.textItem);
-            var buttItem = convertView.FindViewById<Button>(Resource.Id.buttonItem);
-            buttItem.Text = "Bella ciao pisello-kun";
-            buttItem.Click += ButtItem_Click;
+            var valView = convertView.FindViewById<TextView>(Resource.Id.textItemSoldi);
+
             var content = (string)GetChild(groupPosition, childPosition);
-            itemView.Text = content;
+
+            switch (childPosition)
+            {
+                case 0:
+                    info = GetProdInfo(content);
+                    itemView.Text = "Quantita:";
+                    valView.Text = info.Quantita;
+                    break;
+                case 1:
+                    itemView.Text = "Prezzo unitario:";
+                    valView.Text = info.Unitario.ToString(CultureInfo.CurrentCulture) + "€";
+                    break;
+                case 2:
+                    itemView.Text = "Prezzo imponibile:";
+                    valView.Text = info.Imponibile.ToString(CultureInfo.CurrentCulture) + "€";
+                    break;
+                case 3:
+                    itemView.Text = "Sconto:";
+                    valView.Text = info.Sconto + "%";
+                    break;
+                case 4:
+                    itemView.Text = "Prezzo totale:";
+                    valView.Text = info.Totale.ToString(CultureInfo.CurrentCulture) + "€";
+                    break;
+                case 5:
+                    itemView.Text = "Iva:";
+                    valView.Text = info.Iva.ToString(CultureInfo.CurrentCulture) + "%";
+                    break;
+                case 6:
+                    itemView.Text = "Note:";
+                    valView.Text = info.Note;
+                    break;
+                default:
+                    itemView.Text = "Errore";
+                    valView.Text = "Errore";
+                    break;
+            }
+
             return convertView;
         }
 
-        private void ButtItem_Click(object sender, EventArgs e)
+        public ProdInfo GetProdInfo(string content)
         {
-            throw new NotImplementedException();
+            var prodInfoSplit = content.Split(';');
+            var qtaspSplit = prodInfoSplit[1].Split('/');
+            var codArt = prodInfoSplit[0];
+            var qta = new string((from c in qtaspSplit[0]
+                                  where char.IsDigit(c) || char.IsPunctuation(c)
+                                  select c
+                ).ToArray());
+
+            var puni = prodInfoSplit[2].Split('/').Last().Replace(',', '.');
+
+            puni = new string((from c in puni
+                               where char.IsDigit(c) || char.IsPunctuation(c)
+                               select c
+                ).ToArray());
+            var ttemp = Convert.ToDecimal(Convert.ToSingle(qta) * float.Parse(puni.Replace(',', '.')));
+            decimal ivatem = 22;
+            try
+            {
+                ivatem = Convert.ToDecimal(Helper.Table.First(prodl => prodl[0] == codArt)[13]);
+            }
+            catch (Exception e)
+            {
+
+            }
+            var totIva = ttemp + (ttemp / 100) * ivatem;
+            totIva = Math.Round(totIva, 3);
+            decimal tot = 0;
+            if (prodInfoSplit[4] == "")
+            {
+                prodInfoSplit[4] = "0.00";
+            }
+            try
+            {
+
+                var valsconto = totIva / 100 * Convert.ToDecimal(prodInfoSplit[4]);
+                tot = totIva - valsconto;
+                tot = Math.Round(tot, 2);
+            }
+            catch
+            {
+                // ignored
+            }
+          
+            // var qpString = $"Q.:{qtaspSplit[0]}        Pz.U:{Convert.ToDecimal(puni)}     Imp:{ttemp}     Sc:{prodInfoSplit[4]}        Tot:{tot}    IVA:{ivatem}";
+            var q = qtaspSplit[0];
+            return new ProdInfo(q, Convert.ToDecimal(puni), ttemp, prodInfoSplit[4], tot, ivatem, prodInfoSplit.Last());
         }
 
+        public struct ProdInfo
+        {
+            public string Quantita { get; }
+            public decimal Unitario { get; }
+
+            public decimal Imponibile { get; }
+
+            public string Sconto { get; }
+            public decimal Totale { get; }
+
+            public decimal Iva { get; }
+
+            public string Note { get; }
+
+            public ProdInfo(string quantita, decimal unitario, decimal imponibile, string sconto, decimal totale, decimal iva, string note)
+            {
+                Quantita = quantita;
+                Unitario = unitario;
+                Imponibile = imponibile;
+                Sconto = sconto;
+                Totale = totale;
+                Iva = iva;
+                Note = note;
+            }
+        }
         public override Object GetGroup(int groupPosition)
         {
             return ListGroup[groupPosition];
@@ -77,21 +185,42 @@ namespace GestioneSarin2.Adapter_and_Single_class
         {
             return groupPosition;
         }
-
+        //PROD BASE
         public override View GetGroupView(int groupPosition, bool isExpanded, View convertView, ViewGroup parent)
         {
             if (convertView == null)
             {
                 var inflater = (LayoutInflater)Context.GetSystemService(Context.LayoutInflaterService);
                 convertView = inflater.Inflate(Resource.Layout.groupLayout, null);
-                
+
             }
-            var textGroup = (string)GetGroup(groupPosition);
+
+            string textGroup;
+            try
+            {
+                textGroup = Helper.Table.First(art => art[0] == ListGroup[groupPosition]).ToList()[1];
+            }
+            catch (Exception e)
+            {
+                textGroup = ListGroup[groupPosition];
+            }
+
             var textGroupV = convertView.FindViewById<TextView>(Resource.Id.textGroup);
+            var texgroupSoldi = convertView.FindViewById<TextView>(Resource.Id.textGroupSoldi);
+            var textinfoq = convertView.FindViewById<TextView>(Resource.Id.textGroupAll);
+            var linfo = Getinfo(ListGroup[groupPosition]);
+            textinfoq.Text = $"{linfo.Quantita}\t{linfo.Unitario}€\t{linfo.Imponibile}€\t{linfo.Sconto}%\t{linfo.Iva}%";
+            texgroupSoldi.Text = linfo.Totale.ToString(CultureInfo.CurrentCulture) + "€";
             textGroupV.Text = textGroup;
             return convertView;
         }
 
+        public ProdInfo Getinfo(string artName)
+        {
+            var rigDet = ListChild[artName].First();
+            return GetProdInfo(rigDet);
+
+        }
         public override bool IsChildSelectable(int groupPosition, int childPosition)
         {
             return true;

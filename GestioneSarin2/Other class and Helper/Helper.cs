@@ -17,11 +17,25 @@ namespace GestioneSarin2
 {
     internal static class Helper
     {
-        public static List<List<string>> table;
+        private static List<List<string>> table;
+
+        public static List<List<string>> Table
+        {
+            get
+            {
+                if (table==null)
+                {
+                    GetArticoli(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin/catalogo.txt");
+                }
+
+                return table;
+            }
+            set => table = value;
+        }
 
         public static List<List<string>> GetGroup(Context context, bool force = false)
         {
-          
+
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
             if (!File.Exists(path + "/maggrp.txt") || force)
@@ -44,7 +58,7 @@ namespace GestioneSarin2
                 }
             }
 
-            var tableTemp = new List<List<string>> { new List<string>(), new List<string>(),new List<string>() };
+            var tableTemp = new List<List<string>> { new List<string>(), new List<string>(), new List<string>() };
             using (var fs = new StreamReader(path + "/maggrp.txt"))
             {
                 while (!fs.EndOfStream)
@@ -53,7 +67,7 @@ namespace GestioneSarin2
                     if (split == null) continue;
                     tableTemp[0].Add(split[0]);
                     tableTemp[1].Add(split[1]);
-                    tableTemp[2].Add(split[0]+';'+split[1]);
+                    tableTemp[2].Add(split[0] + ';' + split[1]);
 
                 }
             }
@@ -67,16 +81,45 @@ namespace GestioneSarin2
             foreach (var singprod in prod)
             {
                 var prodsplit = singprod.Split(';');
+                try
+                {
+                    if (Convert.ToDecimal(prodsplit[3]) != 0)
+                    {
+                        prodsplit[2] = prodsplit[3];
+                        prodsplit[3] = "";
+                    }
+                }
+                catch
+                {
+
+                }
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
                 if (!float.TryParse(prodsplit[2], out var qta))
                 {
-                    var qtaSplit = prodsplit[2].Split('/')[1].ToCharArray();
-                    qta = float.Parse(qtaSplit.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch)).Aggregate("", (current, ch) => current + ch));
+                    var qtaSplit = new string(prodsplit[2].Split('/')[1].ToCharArray());
+                    qta = float.Parse(new string((from c in qtaSplit
+                                                  where char.IsDigit(c) || char.IsPunctuation(c)
+                                                  select c
+                        ).ToArray()));
 
                 }
                 var quants = prodsplit[1].Split();
                 var quant = quants[0].Replace(',', '.');
-                totale += Convert.ToDecimal(quant) * Convert.ToDecimal(qta);
+                var totTemp = Convert.ToDecimal(quant) * Convert.ToDecimal(qta);
+                try
+                {
+                    if (Convert.ToDecimal(prodsplit[4]) != 0)
+                    {
+                        var valsconto = totTemp / 100 * Convert.ToDecimal(prodsplit[4]);
+                        totTemp = totTemp - valsconto;
+
+                    }
+                }
+                catch
+                {
+                }
+
+                totale += totTemp;
             }
 
             totale = Math.Round(totale, 2);
@@ -96,13 +139,13 @@ namespace GestioneSarin2
                     qta = float.Parse(qtaSplit.Where(ch => char.IsNumber(ch) || char.IsPunctuation(ch))
                         .Aggregate("", (current, ch) => current + ch));
                     var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
-                    var ivatem = Convert.ToDecimal(table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
+                    var ivatem = Convert.ToDecimal(Table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
                     tot += (ttemp / 100) * ivatem;
                 }
                 else
                 {
                     var ttemp = Convert.ToDecimal(prodsplit[1]) * Convert.ToDecimal(qta);
-                    var ivatem = Convert.ToDecimal(table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
+                    var ivatem = Convert.ToDecimal(Table.First(prodl => prodl[5] == prodsplit[0].ToUpper())[6]);
                     tot += (ttemp / 100) * ivatem;
                 }
 
@@ -115,60 +158,9 @@ namespace GestioneSarin2
             return tot;
         }
 
-        /*public static List<List<string>> GetDest(Context contex, bool force = false)
-        {
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
-            if (!File.Exists(path + "/destdiv.csv") || force)
-            {
-                var sharedPref = PreferenceManager.GetDefaultSharedPreferences(contex);
-                using (WebClient request = new WebClient())
-                {
-                    var usern = sharedPref.GetString(ActivitySettings.KeyUsern, "");
-                    var passw = sharedPref.GetString(ActivitySettings.KeyPassw, "");
-                    request.Credentials = new NetworkCredential(usern, passw);
-                    var codA = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
-
-                    var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
-                    byte[] fileData = request.DownloadData($"ftp://{ip}/{codA}/import/_destdiv.csv");
-                    using (FileStream file = new FileStream(path + "/destdiv.csv", FileMode.Create))
-                    {
-                        file.Write(fileData, 0, fileData.Length);
-                        file.Close();
-                    }
-                }
-            }
-
-            var tableTemp = new List<List<string>>();
-            using (var fs = new StreamReader(path + "/destdiv.csv"))
-            {
-                while (!fs.EndOfStream)
-                {
-                    var row = fs.ReadLine();
-                    if (row == null) continue;
-                    var columns = row.Split(';');
-                    tableTemp.Add(columns.ToList());
-                }
-            }
-
-            return tableTemp;
-        }*/
-
         public static List<List<string>> GetArticoli(Context context, bool force = false)
         {
-            /* //  FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://217.133.0.34/" + "_catandr.xls");
-
-             using (WebClient request = new WebClient())
-             {
-                 request.Credentials = new NetworkCredential("spigam", "123456");
-                 byte[] fileData = request.DownloadData("ftp://217.133.0.34/" + "catalogo2.xls");
-                 using (FileStream file = new FileStream(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/_catandr.xml", FileMode.Create))
-                 {
-                     file.Write(fileData, 0, fileData.Length);
-                     file.Close();
-                 }
-
-             }*/
+          
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
@@ -204,7 +196,7 @@ namespace GestioneSarin2
                 }
             }
 
-            table = tableTemp;
+            Table = tableTemp;
             return tableTemp;
         }
 
@@ -224,7 +216,7 @@ namespace GestioneSarin2
                     }
                 }
 
-                table = tableTemp;
+                Table = tableTemp;
                 return tableTemp;
             }
             catch (Exception e)
@@ -301,7 +293,7 @@ namespace GestioneSarin2
                     var ip = sharedPref.GetString(ActivitySettings.KeyIp, "");
                     var dpath = $"ftp://{ip}/{codA}/import/anagrafe.txt";
                     var fileData = request.DownloadData(dpath);
-                    using (var file = new FileStream(path + "/clienti.txt", FileMode.OpenOrCreate,FileAccess.Write,FileShare.ReadWrite))
+                    using (var file = new FileStream(path + "/clienti.txt", FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
                     {
                         file.Write(fileData, 0, fileData.Length);
                         file.Close();
@@ -410,7 +402,7 @@ namespace GestioneSarin2
         }
         public static void GetDoc(Context context, bool force = false)
         {
-             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
             if (!File.Exists(path + "/docana.txt") || force)
             {
