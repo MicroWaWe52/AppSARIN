@@ -5,8 +5,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-      <item name="android:textColor">@color/TextColor</item>
-      <item name="android:textColorPrimary">@color/TextColor</item>
+      <item name="android:textColor">@color/colorPrimary</item>
+      <item name="android:textColorPrimary">@color/colorPrimary</item>
       <item name="android:windowBackground">@color/background</item>
     </style>
   <style name="AppThemeNo" parent="Theme.AppCompat.Light.NoActionBar">
@@ -14,8 +14,8 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
-    <item name="android:textColor">@color/TextColor</item>
-    <item name="android:textColorPrimary">@color/TextColor</item>
+    <item name="android:textColor">@color/colorPrimary</item>
+    <item name="android:textColorPrimary">@color/colorPrimary</item>
     <item name="android:windowBackground">@color/background</item>
   </style>
   <style name="ToolbarColoredBackArrow" parent="AppTheme">

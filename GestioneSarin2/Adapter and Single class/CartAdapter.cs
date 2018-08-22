@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
+using Android.Views;
+using Android.Widget;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using ExtensionMethods;
 using Object = Java.Lang.Object;
 
 namespace GestioneSarin2.Adapter_and_Single_class
@@ -58,7 +54,10 @@ namespace GestioneSarin2.Adapter_and_Single_class
 
             var itemView = convertView.FindViewById<TextView>(Resource.Id.textItem);
             var valView = convertView.FindViewById<TextView>(Resource.Id.textItemSoldi);
-
+            AssetManager am = Context.Assets;
+            Typeface tvDoc = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            itemView.SetTypeface(tvDoc,TypefaceStyle.Normal);
+            valView.SetTypeface(tvDoc,TypefaceStyle.Normal);
             var content = (string)GetChild(groupPosition, childPosition);
 
             switch (childPosition)
@@ -117,7 +116,7 @@ namespace GestioneSarin2.Adapter_and_Single_class
                                where char.IsDigit(c) || char.IsPunctuation(c)
                                select c
                 ).ToArray());
-            var ttemp = Convert.ToDecimal(Convert.ToSingle(qta) * float.Parse(puni.Replace(',', '.')));
+            var ttemp = Convert.ToDecimal(Convert.ToDecimal(qta) * decimal.Parse(puni.Replace(',', '.')));
             decimal ivatem = 22;
             try
             {
@@ -148,24 +147,20 @@ namespace GestioneSarin2.Adapter_and_Single_class
           
             // var qpString = $"Q.:{qtaspSplit[0]}        Pz.U:{Convert.ToDecimal(puni)}     Imp:{ttemp}     Sc:{prodInfoSplit[4]}        Tot:{tot}    IVA:{ivatem}";
             var q = qtaspSplit[0];
-            return new ProdInfo(q, Convert.ToDecimal(puni), ttemp, prodInfoSplit[4], tot, ivatem, prodInfoSplit.Last());
+            return new ProdInfo(q, Convert.ToDecimal(puni), ttemp, prodInfoSplit[4], tot, ivatem, prodInfoSplit.Last(),codArt);
         }
 
         public struct ProdInfo
         {
             public string Quantita { get; }
             public decimal Unitario { get; }
-
             public decimal Imponibile { get; }
-
             public string Sconto { get; }
             public decimal Totale { get; }
-
             public decimal Iva { get; }
-
             public string Note { get; }
-
-            public ProdInfo(string quantita, decimal unitario, decimal imponibile, string sconto, decimal totale, decimal iva, string note)
+            public string CodArt { get; }
+            public ProdInfo(string quantita, decimal unitario, decimal imponibile, string sconto, decimal totale, decimal iva, string note,string codArt)
             {
                 Quantita = quantita;
                 Unitario = unitario;
@@ -174,6 +169,7 @@ namespace GestioneSarin2.Adapter_and_Single_class
                 Totale = totale;
                 Iva = iva;
                 Note = note;
+                CodArt = codArt;
             }
         }
         public override Object GetGroup(int groupPosition)
@@ -194,11 +190,15 @@ namespace GestioneSarin2.Adapter_and_Single_class
                 convertView = inflater.Inflate(Resource.Layout.groupLayout, null);
 
             }
-
+            var linfo = Getinfo(ListGroup[groupPosition]);
             string textGroup;
             try
             {
                 textGroup = Helper.Table.First(art => art[0] == ListGroup[groupPosition]).ToList()[1];
+                if (string.IsNullOrEmpty(textGroup))
+                {
+                    textGroup = linfo.Note;
+                }
             }
             catch (Exception e)
             {
@@ -207,11 +207,15 @@ namespace GestioneSarin2.Adapter_and_Single_class
 
             var textGroupV = convertView.FindViewById<TextView>(Resource.Id.textGroup);
             var texgroupSoldi = convertView.FindViewById<TextView>(Resource.Id.textGroupSoldi);
+            AssetManager am = Context.Assets;
+            Typeface tvDoc = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            textGroupV.SetTypeface(tvDoc,TypefaceStyle.Normal);
+            texgroupSoldi.SetTypeface(tvDoc,TypefaceStyle.Normal);
             var textinfoq = convertView.FindViewById<TextView>(Resource.Id.textGroupAll);
-            var linfo = Getinfo(ListGroup[groupPosition]);
-            textinfoq.Text = $"{linfo.Quantita}\t{linfo.Unitario}€\t{linfo.Imponibile}€\t{linfo.Sconto}%\t{linfo.Iva}%";
+         
+            textinfoq.Text = $"{linfo.CodArt}{linfo.Quantita}\t{linfo.Unitario}€\t{linfo.Imponibile}€\t{linfo.Sconto}%\t{linfo.Iva}%";
             texgroupSoldi.Text = linfo.Totale.ToString(CultureInfo.CurrentCulture) + "€";
-            textGroupV.Text = textGroup;
+            textGroupV.Text =textGroup;
             return convertView;
         }
 

@@ -17,6 +17,11 @@ namespace GestioneSarin2.Other_class_and_Helper
     {
         Vendita=0,
         Rapportino=1,
+        Bolla=2,
+        Fattura=3,
+        Generico=4,
+        Preventivo=5,
+
 
     }
 }

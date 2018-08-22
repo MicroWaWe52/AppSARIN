@@ -1,16 +1,18 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Gms.Common;
+using Android.Graphics;
 using Android.OS;
 using Android.Preferences;
 using Android.Provider;
-using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
 using Firebase.Messaging;
 using GestioneSarin2.Activity;
+using GestioneSarin2.Adapter_and_Single_class;
 using GestioneSarin2.Other_class_and_Helper;
 using Java.IO;
 using Java.Nio.Channels;
@@ -20,11 +22,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Android.Net.Wifi.Aware;
-using GestioneSarin2.Adapter_and_Single_class;
+using Android.Graphics.Drawables;
+using Android.Util;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
 using File = System.IO.File;
+using FileNotFoundException = Java.IO.FileNotFoundException;
+using Orientation = Android.Widget.Orientation;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace GestioneSarin2
@@ -39,16 +43,16 @@ namespace GestioneSarin2
         private int docType;
         private TextView totNoIvaTextView;
         private TextView totIvaTextView;
-        List<string> group = new List<string>();
-        Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+        readonly List<string> group = new List<string>();
+        readonly Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.layoutCart);
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin";
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
             if (!File.Exists(path + "/catalogo.csv"))
             {
                 Helper.GetArticoli(this);
@@ -59,9 +63,17 @@ namespace GestioneSarin2
             orderButton = FindViewById<RadioButton>(Resource.Id.ButtonOrdina);
             totIvaTextView = FindViewById<TextView>(Resource.Id.totIvaText);
             totNoIvaTextView = FindViewById<TextView>(Resource.Id.totNoIvaText);
+            AssetManager am = Assets;
+            Typeface tvDoc = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
+            totIvaTextView.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            totNoIvaTextView.SetTypeface(tvDoc, TypefaceStyle.Normal);
             deleteButton.Click += DeleteButton_Click;
             addButton.Click += AddButton_Click;
             orderButton.Click += OrderButton_Click;
+            deleteButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            addButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+            orderButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
+
             listView = FindViewById<ExpandableListView>(Resource.Id.listViewMainProd);
             // listView.ItemClick += ListView_ItemClick;
             // listView.ItemLongClick += ListView_ItemLongClick;
@@ -74,7 +86,6 @@ namespace GestioneSarin2
                 .SetTextColor(Android.Graphics.Color.ParseColor("#f2efe8"));
             var prodArray = Intent.GetStringArrayExtra("prod");
             var uriArray = Intent.GetStringArrayExtra("uri");
-
 
             using (StreamReader stream = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
             {
@@ -130,8 +141,8 @@ namespace GestioneSarin2
                 var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                 var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
                 tot = Math.Round(tot, 2);
-                totNoIvaTextView.Text = "Totale:    " + totNoIva;
-                totIvaTextView.Text = "Totale con IVA:    " + tot;
+                totNoIvaTextView.Text = totNoIva + '€';
+                totIvaTextView.Text = tot.ToString(CultureInfo.CurrentCulture) + '€';
 
             }
             catch (Exception e)
@@ -143,19 +154,10 @@ namespace GestioneSarin2
             FirebaseMessaging.Instance.SubscribeToTopic("all");
             docType = Intent.GetIntExtra("Type", 0);
             nProgPhoto = Intent.GetIntExtra("nprog", 0);
-
-
+            
         }
 
-
-        protected override void OnDestroy()
-        {
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt"))
-            {
-                File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/codclifor.txt");
-            }
-            base.OnDestroy();
-        }
+       
         private void Lw_ItemClickCatalogo(object sender, AdapterView.ItemClickEventArgs e)
         {
             Intent i5 = new Intent(this, typeof(ActivityGallery));
@@ -188,8 +190,13 @@ namespace GestioneSarin2
             builder.SetPositiveButton("Conferma",
                 delegate
                 {
+                    var qta = "0.00";
+                    if (textQta.Text != "")
+                    {
+                        qta = textQta.Text.Replace(',', '.');
+                    }
                     var psel = Helper.Table.First(p => p[1] == itemName);
-                    listprod.Add($"{psel[0]};{textQta.Text.Replace(',', '.')};{psel[4]};{textPPart.Text};{textScon.Text};{textNote.Text}");
+                    listprod.Add($"{psel[0]};{qta};{psel[4]};{textPPart.Text};{textScon.Text};{textNote.Text}");
                     var urisplit = psel[15].Split('\\');
                     listURI.Add("\\");
 
@@ -216,7 +223,7 @@ namespace GestioneSarin2
                         }
 
                         var ptemp = new Prodotto { ImageUrl = prod.uri };
-                        var split = prod.prodotto.Split(';');//todo crash in differentmode of adding (seems fixed now keep eyes on it)
+                        var split = prod.prodotto.Split(';');
 
                         var pqueryed = query.First(p => p[0] == split[0].ToUpper());
                         var namet = pqueryed[1];
@@ -240,23 +247,25 @@ namespace GestioneSarin2
                         if (split[4] == "")
                         {
                             split[4] = "0";
-                        }//TODO get totale dal nuovo carrello 
+                        }
+
                         ptemp.Sconto = split[4];
                         ptemp.IVA = pqueryed[13];
                         templist.Add(ptemp);
                         listprod.RemoveAt(listprod.Count - 1);
-                        listprod.Add($"{psel[0]};{textQta.Text.Replace(',', '.')};{split[2]};{textPPart.Text};{split[4]};{textNote.Text}");
+                        listprod.Add($"{psel[0]};{qta};{split[2]};{textPPart.Text};{split[4]};{textNote.Text}");
                         var urisplit2 = psel[15].Split('\\');
                         listURI.Add("\\");
-
+                        Intent.PutExtra("prod", listprod.ToArray());
+                        Intent.PutExtra("uri", listURI.ToArray());
                     }
                     Setdata();
                     alertall.Dismiss();
                     var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
                     var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
                     tot = Math.Round(tot, 2);
-                    totNoIvaTextView.Text = "Totale:    " + totNoIva;
-                    totIvaTextView.Text = "Totale con IVA:    " + tot;
+                    totNoIvaTextView.Text = totNoIva + '€';
+                    totIvaTextView.Text = tot.ToString(CultureInfo.CurrentCulture) + '€';
                 });
             builder.Show();
 
@@ -317,18 +326,20 @@ namespace GestioneSarin2
                 {
                     Directory.CreateDirectory(path);
                 }
-                var last = 0;
+                int last;
                 try
                 {
-                    using (StreamReader sr = new StreamReader(path + "/docTes.csv"))
+                    using (StreamReader sr = new StreamReader(path + "/docTes.txt"))
                     {
+                        var teslist = new List<string>();
                         while (!sr.EndOfStream)
                         {
-                            var line = sr.ReadLine();
-                            last = Convert.ToInt32(line?.Split(';')[0]) + 1;
+                            teslist.Add(sr.ReadLine());
                         }
 
+                        last = teslist.Count + 1;
                     }
+
                 }
                 catch
                 {
@@ -349,8 +360,10 @@ namespace GestioneSarin2
                             prodFin += ";" + prodSplit[i];
                         }
                         //  var rig = index + ";" + last + ";" + prodFin;
-                        var pUni = prodSplit[4];
-                        var rig = $"{last};{index + 1};{docType};{DateTime.Now.ToShortDateString()};{index + 1};{prodSplit[0]};{prodSplit[2]};{prodSplit[1]};{prodSplit[4]};{pUni}";
+                        var pUni = prodSplit[2].Split('/').Last();
+                        pUni = new string(pUni.Take(pUni.Length - 1).ToArray());
+
+                        var rig = $"{last};{index + 1};{docType};{DateTime.Now.ToShortDateString()};{index + 1};{prodSplit[0]};{pUni};{prodSplit[1]};{prodSplit[4]};{prodSplit[5]}{Environment.NewLine}";
                         streamWriter.WriteLine(rig);
                     }
                 }
@@ -371,24 +384,38 @@ namespace GestioneSarin2
                     }
                     var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                     var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
+                    var doc = "O";
                     switch (docType)
                     {
                         case (int)DocType.Vendita:
-                            streamWriter.Write(
-                                $"{last};ORDCL;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
+                            doc = Helper.GetAge(this).First(docR => docR[2] == "B")[0];
                             break;
                         case (int)DocType.Rapportino:
-                            streamWriter.Write(
-                                $"{last};RAPLA;{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}"); //todo sconti testa note testa acconto
+                            doc = Helper.GetAge(this).First(docR => docR[2] == "R")[0];
                             break;
+                        case (int)DocType.Fattura:
+                            doc = Helper.GetAge(this).First(docR => docR[2] == "F")[0];
+                            break;
+                        case (int)DocType.Bolla:
+                            doc = Helper.GetAge(this).First(docR => docR[2] == "O")[0];
+                            break;
+                        case (int)DocType.Preventivo:
+                            doc = Helper.GetAge(this).First(docR => docR[2] == "P")[0];
+                            break;
+                        case (int)DocType.Generico:
+                            doc = Helper.GetAge(this).First(docR => docR[2] == "G")[0];
+                            break;
+
                     }
+                    streamWriter.Write($"{last};{doc};{last};{DateTime.Now.ToShortDateString()};{codclifor + codDest};{codAge};{editSconto.Text};{editNote.Text};{editAcc.Text}{Environment.NewLine}");
+
                 }
 
 
 
-                Toast.MakeText(this, "Ordine effetuato e salvato nella cartella /Downloads.", ToastLength.Short).Show();
+                Toast.MakeText(this, "Ordine effetuato.", ToastLength.Short).Show();
                 listprod = new List<string>();
-                listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
+                listView.SetAdapter(null);
 
             });
             builder1.Show();
@@ -497,66 +524,20 @@ namespace GestioneSarin2
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            listprod = new List<string>();
-            listView.Adapter = null;
-        }
-
-        private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
-        {
-            var prod = listprod[e.Position];
-            var prodSplit = prod.Split(';');
-            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
-            var editTexQ = new EditText(this) { Text = prodSplit[1], Hint = "Quantità" };
-            var editTexS = new EditText(this) { Text = prodSplit[4], Hint = "Sconto" };
-            var editTextP = new EditText(this) { Text = prodSplit[3], Hint = "Prezzo particolare" };
-            var editTexN = new EditText(this) { Text = prodSplit[5], Hint = "Note" };
-            layout.AddView(editTexQ);
-            layout.AddView(editTexS);
-            layout.AddView(editTextP);
-            layout.AddView(editTexN);
             var builder = new AlertDialog.Builder(this);
-            builder.SetTitle("Modifica informazioni riga");
-            builder.SetView(layout);
+            builder.SetTitle("Sicuro di volere cancellare tutto?");
             builder.SetCancelable(true);
-            builder.SetNegativeButton("Annulla", delegate { });
-            builder.SetPositiveButton("Conferma", delegate
+            builder.SetPositiveButton("Si", delegate
             {
-                prodSplit[1] = editTexQ.Text;
-                prodSplit[4] = editTexS.Text;
-                prodSplit[5] = editTexN.Text;
-                prodSplit[3] = editTextP.Text;
-                var pTemp = prodSplit.Aggregate((current, next) => current + ";" + next);
-                listprod[e.Position] = pTemp;
-                var templist = new List<Prodotto>();
-                var finalList = listprod.Zip(listURI, (p, u) => new
-                {
-                    prodotto = p,
-                    uri = u
-                }).ToList();
-                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-                TextInfo textInfo = cultureInfo.TextInfo;
-                foreach (var prodAda in finalList)
-                {
-                    var ptemp = new Prodotto { ImageUrl = prodAda.uri };
-                    var split = prodAda.prodotto.Split(';');
-                    var pqueryed = query.First(p => p[5] == split[0]);
-                    var namet = pqueryed[5];
-                    namet = textInfo.ToLower(namet);
-                    ptemp.Name = textInfo.ToTitleCase(namet);
-                    ptemp.QuantityPrice = split[1] + '/' + split[2];
-                    ptemp.CodArt = pqueryed[4];
-                    templist.Add(ptemp);
-
-                }
-                Setdata();
-                var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                var tot2 = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
-                tot2 = Math.Round(tot2, 2);
-                totNoIvaTextView.Text = "Totale:    " + totNoIva2;
-                totIvaTextView.Text = "Totale con IVA:    " + tot2;
+                listprod = new List<string>();
+                listView.Adapter = null;
             });
+            builder.SetNegativeButton("No", delegate { });
             builder.Show();
+
+
         }
+
 
         public override void OnBackPressed()
         {
@@ -579,6 +560,7 @@ namespace GestioneSarin2
                     listView.Adapter = null;
                     return;
                 }
+
                 //todo delete
                 var templist = new List<Prodotto>();
                 var finalList = listprod.Zip(listURI, (p, u) => new
@@ -619,81 +601,201 @@ namespace GestioneSarin2
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             var id = item.ItemId;
+            AlertDialog alertMod = null;
+            AlertDialog alertDel = null;
             switch (id)
             {
-                case Resource.Id.Aggiorna_Il_Database:
-                    Helper.GetArticoli(this, true);
-                    break;
-                case Resource.Id.savePres:
 
-                    var builder = new AlertDialog.Builder(this);
-                    builder.SetTitle("Vuoi salvare quest'ordine?");
-                    builder.SetCancelable(true);
-                    builder.SetNegativeButton("No", delegate { });
-                    builder.SetPositiveButton("Si", delegate
-                    {
-
-
-                        var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                            .DirectoryDownloads).AbsolutePath + "/Sarin";
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-
-
-                        using (StreamWriter streamWriter = new StreamWriter(path + "/presets.csv", true))
-                        {
-                            foreach (var prod in listprod)
-                            {
-                                streamWriter.WriteLine(prod);
-                            }
-                            var totNoIva = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
-                            var tot = Convert.ToDecimal(totNoIva) + Convert.ToDecimal(totNoIva) / 100 * 22;
-                            tot = Math.Round(tot, 2);
-                            //aggiungere tipi
-                            var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                            var codAge = sharedPref.GetString(ActivitySettings.KeyCodAge, "");
-                            switch (docType)
-                            {
-                                case (int)DocType.Vendita:
-                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
-                                    streamWriter.Write('#');
-                                    break;
-                                case (int)DocType.Rapportino:
-                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};RAPLA");
-                                    streamWriter.Write('#');
-                                    break;
-                                default:
-                                    streamWriter.WriteLine($";;;{Helper.GetTot(listprod)};22;{tot};{codAge};{codclifor};{DateTime.Now.ToShortDateString()};{codDest};ORDCL");
-                                    streamWriter.Write('#');
-                                    break;
-                            }
-
-                        }
-                        Toast.MakeText(this, "Ordine salvato.", ToastLength.Short).Show();
-                        listprod = new List<string>();
-                        listView.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1);
-                    });
-                    builder.Show();
-                    break;
                 case Resource.Id.addPhoto:
-                    Intent getIntent = new Intent(Intent.ActionGetContent);
-                    getIntent.SetType("image/*");
+                    {
+                        Intent getIntent = new Intent(Intent.ActionGetContent);
+                        getIntent.SetType("image/*");
 
-                    Intent pickIntent = new Intent(Intent.ActionPick, MediaStore.Images.Media.ExternalContentUri);
-                    pickIntent.SetType("image/*");
+                        Intent pickIntent = new Intent(Intent.ActionPick, MediaStore.Images.Media.ExternalContentUri);
+                        pickIntent.SetType("image/*");
 
-                    Intent chooserIntent = Intent.CreateChooser(getIntent, "Select Image");
-                    chooserIntent.PutExtra(Intent.ExtraInitialIntents, new IParcelable[] { pickIntent });
+                        Intent chooserIntent = Intent.CreateChooser(getIntent, "Select Image");
+                        chooserIntent.PutExtra(Intent.ExtraInitialIntents, new IParcelable[] { pickIntent });
 
-                    StartActivityForResult(chooserIntent, PICK_IMAGE);
+                        StartActivityForResult(chooserIntent, PICK_IMAGE);
 
-                    break;
+                        break;
+                    }
+                case Resource.Id.Modifica:
+                    {
+                        var prodTit = new List<string>();
+                        foreach (var prod in listprod)
+                        {
+                            prodTit.Add(Helper.Table.First(prodo => prodo[0] == prod.Split(';')[0])[1]);
+                        }
+
+                        var listp = new ListView(this)
+                        {
+                            Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodTit)
+                        };
+                        var alertSeleMod = new AlertDialog.Builder(this);
+                        alertSeleMod.SetCancelable(true);
+                        alertSeleMod.SetView(listp);
+                        alertSeleMod.SetTitle("Seleziona il prodotto da modificare");
+                        listp.ItemClick += (ee, se) =>
+                        {
+                            var prod = listprod[se.Position];
+                            var prodSplit = prod.Split(';');
+                            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+                            var editTexQ = new EditText(this) { Text = prodSplit[1], Hint = "Quantità" };
+                            var editTexS = new EditText(this) { Text = prodSplit[4], Hint = "Sconto" };
+                            var editTextP = new EditText(this) { Text = prodSplit[2], Hint = "Prezzo particolare" };
+                            var editTexN = new EditText(this) { Text = prodSplit[5], Hint = "Note" };
+                            layout.AddView(editTexQ);
+                            layout.AddView(editTexS);
+                            layout.AddView(editTextP);
+                            layout.AddView(editTexN);
+                            var builder = new AlertDialog.Builder(this);
+                            builder.SetTitle("Modifica informazioni riga");
+                            builder.SetView(layout);
+                            builder.SetCancelable(true);
+                            builder.SetNegativeButton("Annulla", delegate { });
+                            builder.SetPositiveButton("Conferma", delegate
+                            {
+                                prodSplit[1] = editTexQ.Text;
+                                prodSplit[4] = editTexS.Text;
+                                prodSplit[5] = editTexN.Text;
+                                prodSplit[2] = editTextP.Text;
+                                var pTemp = prodSplit.Aggregate((current, next) => current + ";" + next);
+                                listprod[se.Position] = pTemp;
+                                var templist = new List<Prodotto>();
+                                var finalList = listprod.Zip(listURI, (p, u) => new
+                                {
+                                    prodotto = p,
+                                    uri = u
+                                }).ToList();
+                                CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                                TextInfo textInfo = cultureInfo.TextInfo;
+                                foreach (var prodAda in finalList)
+                                {
+                                    var ptemp = new Prodotto { ImageUrl = prodAda.uri };
+                                    var split = prodAda.prodotto.Split(';');
+                                    var pqueryed = query.First(p => p[0] == split[0].ToUpper());
+                                    var namet = pqueryed[1];
+                                    namet = textInfo.ToLower(namet);
+                                    ptemp.Name = textInfo.ToTitleCase(namet);
+                                    ptemp.QuantityPrice = split[1] + '/' + split[2];
+                                    ptemp.CodArt = pqueryed[0];
+                                    templist.Add(ptemp);
+
+                                }
+                                Setdata();
+                                var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                                var tot2 = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
+                                tot2 = Math.Round(tot2, 2);
+                                totNoIvaTextView.Text = totNoIva2 + '€';
+                                totIvaTextView.Text = tot2.ToString(CultureInfo.CurrentCulture) + '€';
+                                alertMod.Dismiss();
+                            });
+                            builder.Show();
+                        };
+                        alertMod = alertSeleMod.Create();
+                        alertMod.Show();
 
 
+
+                        break;
+                    }
+                case Resource.Id.Elimina:
+                    {
+                        var prodTit = new List<string>();
+                        foreach (var prod in listprod)
+                        {
+                            prodTit.Add(Helper.Table.First(prodo => prodo[0] == prod.Split(';')[0])[1]);
+                        }
+
+                        var listp = new ListView(this)
+                        {
+                            Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, prodTit)
+                        };
+                        var alertSeleDel = new AlertDialog.Builder(this);
+                        alertSeleDel.SetCancelable(true);
+                        alertSeleDel.SetView(listp);
+                        alertSeleDel.SetTitle("Seleziona il prodotto da modificare");
+                        listp.ItemClick += (ee, se) =>
+                        {
+                            listprod.RemoveAt(se.Position);
+                            listURI.RemoveAt(se.Position);
+                            if (listprod.Count <= 0)
+                            {
+                                listView.Adapter = null;
+                                return;
+                            }
+                            var templist = new List<Prodotto>();
+                            var finalList = listprod.Zip(listURI, (p, u) => new
+                            {
+                                prodotto = p,
+                                uri = u
+                            }).ToList();
+                            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+                            TextInfo textInfo = cultureInfo.TextInfo;
+                            foreach (var prodAda in finalList)
+                            {
+                                var ptemp = new Prodotto { ImageUrl = prodAda.uri };
+                                var split = prodAda.prodotto.Split(';');
+                                var pqueryed = query.First(p => p[0] == split[0].ToUpper());
+                                var namet = pqueryed[1];
+                                namet = textInfo.ToLower(namet);
+                                ptemp.Name = textInfo.ToTitleCase(namet);
+                                ptemp.QuantityPrice = split[1] + '/' + split[2];
+                                ptemp.CodArt = pqueryed[0];
+                                templist.Add(ptemp);
+
+                            }
+                            Setdata();
+                            var totNoIva2 = Helper.GetTot(listprod).ToString(CultureInfo.CurrentCulture);
+                            var tot2 = Convert.ToDecimal(totNoIva2) + Convert.ToDecimal(totNoIva2) / 100 * 22;
+                            tot2 = Math.Round(tot2, 2);
+                            totNoIvaTextView.Text = totNoIva2 + '€';
+                            totIvaTextView.Text = tot2.ToString(CultureInfo.CurrentCulture) + '€';
+                            alertDel.Dismiss();
+                        };
+                        alertDel = alertSeleDel.Create();
+                        alertDel.Show();
+
+                        break;
+                    }
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public override bool OnPrepareOptionsMenu(IMenu menu)
+        {
+            base.OnPrepareOptionsMenu(menu);
+            defaultmenu = menu;
+
+            setCount(this, nProgPhoto.ToString());
+            return true;
+
+        }
+
+        private IMenu defaultmenu;
+        public void setCount(Context context, String count)
+        {
+            var menuItem = defaultmenu.FindItem(Resource.Id.addPhoto);
+            LayerDrawable icon = (LayerDrawable)menuItem.Icon;
+
+            CountDrawable badge;
+
+            // Reuse drawable if possible
+            Drawable reuse = icon.FindDrawableByLayerId(Resource.Id.ic_group_count);
+            if (reuse is CountDrawable drawable)
+            {
+                badge = drawable;
+            }
+            else
+            {
+                badge = new CountDrawable(context);
+            }
+
+            badge.setCount(count);
+            icon.Mutate();
+            icon.SetDrawableByLayerId(Resource.Id.ic_group_count, badge);
         }
         public static readonly int PICK_IMAGE = 1;
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -701,46 +803,58 @@ namespace GestioneSarin2
             base.OnActivityResult(requestCode, resultCode, data);
             if (requestCode != PICK_IMAGE || resultCode != Result.Ok) return;
             var d = data.Data;
-            var picturePath = GetPath(this, d);
+            MoveFile(ImageFilePath.getPath(this, d));
         }
 
         private int nProgPhoto;
-        public string GetPath(Context context, Android.Net.Uri uri)
-        {
-            var result = "";
-            var proj = new[] { MediaStore.Images.Media.InterfaceConsts.Data };
-            var cursor = context.ContentResolver.Query(uri, proj, null, null, null);
-            if (cursor != null)
-            {
-                if (cursor.MoveToFirst())
-                {
-                    var columnIndex = cursor.GetColumnIndexOrThrow(proj[0]);
-                    result = cursor.GetString(columnIndex);
-                }
-                cursor.Close();
-            }
-            var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                           .DirectoryDownloads).AbsolutePath + "/Sarin/photoa";
-            nProgPhoto++;
 
-            var img = new Java.IO.File(result);
-            var newImg = new Java.IO.File(path + $"/{DateTime.Now:yyyy-mm-dd}-codag-{codclifor}-{nProgPhoto}.jpg");
-            FileChannel inputChannel = null;
-            FileChannel outputChannel = null;
+        private void MoveFile(string inputPath)
+        {
+            var outputPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin/photoa" + $"/{DateTime.Now:yyyy-mm-dd}-codag-{codclifor}-{nProgPhoto}.jpg";
+            InputStream input = null;
+            OutputStream output = null;
             try
             {
-                inputChannel = new FileInputStream(img).Channel;
-                outputChannel = new FileOutputStream(newImg).Channel;
-                outputChannel.TransferFrom(inputChannel, 0, inputChannel.Size());
+
+                //create output directory if it doesn't exist
+                var dir = new Java.IO.File(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin/photoa");
+                if (!dir.Exists())
+                {
+                    dir.Mkdirs();
+                }
+
+
+                input = new FileInputStream(inputPath);
+                output = new FileOutputStream(outputPath);
+
+                byte[] buffer = new byte[1024];
+                int read;
+                while ((read = input.Read(buffer)) != -1)
+                {
+                    output.Write(buffer, 0, read);
+                }
+                input.Close();
+                input = null;
+
+                // write the output file
+                output.Flush();
+                output.Close();
+                output = null;
+
+
+
             }
-            finally
+
+            catch (FileNotFoundException fnfe1)
             {
-                inputChannel?.Close();
-                outputChannel?.Close();
-                inputChannel?.Dispose();
-                outputChannel?.Dispose();
+                Log.Error("tag", fnfe1.Message);
             }
-            return result ?? "Not found";
+            catch (Exception e)
+            {
+                Log.Error("tag", e.Message);
+            }
+            nProgPhoto++;
+            setCount(this, nProgPhoto.ToString());
         }
 
         public bool IsPlayServicesAvailable()
@@ -768,16 +882,33 @@ namespace GestioneSarin2
             var i = 0;
             foreach (var prod in listprod)
             {
-                var listInfo = new List<string>();
-                listInfo.AddRange(Enumerable.Repeat(prod, 7));
-                var p = Helper.Table.Find(ppp => ppp[0] == prod.Split(';')[0]);
-                group.Add(p[0] + p[1]);
-                dictionary.Add(group[i], listInfo);
-                i++;
+                try
+                {
+                    var listInfo = new List<string>();
+                    listInfo.AddRange(Enumerable.Repeat(prod, 7));
+                    var p = Helper.Table.Find(ppp => ppp[0] == prod.Split(';')[0]);
+                    group.Add(p[1]);
+                    dictionary.Add(group[i], listInfo);
+                    i++;
+                }
+                catch
+                {
+                    //todo handle two equals items
+                    var listInfo = new List<string>();
+                    listInfo.AddRange(Enumerable.Repeat(prod, 7));
+                    var p = Helper.Table.Find(ppp => ppp[0] == prod.Split(';')[0]);
+                    group.Add(p[1]);
+                    dictionary.Add(group[i] + i, listInfo);
+                    i++;
+                    Toast.MakeText(this, "Non puoi aggiungere due oggetti uguali", ToastLength.Short).Show();
+                }
             }
 
             var ada = new CartAdapter(this, group, dictionary);
             listView.SetAdapter(ada);
+            Intent.PutExtra("prod", listprod.ToArray());
+            Intent.PutExtra("uri", listURI.ToArray());
+
 
         }
 

@@ -1,24 +1,20 @@
-﻿using System;
+﻿using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Preferences;
+using Android.Support.V7.App;
+using Android.Views;
+using Android.Widget;
+using ExtensionMethods;
+using GestioneSarin2.Activity;
+using GestioneSarin2.Other_class_and_Helper;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Preferences;
-using Android.Runtime;
-using Android.Support.V7.App;
-using Android.Util;
-using Android.Views;
-using Android.Widget;
-using ExtensionMethods;
-using GestioneSarin2;
-using GestioneSarin2.Activity;
-using GestioneSarin2.Other_class_and_Helper;
 using AlertDialog = Android.App.AlertDialog;
 using Environment = System.Environment;
 using File = Java.IO.File;
@@ -31,8 +27,8 @@ namespace GestioneSarin2
     {
         private ListView listViewHist;
 
-        readonly string pathpp = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                            .DirectoryDownloads).AbsolutePath + "/Sarin";
+        readonly string pathpp = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
         private List<string> csvlist = new List<string>();
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -64,34 +60,37 @@ namespace GestioneSarin2
                 Directory.CreateDirectory(path);
             }
 
+            if (!System.IO.File.Exists(path + "/docTes.txt"))
+            {
+                return;
+            }
+
 
             var listoOrdines = new List<Ordine>();
             {
-
-
                 var pathord = path + "/docTes.txt";
                 var ordDet = new List<string>();
                 using (var streamWriter = new StreamReader(pathord))
                 {
-                    var ordStr = streamWriter.ReadToEnd();
+                    while (!streamWriter.EndOfStream)
+                    {
+                        var ordStr = streamWriter.ReadLine();
+                        ordDet.Add(ordStr);
 
-                    ordDet = ordStr.Split(
-                        new[] { Environment.NewLine },
-                        StringSplitOptions.None
-                    ).ToList();
-
+                    }
                 }
                 foreach (var ord in ordDet)
                 {
                     var testa = ord.Split(';');
-                    var nameTemp = clienti.First(list => ("C" + list[0]).Contains(testa[5]))[1];
+                    var nameTemp = clienti.First(cli=>cli[0]==testa[4])[1];
                     listoOrdines.Add(new Ordine
                     {
                         Date = testa[3],
                         Name = nameTemp,
                         CodCli = testa[4],
                         Type = testa[1],
-                        Tot = GetTot(Convert.ToInt32(testa[2])).ToString(CultureInfo.CurrentCulture)
+                        //Todo totale hist
+                        Tot = Math.Round(GetTot(Convert.ToInt32(testa[0])), 2).ToString(CultureInfo.CurrentCulture)
                     });
                 }
 
@@ -141,10 +140,10 @@ namespace GestioneSarin2
             builder.SetNegativeButton("No", delegate { });
             builder.SetPositiveButton("Si", delegate
             {
-                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                               .DirectoryDownloads).AbsolutePath + "/Sarin";
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
                 var tesList = new List<string>();
-                using (var sw = new StreamReader(path + "/doctes.csv"))
+                using (var sw = new StreamReader(path + "/docTes.txt"))
                 {
                     while (!sw.EndOfStream)
                     {
@@ -177,7 +176,7 @@ namespace GestioneSarin2
                 }
                 var nDoc = tesSplit[0];
                 var rigList = new List<string>();
-                using (var sr = new StreamReader(path + "/docrig.csv"))
+                using (var sr = new StreamReader(path + "/docRig.txt"))
                 {
                     while (!sr.EndOfStream)
                     {
@@ -279,11 +278,11 @@ namespace GestioneSarin2
             builder.SetNegativeButton("No", delegate { });
             builder.SetPositiveButton("Si", delegate
             {
+                // Re TODO DElete hist
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
 
-                var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                               .DirectoryDownloads).AbsolutePath + "/Sarin";
                 var tesList = new List<string>();
-                using (var sw = new StreamReader(path + "/doctes.csv"))
+                using (var sw = new StreamReader(path + "/doctes.txt"))
                 {
                     while (!sw.EndOfStream)
                     {
@@ -293,12 +292,12 @@ namespace GestioneSarin2
 
                 if (tesList.Count == 1)
                 {
-                    System.IO.File.Delete(path + "/doctes.csv");
-                    System.IO.File.Delete(path + "/docrig.csv");
+                    System.IO.File.Delete(path + "/doctes.txt");
+                    System.IO.File.Delete(path + "/docrig.txt");
                 }
                 else
                 {
-                    using (var sw = new StreamWriter(path + "/doctes.csv"))
+                    using (var sw = new StreamWriter(path + "/doctes.txt"))
                     {
                         for (var i = 0; i < tesList.Count; i++)
                         {
@@ -310,7 +309,7 @@ namespace GestioneSarin2
                     }
                     var rigList = new List<string>();
                     var rigListTemp = new List<string>();
-                    using (var sr = new StreamReader(path + "/docrig.csv"))
+                    using (var sr = new StreamReader(path + "/docrig.txt"))
                     {
                         while (!sr.EndOfStream)
                         {
@@ -318,7 +317,7 @@ namespace GestioneSarin2
                         }
                     }
                     rigListTemp.AddRange(rigList.Where(rig => !rig.Split(';')[1].Contains(e.Position.ToString())));
-                    using (var sw = new StreamWriter(path + "/docRig.csv"))
+                    using (var sw = new StreamWriter(path + "/docRig.txt"))
                     {
                         foreach (var rig in rigListTemp)
                         {
@@ -344,11 +343,11 @@ namespace GestioneSarin2
             switch (id)
             {
                 case Resource.Id.sendHistory:
-                    var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment
-                                   .DirectoryDownloads).AbsolutePath + "/Sarin";
+                    var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+
                     var sharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                    csvlist.Add(path + "/doctes.csv");
-                    csvlist.Add(path + "/docrig.csv");
+                    csvlist.Add(path + "/docTes.txt");
+                    csvlist.Add(path + "/docRig.txt");
                     var directory = new File(pathpp + "/photoa");
                     var files = directory.ListFiles();
                     if (files != null)
@@ -396,8 +395,8 @@ namespace ExtensionMethods
     {/// <summary>
      /// Simple converter String->Decimal
      /// </summary>
-     /// <param name="str">Value</param>
-     /// <returns></returns>
+     /// <param name="str">Value To convert</param>
+     /// <returns>Decimal value converted</returns>
         public static decimal ToDecimal(this string str)
         {
             decimal result = 0;
@@ -411,13 +410,6 @@ namespace ExtensionMethods
             }
 
             return result;
-        }
-
-        public static string GetName(this string codArt)
-        {
-            var artTab = Helper.Table;
-            codArt = codArt.Split(';')[0];
-            return artTab.First(prod => prod[0] == codArt)[1];
         }
     }
 

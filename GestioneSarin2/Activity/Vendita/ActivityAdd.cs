@@ -135,7 +135,11 @@ namespace GestioneSarin2
                         {
                             qta += ".00";
                         }
-                       
+
+                        if (textPPart.Text!="")
+                        {
+                            subqueryList[e.Position].QuantityPrice = textPPart.Text;
+                        }
                         listProd.Add($"{subqueryList[e.Position].CodArt};{qta};{subqueryList[e.Position].QuantityPrice};{textPPart.Text};{textScon.Text};{textNote.Text}");
                         subqueryList[e.Position].Note = textNote.Text;
                         Intent i = new Intent(this, typeof(ActivityCart));

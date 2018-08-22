@@ -3,19 +3,15 @@
       xmlns:tools="http://schemas.android.com/tools"
       android:title="Ciao">
   <item
-    android:id="@+id/Aggiorna_Il_Database"
+    android:id="@+id/Modifica"
     android:orderInCategory="100"
-    android:title="Aggiorna il Database "
+    android:title="Modifica riga"
     app:showAsAction="never" />
-  <item
-    android:id="@+id/Cliente"
-    android:orderInCategory="100"
-    android:title="Cambia Cliente "
-    app:showAsAction="never" />
-  <item
-    android:id="@+id/Agente"
-    android:orderInCategory="100"
-    android:title="Cambia Agente "
-    app:showAsAction="never" />
+  <item android:id="@+id/Elimina"
+        android:orderInCategory="100"
+        android:title="Elimina riga"
+        />
+
+
 </menu>
 

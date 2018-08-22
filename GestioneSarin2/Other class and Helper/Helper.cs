@@ -96,7 +96,7 @@ namespace GestioneSarin2
                 prodsplit[2] = prodsplit[2].Replace(',', '.');
                 if (!float.TryParse(prodsplit[2], out var qta))
                 {
-                    var qtaSplit = new string(prodsplit[2].Split('/')[1].ToCharArray());
+                    var qtaSplit = new string(prodsplit[2].Split('/').Last().ToCharArray());
                     qta = float.Parse(new string((from c in qtaSplit
                                                   where char.IsDigit(c) || char.IsPunctuation(c)
                                                   select c

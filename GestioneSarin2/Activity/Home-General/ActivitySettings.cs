@@ -103,9 +103,12 @@ namespace GestioneSarin2.Activity
 
         private void ActivitySettings_PreferenceClick_Delete(object sender, Preference.PreferenceClickEventArgs e)
         {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin";
+            var path = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/Sarin");
 
-            Directory.Delete(path, true);
+            foreach (var enumerateFile in path.EnumerateFiles())
+            {
+                enumerateFile.Delete();
+            }
         }
 
         private void ActivitySettings_PreferenceClick_Update(object sender, Preference.PreferenceClickEventArgs e)

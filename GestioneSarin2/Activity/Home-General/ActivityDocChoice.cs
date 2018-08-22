@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
-using Android.Views;
 using Android.Widget;
 using GestioneSarin2.Other_class_and_Helper;
+using System;
+using System.Linq;
 
 namespace GestioneSarin2.Activity
 {
@@ -42,6 +37,9 @@ namespace GestioneSarin2.Activity
             rappoButton.Click += RappoButtonClick;
             vendButton.Click += VendButtonClick;
             prevButton.Click += PrevButton_Click;
+            bollButton.Click += BollButton_Click;
+            fattButton.Click += FattButton_Click;
+            genButton.Click += GenButton_Click;
             AssetManager am = Assets;
             Typeface tvDoc = Typeface.CreateFromAsset(am, "FiraSans-Regular.ttf");
             rappoButton.SetTypeface(tvDoc, TypefaceStyle.Normal);
@@ -55,30 +53,109 @@ namespace GestioneSarin2.Activity
 
         }
 
+        private void GenButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var doc = Helper.GetAge(this).First(docR => docR[2] == "G");
+                if (doc.Count != 4) return;
+                var i = new Intent(this, typeof(ActivityCustomers));
+                var type = (int)DocType.Generico;
+                i.PutExtra("Type", type);
+                StartActivity(i);
+            }
+            catch
+            {
+                Toast.MakeText(this, "Non sei autorizzato a questo documento", ToastLength.Short).Show();
+            }
+        }
+
+        private void FattButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var doc = Helper.GetAge(this).First(docR => docR[2] == "F");
+                if (doc.Count != 4) return;
+                var i = new Intent(this, typeof(ActivityCustomers));
+                var type = (int)DocType.Fattura;
+                i.PutExtra("Type", type);
+                StartActivity(i);
+            }
+            catch
+            {
+                Toast.MakeText(this, "Non sei autorizzato a questo documento", ToastLength.Short).Show();
+            }
+        }
+
+        private void BollButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var doc = Helper.GetAge(this).First(docR => docR[2] == "O");
+                if (doc.Count != 4) return;
+                var i = new Intent(this, typeof(ActivityCustomers));
+                var type = (int)DocType.Bolla;
+                i.PutExtra("Type", type);
+                StartActivity(i);
+            }
+            catch
+            {
+                Toast.MakeText(this, "Non sei autorizzato a questo documento", ToastLength.Short).Show();
+            }
+        }
+
         private void PrevButton_Click(object sender, EventArgs e)
         {
-            StartActivity(typeof(Activitytextexpan));
+            try
+            {
+                var doc = Helper.GetAge(this).First(docR => docR[2] == "P");
+                if (doc.Count != 4) return;
+                var i = new Intent(this, typeof(ActivityCustomers));
+                var type = (int)DocType.Preventivo;
+                i.PutExtra("Type", type);
+                StartActivity(i);
+            }
+            catch
+            {
+                Toast.MakeText(this, "Non sei autorizzato a questo documento", ToastLength.Short).Show();
+            }
+
         }
 
         private void VendButtonClick(object sender, EventArgs e)
         {
-            var doc = Helper.GetAge(this).First(docR => docR[2] == "B");
-            if (doc.Count != 4) return;
-            var i = new Intent(this, typeof(ActivityCustomers));
-            var type = (int)DocType.Vendita;
-            i.PutExtra("Type", type);
-            StartActivity(i);
+            try
+            {
+                var doc = Helper.GetAge(this).First(docR => docR[2] == "B");
+                if (doc.Count != 4) return;
+                var i = new Intent(this, typeof(ActivityCustomers));
+                var type = (int)DocType.Vendita;
+                i.PutExtra("Type", type);
+                StartActivity(i);
+            }
+            catch
+            {
+                Toast.MakeText(this, "Non sei autorizzato a questo documento", ToastLength.Short).Show();
+            }
 
         }
 
         private void RappoButtonClick(object sender, EventArgs e)
         {
-            var doc = Helper.GetAge(this).First(docR => docR[2] == "R");
-            if (doc.Count != 4) return;
-            Intent i = new Intent(this, typeof(ActivityCustomers));
-            var type = (int)DocType.Rapportino;
-            i.PutExtra("Type", type);
-            StartActivity(i);
+            try
+            {
+                var doc = Helper.GetAge(this).First(docR => docR[2] == "R");
+                if (doc.Count != 4) return;
+                var i = new Intent(this, typeof(ActivityCustomers));
+                var type = (int)DocType.Rapportino;
+                i.PutExtra("Type", type);
+                StartActivity(i);
+            }
+            catch
+            {
+                Toast.MakeText(this, "Non sei autorizzato a questo documento", ToastLength.Short).Show();
+            }
+
         }
     }
 }

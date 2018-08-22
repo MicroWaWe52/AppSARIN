@@ -70,6 +70,8 @@
     <Compile Include="Activity\Home-General\ActivitySettings.cs" />
     <Compile Include="Adapter and Single class\CartAdapter.cs" />
     <Compile Include="Adapter and Single class\ImageAdapter.cs" />
+    <Compile Include="Other class and Helper\CountDrawable.cs" />
+    <Compile Include="Other class and Helper\ImagePath.cs" />
     <Compile Include="Adapter and Single class\MyAdapter.cs" />
     <Compile Include="Other class and Helper\DocType.cs" />
     <Compile Include="Other class and Helper\Helper.cs" />
@@ -187,12 +189,6 @@
     <AndroidResource Include="Resources\drawable\BG4.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BGC.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BG.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\layoutPreset.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -207,9 +203,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\actionbarMain.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\save.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\layoutCustomers.axml">
@@ -239,18 +232,6 @@
     <AndroidResource Include="Resources\layout\layoutDocChoice.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BG42.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BG12.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BG32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BG22.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\buttonbackground.xml" />
@@ -290,13 +271,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BNW2.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BNW3.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\BNW1.jpg" />
+    <AndroidResource Include="Resources\drawable\countPhotoIcn.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

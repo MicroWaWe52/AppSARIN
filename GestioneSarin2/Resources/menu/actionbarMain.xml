@@ -4,13 +4,8 @@
       xmlns:tools="http://schemas.android.com/tools" >
 
   <item
-    android:id="@+id/savePres"
-    android:icon="@mipmap/save"
-    android:title="@string/app_name"
-    app:showAsAction="ifRoom"/>
-  <item
     android:id="@+id/addPhoto"
-    android:icon="@mipmap/add"
+    android:icon="@drawable/countPhotoIcn"
     android:title="@string/app_name"
     app:showAsAction="ifRoom"/>
 

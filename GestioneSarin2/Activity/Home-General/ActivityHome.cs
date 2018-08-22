@@ -1,28 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Android;
+﻿using Android;
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
-using Android.Content.Res;
-using Android.Graphics;
 using Android.OS;
 using Android.Preferences;
-using Android.Runtime;
 using Android.Support.V7.App;
-using Android.Text;
-using Android.Text.Style;
-using Android.Views;
 using Android.Widget;
 using GestioneSarin2.Activity;
-using Java.Lang;
-using ActionBar = Android.Support.V7.App.ActionBar;
+using System;
+using System.IO;
 using Environment = System.Environment;
-using Path = System.IO.Path;
 
 namespace GestioneSarin2
 {
@@ -75,6 +61,7 @@ namespace GestioneSarin2
 
         private void PresetButton_Click(object sender, EventArgs e)
         {
+            return;
             StartActivity(typeof(ActivityPreset));
         }
 
